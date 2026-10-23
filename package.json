@@ -1,0 +1,16 @@
+{
+  "name": "affiliate-tracker-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Multi-tier Affiliate & Sub-Affiliate Tracking Platform - Powered by AI-Scripto Automations",
+  "scripts": {
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
+    "check": "./scripts/verify-code-quality.sh",
+    "pre-commit": "./scripts/verify-code-quality.sh",
+    "verify": "./scripts/verify-code-quality.sh",
+    "build:frontend": "npm run build --prefix frontend",
+    "build:backend": "npm run build --prefix backend",
+    "build": "npm run build:backend && npm run build:frontend"
+  },
+  "devDependencies": {}
+}

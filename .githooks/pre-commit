@@ -1,0 +1,4 @@
+#!/bin/bash
+# Pre-commit hook - Runs code quality and type checks before allowing commit
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+"$ROOT_DIR/scripts/verify-code-quality.sh"
