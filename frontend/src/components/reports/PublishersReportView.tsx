@@ -32,9 +32,9 @@ export function PublishersReportView() {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
     return (
-      item.name.toLowerCase().includes(q) ||
-      item.offer.toLowerCase().includes(q) ||
-      String(item.id).includes(q)
+      (item.name || '').toLowerCase().includes(q) ||
+      (item.offer || '').toLowerCase().includes(q) ||
+      String(item.id ?? '').includes(q)
     );
   });
 

@@ -188,7 +188,7 @@ export function DashboardView() {
           ) : (
             <div className="mt-2 flex items-baseline gap-2">
               <span className="text-3xl font-bold tabular-nums text-fg">
-                {currencySymbol} {(summary?.payout ?? 750).toFixed(2)}
+                {currencySymbol} {Number(summary?.payout ?? 750).toFixed(2)}
               </span>
               <span className="text-[11px] font-medium text-fg-muted uppercase">
                 {currency}
@@ -226,14 +226,14 @@ export function DashboardView() {
           ) : (
             <div className="mt-2 flex items-baseline gap-2">
               <span className="text-3xl font-bold tabular-nums text-fg">
-                {currencySymbol} {(summary?.epc ?? 11.03).toFixed(2)}
+                {currencySymbol} {Number(summary?.epc ?? 11.03).toFixed(2)}
               </span>
             </div>
           )}
           <p className="text-[11px] text-fg-muted mt-2">
             Earnings by Currency:{' '}
             <strong className="text-fg font-semibold">
-              {currencySymbol} {(summary?.payout ?? 750).toFixed(2)}
+              {currencySymbol} {Number(summary?.payout ?? 750).toFixed(2)}
             </strong>
           </p>
         </div>

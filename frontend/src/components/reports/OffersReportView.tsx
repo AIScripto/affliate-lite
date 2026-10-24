@@ -31,7 +31,7 @@ export function OffersReportView() {
   const filteredData = (report?.data || []).filter((item) => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
-    return item.name.toLowerCase().includes(q) || String(item.id).includes(q);
+    return (item.name || '').toLowerCase().includes(q) || String(item.id ?? '').includes(q);
   });
 
   const totalEntries = filteredData.length;

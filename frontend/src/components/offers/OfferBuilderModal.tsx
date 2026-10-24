@@ -130,8 +130,8 @@ export function OfferBuilderModal({
       if (po) {
         setPaymentModel(po.paymentModel);
         setCurrency(po.currency);
-        setRevenue(po.revenue);
-        setPayout(po.payout);
+        setRevenue(Number(po.revenue || 0));
+        setPayout(Number(po.payout || 0));
       }
 
       // Fetch dual-list affiliates for existing offer
