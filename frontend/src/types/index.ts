@@ -77,6 +77,10 @@ export interface Offer {
   previewUrl?: string | null;
   description?: string | null;
   baseDestinationUrl: string;
+  trafficbackUrl?: string | null;
+  cookieLifetimeDays?: number;
+  clickSessionLifespanHours?: number;
+  allowConversionsWithoutSession?: boolean;
   enforceIpUniqueness: boolean;
   blockDuplicateIps: boolean;
   globalPostbackUrl?: string | null;

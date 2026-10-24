@@ -126,12 +126,16 @@ model Offer {
   domainId            Int?            @map("domain_id")
   visibility          OfferVisibility @default(PRIVATE)
   status              OfferStatus     @default(ACTIVE)
-  previewUrl          String?         @map("preview_url")
-  description         String?
-  destinationUrl      String          @map("destination_url")
-  enforceIpUniqueness Boolean         @default(false) @map("enforce_ip_uniqueness")
-  blockDuplicateIps   Boolean         @default(false) @map("block_duplicate_ips")
-  createdAt           DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  previewUrl                     String?         @map("preview_url")
+  description                    String?
+  destinationUrl                 String          @map("destination_url")
+  trafficbackUrl                 String?         @map("trafficback_url")
+  cookieLifetimeDays             Int             @default(30) @map("cookie_lifetime_days")
+  clickSessionLifespanHours      Int             @default(24) @map("click_session_lifespan_hours")
+  allowConversionsWithoutSession Boolean         @default(false) @map("allow_conversions_without_session")
+  enforceIpUniqueness            Boolean         @default(false) @map("enforce_ip_uniqueness")
+  blockDuplicateIps              Boolean         @default(false) @map("block_duplicate_ips")
+  createdAt                      DateTime        @default(now()) @map("created_at") @db.Timestamptz
   updatedAt           DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   network         Network               @relation(fields: [networkId], references: [id], onDelete: Restrict)

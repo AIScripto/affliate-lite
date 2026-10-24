@@ -2,7 +2,46 @@ import { Request, Response } from 'express';
 import { prisma } from '../db/prisma';
 
 export async function createOffer(req: Request, res: Response): Promise<void> {
-  const { general, tracking, targeting, affiliates, revenuePayouts } = req.body;
+  const rawBody = req.body || {};
+  const general = rawBody.general || {
+    name: rawBody.name,
+    networkId: rawBody.advertiserId || rawBody.networkId,
+    visibility: rawBody.visibility,
+    status: rawBody.status,
+    previewUrl: rawBody.previewUrl,
+    description: rawBody.description,
+  };
+  const tracking = rawBody.tracking || {
+    domainId: rawBody.domainId,
+    destinationUrl: rawBody.baseDestinationUrl || rawBody.destinationUrl,
+    trafficbackUrl: rawBody.trafficbackUrl,
+    cookieLifetimeDays: rawBody.cookieLifetimeDays,
+    clickSessionLifespanHours: rawBody.clickSessionLifespanHours,
+    allowConversionsWithoutSession: rawBody.allowConversionsWithoutSession,
+    enforceIpUniqueness: rawBody.enforceIpUniqueness,
+    blockDuplicateIps: rawBody.blockDuplicateIps,
+  };
+  const targeting = rawBody.targeting || {
+    name: rawBody.targetingGroups?.[0]?.name || rawBody.targetingName || 'Targeting group #1',
+    conditionOp: rawBody.targetingGroups?.[0]?.condition || rawBody.condition || 'AND',
+    isEnabled: true,
+    devices: rawBody.targetingGroups?.[0]?.devices || rawBody.devices || ['ALL'],
+    countries: rawBody.targetingGroups?.[0]?.countries || rawBody.countries || ['ALL'],
+    excludeCountries: Boolean(rawBody.targetingGroups?.[0]?.excludeCountries ?? rawBody.excludeCountries),
+    cities: rawBody.targetingGroups?.[0]?.cities || rawBody.cities || [],
+    regions: rawBody.targetingGroups?.[0]?.regions || rawBody.regions || [],
+  };
+  const affiliates = rawBody.affiliates || {
+    enabledPublisherIds: rawBody.enabledAffiliates?.map((a: any) => a.id) || rawBody.enabledPublisherIds || [],
+  };
+  const revenuePayouts = rawBody.revenuePayouts || {
+    title: 'Default',
+    goalValue: '1',
+    paymentModel: rawBody.payouts?.[0]?.paymentModel || rawBody.paymentModel || 'CPA_FIXED',
+    currency: rawBody.payouts?.[0]?.currency || rawBody.currency || 'USD',
+    revenue: rawBody.payouts?.[0]?.revenue ?? rawBody.revenue ?? 0,
+    payout: rawBody.payouts?.[0]?.payout ?? rawBody.payout ?? 0,
+  };
 
   const result = await prisma.$transaction(async (tx) => {
     // 1. Create Base Offer
@@ -16,6 +55,10 @@ export async function createOffer(req: Request, res: Response): Promise<void> {
         previewUrl: general.previewUrl || null,
         description: general.description || null,
         destinationUrl: tracking.destinationUrl,
+        trafficbackUrl: tracking.trafficbackUrl?.trim() || null,
+        cookieLifetimeDays: tracking.cookieLifetimeDays ?? 30,
+        clickSessionLifespanHours: tracking.clickSessionLifespanHours ?? 24,
+        allowConversionsWithoutSession: Boolean(tracking.allowConversionsWithoutSession),
         enforceIpUniqueness: Boolean(tracking.enforceIpUniqueness),
         blockDuplicateIps: Boolean(tracking.blockDuplicateIps),
       },
@@ -134,22 +177,37 @@ export async function getOffers(req: Request, res: Response): Promise<void> {
     return {
       id: o.id,
       name: o.name,
-      domain: o.domain?.name || 'Default Domain',
+      domain: o.domain,
+      domainId: o.domainId,
       network: o.network.name,
       networkId: o.network.id,
+      advertiser: o.network,
+      advertiserId: o.network.id,
       visibility: o.visibility,
       status: o.status,
       clicks: o._count.clicks,
+      clicksCount: o._count.clicks,
       conversions: o._count.conversions,
+      conversionsCount: o._count.conversions,
       postbackUrl,
       payout: defaultPayout ? Number(defaultPayout.payout) : 0.0,
       revenue: defaultPayout ? Number(defaultPayout.revenue) : 0.0,
       currency: defaultPayout?.currency || 'USD',
       paymentModel: defaultPayout?.paymentModel || 'CPA_FIXED',
-      previewUrl: o.previewUrl,
       destinationUrl: o.destinationUrl,
+      baseDestinationUrl: o.destinationUrl,
+      trafficbackUrl: o.trafficbackUrl,
+      cookieLifetimeDays: o.cookieLifetimeDays,
+      clickSessionLifespanHours: o.clickSessionLifespanHours,
+      allowConversionsWithoutSession: o.allowConversionsWithoutSession,
+      enforceIpUniqueness: o.enforceIpUniqueness,
+      blockDuplicateIps: o.blockDuplicateIps,
+      previewUrl: o.previewUrl,
       description: o.description,
+      targetingGroups: o.targetingGroups,
+      payouts: o.payouts,
       createdAt: o.createdAt,
+      updatedAt: o.updatedAt,
     };
   });
 
@@ -186,7 +244,16 @@ export async function getOfferById(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  res.json({ offer });
+  const formattedOffer = {
+    ...offer,
+    advertiser: offer.network,
+    advertiserId: offer.networkId,
+    baseDestinationUrl: offer.destinationUrl,
+    clicksCount: offer._count.clicks,
+    conversionsCount: offer._count.conversions,
+  };
+
+  res.json({ offer: formattedOffer });
 }
 
 export async function updateOffer(req: Request, res: Response): Promise<void> {
@@ -196,7 +263,46 @@ export async function updateOffer(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const { general, tracking, targeting, affiliates, revenuePayouts } = req.body;
+  const rawBody = req.body || {};
+  const general = rawBody.general || {
+    name: rawBody.name,
+    networkId: rawBody.advertiserId || rawBody.networkId,
+    visibility: rawBody.visibility,
+    status: rawBody.status,
+    previewUrl: rawBody.previewUrl,
+    description: rawBody.description,
+  };
+  const tracking = rawBody.tracking || {
+    domainId: rawBody.domainId,
+    destinationUrl: rawBody.baseDestinationUrl || rawBody.destinationUrl,
+    trafficbackUrl: rawBody.trafficbackUrl,
+    cookieLifetimeDays: rawBody.cookieLifetimeDays,
+    clickSessionLifespanHours: rawBody.clickSessionLifespanHours,
+    allowConversionsWithoutSession: rawBody.allowConversionsWithoutSession,
+    enforceIpUniqueness: rawBody.enforceIpUniqueness,
+    blockDuplicateIps: rawBody.blockDuplicateIps,
+  };
+  const targeting = rawBody.targeting || {
+    name: rawBody.targetingGroups?.[0]?.name || rawBody.targetingName || 'Targeting group #1',
+    conditionOp: rawBody.targetingGroups?.[0]?.condition || rawBody.condition || 'AND',
+    isEnabled: true,
+    devices: rawBody.targetingGroups?.[0]?.devices || rawBody.devices || ['ALL'],
+    countries: rawBody.targetingGroups?.[0]?.countries || rawBody.countries || ['ALL'],
+    excludeCountries: Boolean(rawBody.targetingGroups?.[0]?.excludeCountries ?? rawBody.excludeCountries),
+    cities: rawBody.targetingGroups?.[0]?.cities || rawBody.cities || [],
+    regions: rawBody.targetingGroups?.[0]?.regions || rawBody.regions || [],
+  };
+  const affiliates = rawBody.affiliates || {
+    enabledPublisherIds: rawBody.enabledAffiliates?.map((a: any) => a.id) || rawBody.enabledPublisherIds || [],
+  };
+  const revenuePayouts = rawBody.revenuePayouts || {
+    title: 'Default',
+    goalValue: '1',
+    paymentModel: rawBody.payouts?.[0]?.paymentModel || rawBody.paymentModel || 'CPA_FIXED',
+    currency: rawBody.payouts?.[0]?.currency || rawBody.currency || 'USD',
+    revenue: rawBody.payouts?.[0]?.revenue ?? rawBody.revenue ?? 0,
+    payout: rawBody.payouts?.[0]?.payout ?? rawBody.payout ?? 0,
+  };
 
   await prisma.$transaction(async (tx) => {
     // 1. Update Core Offer
@@ -211,6 +317,10 @@ export async function updateOffer(req: Request, res: Response): Promise<void> {
         previewUrl: general.previewUrl || null,
         description: general.description || null,
         destinationUrl: tracking.destinationUrl,
+        trafficbackUrl: tracking.trafficbackUrl?.trim() || null,
+        cookieLifetimeDays: tracking.cookieLifetimeDays ?? 30,
+        clickSessionLifespanHours: tracking.clickSessionLifespanHours ?? 24,
+        allowConversionsWithoutSession: Boolean(tracking.allowConversionsWithoutSession),
         enforceIpUniqueness: Boolean(tracking.enforceIpUniqueness),
         blockDuplicateIps: Boolean(tracking.blockDuplicateIps),
       },

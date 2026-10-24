@@ -65,7 +65,11 @@ export const UpsertOfferSchema = z.object({
   }),
   tracking: z.object({
     domainId: z.number().int().positive().optional().nullable(),
-    destinationUrl: z.string().url('Please enter a valid destination URL.'),
+    destinationUrl: z.string().trim().min(5, 'Please enter a valid destination URL.'),
+    trafficbackUrl: z.string().trim().optional().nullable().or(z.literal('')),
+    cookieLifetimeDays: z.number().int().min(1).max(365).default(30).optional(),
+    clickSessionLifespanHours: z.number().int().min(1).default(24).optional(),
+    allowConversionsWithoutSession: z.boolean().default(false).optional(),
     enforceIpUniqueness: z.boolean().default(false),
     blockDuplicateIps: z.boolean().default(false),
   }),

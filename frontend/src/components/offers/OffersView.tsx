@@ -12,7 +12,7 @@ import { Offer, Network, Domain, OfferStatus } from '../../types';
 import { DataTable, Column } from '../common/DataTable';
 import { ActionButtons } from '../common/ActionButtons';
 import { Modal } from '../common/Modal';
-import { OfferBuilderModal } from './OfferBuilderModal';
+import { OfferBuilder } from './OfferBuilder';
 
 export function OffersView() {
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -249,6 +249,36 @@ export function OffersView() {
     },
   ];
 
+  // Render full-body OfferBuilder workspace when creating or editing an offer
+  if (builderOpen) {
+    return (
+      <div className="space-y-6">
+        {toastMessage && (
+          <div className="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white px-4 py-2.5 rounded-lg shadow-lg text-xs font-semibold flex items-center gap-2 animate-bounce">
+            <span>✓</span>
+            <span>{toastMessage}</span>
+          </div>
+        )}
+
+        <OfferBuilder
+          offer={selectedOffer}
+          networks={networks}
+          domains={domains}
+          onBack={() => {
+            setBuilderOpen(false);
+            setSelectedOffer(null);
+          }}
+          onSuccess={async (msg) => {
+            showToast(msg);
+            setBuilderOpen(false);
+            setSelectedOffer(null);
+            await loadData();
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Toast Alert */}
@@ -265,7 +295,7 @@ export function OffersView() {
           <div>
             <h1 className="text-base font-bold text-fg">Manage Offer</h1>
             <p className="text-xs text-fg-muted mt-0.5">
-              5-Tab campaign manager with targeting, dual-list affiliate routing, and revenue spread
+              Enterprise campaign manager with full-body tracking controls, targeting, and revenue spread
             </p>
           </div>
 
@@ -293,19 +323,6 @@ export function OffersView() {
           searchPlaceholder="Search offer by name, network, or domain..."
         />
       </div>
-
-      {/* 5-Tab Offer Builder Modal */}
-      <OfferBuilderModal
-        isOpen={builderOpen}
-        onClose={() => setBuilderOpen(false)}
-        offer={selectedOffer}
-        networks={networks}
-        domains={domains}
-        onSuccess={async (msg) => {
-          showToast(msg);
-          await loadData();
-        }}
-      />
 
       {/* Delete Confirmation Modal */}
       <Modal
