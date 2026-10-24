@@ -30,9 +30,10 @@ export function DomainsView() {
     try {
       setIsLoading(true);
       const data = await fetchDomains();
-      setDomains(data);
+      setDomains(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load domains', err);
+      setDomains([]);
     } finally {
       setIsLoading(false);
     }

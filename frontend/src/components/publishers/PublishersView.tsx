@@ -48,9 +48,10 @@ export function PublishersView() {
     try {
       setIsLoading(true);
       const data = await fetchPublishers();
-      setPublishers(data);
+      setPublishers(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load publishers', err);
+      setPublishers([]);
     } finally {
       setIsLoading(false);
     }

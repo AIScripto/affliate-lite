@@ -44,11 +44,14 @@ export function OffersView() {
         fetchNetworks(),
         fetchDomains(),
       ]);
-      setOffers(offersData);
-      setNetworks(networksData);
-      setDomains(domainsData);
+      setOffers(Array.isArray(offersData) ? offersData : []);
+      setNetworks(Array.isArray(networksData) ? networksData : []);
+      setDomains(Array.isArray(domainsData) ? domainsData : []);
     } catch (err) {
       console.error('Failed to load offers data', err);
+      setOffers([]);
+      setNetworks([]);
+      setDomains([]);
     } finally {
       setIsLoading(false);
     }

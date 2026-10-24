@@ -39,21 +39,35 @@ export function DataTable<T>({
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
+  // Ensure data is always an array regardless of backend payload wrapping
+  const safeData: T[] = useMemo(() => {
+    if (Array.isArray(data)) return data;
+    if (data && typeof data === 'object') {
+      const anyData = data as any;
+      if (Array.isArray(anyData.data)) return anyData.data;
+      if (Array.isArray(anyData.publishers)) return anyData.publishers;
+      if (Array.isArray(anyData.domains)) return anyData.domains;
+      if (Array.isArray(anyData.networks)) return anyData.networks;
+      if (Array.isArray(anyData.offers)) return anyData.offers;
+    }
+    return [];
+  }, [data]);
+
   // Filter
   const filteredData = useMemo(() => {
-    if (!searchQuery.trim()) return data;
+    if (!searchQuery.trim()) return safeData;
     const query = searchQuery.toLowerCase();
     if (searchFilter) {
-      return data.filter((item) => searchFilter(item, query));
+      return safeData.filter((item) => searchFilter(item, query));
     }
-    return data.filter((item) => {
+    return safeData.filter((item) => {
       return Object.values(item as Record<string, any>).some((val) =>
         String(val ?? '')
           .toLowerCase()
           .includes(query)
       );
     });
-  }, [data, searchQuery, searchFilter]);
+  }, [safeData, searchQuery, searchFilter]);
 
   // Sort
   const sortedData = useMemo(() => {

@@ -75,7 +75,8 @@ export async function fetchDashboardSummary(
 // ==================== PUBLISHERS ====================
 export async function fetchPublishers(): Promise<User[]> {
   const res = await fetch(`${API_BASE}/publishers`);
-  return handleResponse<User[]>(res);
+  const raw = await handleResponse<any>(res);
+  return Array.isArray(raw) ? raw : (raw?.data || raw?.publishers || []);
 }
 
 export async function createPublisher(data: {
@@ -125,7 +126,8 @@ export async function deletePublisher(id: number): Promise<{ success: boolean }>
 // ==================== DOMAINS ====================
 export async function fetchDomains(): Promise<Domain[]> {
   const res = await fetch(`${API_BASE}/domains`);
-  return handleResponse<Domain[]>(res);
+  const raw = await handleResponse<any>(res);
+  return Array.isArray(raw) ? raw : (raw?.domains || raw?.data || []);
 }
 
 export async function createDomain(name: string): Promise<Domain> {
@@ -159,7 +161,8 @@ export async function deleteDomain(id: number): Promise<{ success: boolean }> {
 // ==================== NETWORKS ====================
 export async function fetchNetworks(): Promise<Network[]> {
   const res = await fetch(`${API_BASE}/networks`);
-  return handleResponse<Network[]>(res);
+  const raw = await handleResponse<any>(res);
+  return Array.isArray(raw) ? raw : (raw?.networks || raw?.data || []);
 }
 
 export async function createNetwork(data: {
@@ -213,7 +216,8 @@ export async function deleteNetwork(id: number): Promise<{ success: boolean }> {
 // ==================== OFFERS ====================
 export async function fetchOffers(): Promise<Offer[]> {
   const res = await fetch(`${API_BASE}/offers`);
-  return handleResponse<Offer[]>(res);
+  const raw = await handleResponse<any>(res);
+  return Array.isArray(raw) ? raw : (raw?.offers || raw?.data || []);
 }
 
 export async function fetchOffer(id: number): Promise<Offer> {

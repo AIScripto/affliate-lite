@@ -43,9 +43,10 @@ export function NetworksView() {
     try {
       setIsLoading(true);
       const data = await fetchNetworks();
-      setNetworks(data);
+      setNetworks(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load networks', err);
+      setNetworks([]);
     } finally {
       setIsLoading(false);
     }
