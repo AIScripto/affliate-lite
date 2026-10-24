@@ -1,154 +1,276 @@
 import { Request, Response } from 'express';
-import { query } from '../config/db';
+import { prisma } from '../db/prisma';
 
-export async function getMasterReports(req: Request, res: Response): Promise<void> {
-  try {
-    // 1. Core Top-Level KPI Summary Cards
-    // Total Clicks
-    const clicksCountRes = await query(`SELECT COUNT(*) AS total_clicks FROM clicks_traffic;`);
-    const totalClicks = parseInt(clicksCountRes.rows[0].total_clicks, 10);
+export async function getNetworksReport(req: Request, res: Response): Promise<void> {
+  const isPublisher = req.user?.role === 'PUBLISHER';
+  const publisherId = isPublisher ? req.user?.id : undefined;
+  const search = ((req.query.search as string) || '').trim().toLowerCase();
 
-    // Financial Totals: Direct Profit, Sub Override, Sub Payable, Total Gross
-    const financeRes = await query(`
-      SELECT 
-        COALESCE(SUM(c.sale_amount), 0) AS total_sales_volume,
-        COALESCE(SUM(c.gross_comm), 0) AS total_gross_comm,
-        COALESCE(SUM(CASE WHEN t.ref_code = 'direct' THEN c.net_profit ELSE 0 END), 0) AS direct_profit,
-        COALESCE(SUM(CASE WHEN t.ref_code != 'direct' THEN c.net_profit ELSE 0 END), 0) AS sub_override_profit,
-        COALESCE(SUM(c.sub_pay), 0) AS sub_payable_liability
-      FROM conversions_sales c
-      JOIN clicks_traffic t ON c.click_id = t.click_id;
-    `);
-
-    const finance = financeRes.rows[0];
-
-    // 2. Direct vs Sub-Affiliate Revenue Comparison
-    const comparisonRes = await query(`
-      SELECT 
-        CASE WHEN t.ref_code = 'direct' THEN 'Direct Master Links' ELSE 'Sub-Affiliate Network' END AS category,
-        COUNT(DISTINCT t.click_id) AS clicks,
-        COUNT(DISTINCT c.id) AS orders,
-        COALESCE(SUM(c.sale_amount), 0) AS total_sale_amount,
-        COALESCE(SUM(c.gross_comm), 0) AS gross_commission,
-        COALESCE(SUM(c.sub_pay), 0) AS sub_payout,
-        COALESCE(SUM(c.net_profit), 0) AS net_master_profit,
-        ROUND((COUNT(DISTINCT c.id)::numeric / NULLIF(COUNT(DISTINCT t.click_id), 0) * 100), 2) AS conversion_rate,
-        ROUND((COALESCE(SUM(c.gross_comm), 0)::numeric / NULLIF(COUNT(DISTINCT t.click_id), 0)), 2) AS epc
-      FROM clicks_traffic t
-      LEFT JOIN conversions_sales c ON t.click_id = c.click_id
-      GROUP BY category;
-    `);
-
-    // 3. Sub-Affiliate Leaderboard & Fraud Audit
-    // Ranks every sub-affiliate, flags fraud if clicks > 100 with 0% CR or abnormal spikes
-    const leaderboardRes = await query(`
-      SELECT 
-        u.id,
-        u.full_name,
-        u.ref_code,
-        u.split_pct,
-        u.wallet_pending,
-        u.wallet_approved,
-        COUNT(DISTINCT t.click_id) AS clicks,
-        COUNT(DISTINCT c.id) AS orders,
-        COALESCE(SUM(c.sale_amount), 0) AS volume,
-        COALESCE(SUM(c.gross_comm), 0) AS gross_commission,
-        COALESCE(SUM(c.sub_pay), 0) AS sub_earnings,
-        COALESCE(SUM(c.net_profit), 0) AS master_override,
-        ROUND((COUNT(DISTINCT c.id)::numeric / NULLIF(COUNT(DISTINCT t.click_id), 0) * 100), 2) AS cr_pct,
-        ROUND((COALESCE(SUM(c.sub_pay), 0)::numeric / NULLIF(COUNT(DISTINCT t.click_id), 0)), 2) AS epc,
-        CASE 
-          WHEN COUNT(DISTINCT t.click_id) >= 200 AND COUNT(DISTINCT c.id) = 0 THEN true
-          ELSE false 
-        END AS is_suspicious_spike
-      FROM users u
-      LEFT JOIN clicks_traffic t ON u.id = t.user_id
-      LEFT JOIN conversions_sales c ON t.click_id = c.click_id
-      WHERE u.role = 'sub_aff'
-      GROUP BY u.id, u.full_name, u.ref_code, u.split_pct, u.wallet_pending, u.wallet_approved
-      ORDER BY orders DESC, clicks DESC;
-    `);
-
-    // 4. Traffic Channels / Sources Breakdown
-    const sourcesRes = await query(`
-      SELECT 
-        COALESCE(t.src, 'unknown') AS source,
-        COUNT(DISTINCT t.click_id) AS clicks,
-        COUNT(DISTINCT c.id) AS conversions,
-        COALESCE(SUM(c.gross_comm), 0) AS total_commission,
-        ROUND((COUNT(DISTINCT c.id)::numeric / NULLIF(COUNT(DISTINCT t.click_id), 0) * 100), 2) AS cr_pct
-      FROM clicks_traffic t
-      LEFT JOIN conversions_sales c ON t.click_id = c.click_id
-      GROUP BY t.src
-      ORDER BY clicks DESC;
-    `);
-
-    // 5. Geo and Device Breakdown
-    const geoRes = await query(`
-      SELECT 
-        country,
-        COUNT(*) AS clicks
-      FROM clicks_traffic
-      GROUP BY country
-      ORDER BY clicks DESC
-      LIMIT 6;
-    `);
-
-    const deviceRes = await query(`
-      SELECT 
-        device,
-        COUNT(*) AS clicks
-      FROM clicks_traffic
-      GROUP BY device
-      ORDER BY clicks DESC;
-    `);
-
-    // 6. Live Conversion & Attribution Stream
-    const streamRes = await query(`
-      SELECT 
-        c.id,
-        c.click_id,
-        c.brand_order_id,
-        c.sale_amount,
-        c.gross_comm,
-        c.sub_pay,
-        c.net_profit,
-        c.status,
-        c.created_at,
-        t.ref_code,
-        t.src,
-        t.camp,
-        u.full_name AS promoter,
-        b.brand_name,
-        p.title AS product_title
-      FROM conversions_sales c
-      JOIN clicks_traffic t ON c.click_id = t.click_id
-      JOIN users u ON t.user_id = u.id
-      JOIN products p ON t.product_id = p.id
-      JOIN brand_params b ON p.brand_id = b.id
-      ORDER BY c.created_at DESC
-      LIMIT 15;
-    `);
-
-    res.json({
-      success: true,
-      summary: {
-        totalClicks,
-        totalSalesVolume: parseFloat(finance.total_sales_volume),
-        totalGrossComm: parseFloat(finance.total_gross_comm),
-        directProfit: parseFloat(finance.direct_profit),
-        subOverrideProfit: parseFloat(finance.sub_override_profit),
-        subPayableLiability: parseFloat(finance.sub_payable_liability),
+  // Fetch all networks with their offers and stats
+  const networks = await prisma.network.findMany({
+    where: search
+      ? {
+          OR: [
+            { name: { contains: search, mode: 'insensitive' } },
+            { offers: { some: { name: { contains: search, mode: 'insensitive' } } } },
+          ],
+        }
+      : {},
+    include: {
+      offers: {
+        include: {
+          clicks: {
+            where: publisherId ? { publisherId } : {},
+            select: { id: true },
+          },
+          conversions: {
+            where: publisherId ? { publisherId } : {},
+            select: { id: true, status: true, payout: true, revenue: true },
+          },
+        },
       },
-      directVsSub: comparisonRes.rows,
-      leaderboard: leaderboardRes.rows,
-      trafficSources: sourcesRes.rows,
-      geography: geoRes.rows,
-      devices: deviceRes.rows,
-      liveStream: streamRes.rows,
-    });
-  } catch (error) {
-    console.error('Error compiling master reports:', error);
-    res.status(500).json({ error: 'Failed to compile master reporting data' });
+    },
+    orderBy: { id: 'asc' },
+  });
+
+  const rows: Array<{
+    id: number;
+    networkName: string;
+    offerName: string;
+    clicks: number;
+    approvedConversions: number;
+    uncheckedConversions: number;
+    totalConversions: number;
+    payout: number;
+    revenue: number;
+  }> = [];
+
+  for (const net of networks) {
+    if (net.offers.length === 0) {
+      rows.push({
+        id: net.id,
+        networkName: net.name,
+        offerName: '-',
+        clicks: 0,
+        approvedConversions: 0,
+        uncheckedConversions: 0,
+        totalConversions: 0,
+        payout: 0.0,
+        revenue: 0.0,
+      });
+    } else {
+      for (const off of net.offers) {
+        const approved = off.conversions.filter((c) => c.status === 'APPROVED').length;
+        const unchecked = off.conversions.filter((c) => c.status === 'UNCHECKED').length;
+        const totalConv = off.conversions.length;
+        const payout = off.conversions.reduce((sum, c) => sum + Number(c.payout), 0);
+        const revenue = off.conversions.reduce((sum, c) => sum + Number(c.revenue), 0);
+
+        rows.push({
+          id: net.id,
+          networkName: net.name,
+          offerName: off.name,
+          clicks: off.clicks.length,
+          approvedConversions: approved,
+          uncheckedConversions: unchecked,
+          totalConversions: totalConv,
+          payout: Number(payout.toFixed(2)),
+          revenue: Number(revenue.toFixed(2)),
+        });
+      }
+    }
   }
+
+  // Summary row
+  const summary = {
+    totalClicks: rows.reduce((s, r) => s + r.clicks, 0),
+    totalApproved: rows.reduce((s, r) => s + r.approvedConversions, 0),
+    totalUnchecked: rows.reduce((s, r) => s + r.uncheckedConversions, 0),
+    totalConversions: rows.reduce((s, r) => s + r.totalConversions, 0),
+    totalPayout: Number(rows.reduce((s, r) => s + r.payout, 0).toFixed(2)),
+    totalRevenue: Number(rows.reduce((s, r) => s + r.revenue, 0).toFixed(2)),
+  };
+
+  res.json({ rows, summary });
+}
+
+export async function getOffersReport(req: Request, res: Response): Promise<void> {
+  const isPublisher = req.user?.role === 'PUBLISHER';
+  const publisherId = isPublisher ? req.user?.id : undefined;
+  const search = ((req.query.search as string) || '').trim().toLowerCase();
+
+  const offers = await prisma.offer.findMany({
+    where: {
+      ...(search ? { name: { contains: search, mode: 'insensitive' } } : {}),
+      ...(publisherId
+        ? {
+            OR: [
+              { visibility: 'PUBLIC' },
+              { publishers: { some: { publisherId, isEnabled: true } } },
+            ],
+          }
+        : {}),
+    },
+    include: {
+      clicks: {
+        where: publisherId ? { publisherId } : {},
+        select: { id: true },
+      },
+      conversions: {
+        where: publisherId ? { publisherId } : {},
+        select: { id: true, payout: true, revenue: true },
+      },
+    },
+    orderBy: { id: 'asc' },
+  });
+
+  const rows = offers.map((off) => {
+    const clicks = off.clicks.length;
+    const conversions = off.conversions.length;
+    const payout = off.conversions.reduce((sum, c) => sum + Number(c.payout), 0);
+    const revenue = off.conversions.reduce((sum, c) => sum + Number(c.revenue), 0);
+    const epc = clicks > 0 ? Number((payout / clicks).toFixed(2)) : 0.0;
+
+    return {
+      id: off.id,
+      offerName: off.name,
+      conversions,
+      payout: Number(payout.toFixed(2)),
+      revenue: Number(revenue.toFixed(2)),
+      clicks,
+      epc,
+    };
+  });
+
+  const totalClicks = rows.reduce((s, r) => s + r.clicks, 0);
+  const totalPayout = Number(rows.reduce((s, r) => s + r.payout, 0).toFixed(2));
+  const totalConversions = rows.reduce((s, r) => s + r.conversions, 0);
+  const weightedEpc = totalClicks > 0 ? Number((totalPayout / totalClicks).toFixed(2)) : 0.0;
+
+  const summary = {
+    totalClicks,
+    totalConversions,
+    totalPayout,
+    totalRevenue: Number(rows.reduce((s, r) => s + r.revenue, 0).toFixed(2)),
+    averageEpc: weightedEpc,
+  };
+
+  res.json({ rows, summary });
+}
+
+export async function getPublishersReport(req: Request, res: Response): Promise<void> {
+  const isPublisher = req.user?.role === 'PUBLISHER';
+  const publisherId = isPublisher ? req.user?.id : undefined;
+  const search = ((req.query.search as string) || '').trim().toLowerCase();
+
+  const publishers = await prisma.user.findMany({
+    where: {
+      role: 'PUBLISHER',
+      ...(publisherId ? { id: publisherId } : {}),
+      ...(search ? { name: { contains: search, mode: 'insensitive' } } : {}),
+    },
+    include: {
+      clicks: {
+        include: { offer: { select: { id: true, name: true } } },
+      },
+      conversions: {
+        include: { offer: { select: { id: true, name: true } } },
+      },
+    },
+    orderBy: { id: 'asc' },
+  });
+
+  const rows: Array<{
+    id: number;
+    publisherName: string;
+    offerName: string;
+    clicks: number;
+    approvedConversions: number;
+    uncheckedConversions: number;
+    totalConversions: number;
+    epc: number;
+    payout: number;
+  }> = [];
+
+  for (const pub of publishers) {
+    // Group by offer
+    const offerMap = new Map<
+      number,
+      { offerName: string; clicks: number; approved: number; unchecked: number; total: number; payout: number }
+    >();
+
+    pub.clicks.forEach((c) => {
+      if (!offerMap.has(c.offer.id)) {
+        offerMap.set(c.offer.id, {
+          offerName: c.offer.name,
+          clicks: 0,
+          approved: 0,
+          unchecked: 0,
+          total: 0,
+          payout: 0,
+        });
+      }
+      offerMap.get(c.offer.id)!.clicks += 1;
+    });
+
+    pub.conversions.forEach((conv) => {
+      if (!offerMap.has(conv.offer.id)) {
+        offerMap.set(conv.offer.id, {
+          offerName: conv.offer.name,
+          clicks: 0,
+          approved: 0,
+          unchecked: 0,
+          total: 0,
+          payout: 0,
+        });
+      }
+      const item = offerMap.get(conv.offer.id)!;
+      item.total += 1;
+      if (conv.status === 'APPROVED') item.approved += 1;
+      if (conv.status === 'UNCHECKED') item.unchecked += 1;
+      item.payout += Number(conv.payout);
+    });
+
+    if (offerMap.size === 0) {
+      rows.push({
+        id: pub.id,
+        publisherName: pub.name,
+        offerName: '-',
+        clicks: 0,
+        approvedConversions: 0,
+        uncheckedConversions: 0,
+        totalConversions: 0,
+        epc: 0.0,
+        payout: 0.0,
+      });
+    } else {
+      for (const [, val] of offerMap.entries()) {
+        const epc = val.clicks > 0 ? Number((val.payout / val.clicks).toFixed(2)) : 0.0;
+        rows.push({
+          id: pub.id,
+          publisherName: pub.name,
+          offerName: val.offerName,
+          clicks: val.clicks,
+          approvedConversions: val.approved,
+          uncheckedConversions: val.unchecked,
+          totalConversions: val.total,
+          epc,
+          payout: Number(val.payout.toFixed(2)),
+        });
+      }
+    }
+  }
+
+  const totalClicks = rows.reduce((s, r) => s + r.clicks, 0);
+  const totalPayout = Number(rows.reduce((s, r) => s + r.payout, 0).toFixed(2));
+  const summary = {
+    totalClicks,
+    totalApproved: rows.reduce((s, r) => s + r.approvedConversions, 0),
+    totalUnchecked: rows.reduce((s, r) => s + r.uncheckedConversions, 0),
+    totalConversions: rows.reduce((s, r) => s + r.totalConversions, 0),
+    totalPayout,
+    averageEpc: totalClicks > 0 ? Number((totalPayout / totalClicks).toFixed(2)) : 0.0,
+  };
+
+  res.json({ rows, summary });
 }

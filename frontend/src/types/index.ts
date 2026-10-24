@@ -1,159 +1,182 @@
-export type UserRole = 'admin' | 'sub_aff';
+export type UserRole = 'ADMIN' | 'PUBLISHER';
+export type PublisherStatus = 'ACTIVE' | 'INACTIVE' | 'PAUSED';
+export type DomainStatus = 'ACTIVE' | 'INACTIVE';
+export type NetworkStatus = 'ACTIVE' | 'INACTIVE';
+export type OfferVisibility = 'PUBLIC' | 'PRIVATE' | 'REQUIRES_APPROVAL';
+export type OfferStatus = 'ACTIVE' | 'PAUSED' | 'DISABLED';
+export type PaymentModel = 'CPA' | 'CPC' | 'CPM' | 'REVSHARE';
 
 export interface User {
-  id: string;
-  email: string;
-  full_name: string;
-  first_name?: string;
-  last_name?: string;
-  mobile_number?: string;
-  status: 'active' | 'inactive';
-  role: UserRole;
-  ref_code: string;
-  split_pct: number;
-  wallet_pending: number;
-  wallet_approved: number;
-  created_at?: string;
-}
-
-export interface CustomParamDefinition {
-  id: string;
+  id: number;
   name: string;
-  param_key: string;
-  token: string;
-  default_value?: string;
-  category?: 'attribution' | 'campaign' | 'device' | 'custom';
+  email: string;
+  role: UserRole;
+  status: PublisherStatus;
+  createdAt?: string;
+  offersCount?: number;
 }
 
-export interface BrandParam {
-  id: string;
-  brand_name: string;
-  master_aff_id: string;
-  url_template: string;
-  click_id_param_key: string;
-  sub_ref_param_key: string;
-  postback_secret: string;
-  custom_params?: CustomParamDefinition[];
-  created_at?: string;
-  updated_at?: string;
+export interface Domain {
+  id: number;
+  name: string;
+  status: DomainStatus;
+  createdAt: string;
+  updatedAt?: string;
 }
 
-export interface Product {
-  id: string;
-  brand_id: string;
-  brand_name: string;
-  title: string;
-  slug: string;
-  destination_url: string;
-  retail_price: number;
-  default_comm_pct: number;
-  image_url?: string;
-  is_active: boolean;
-  url_template?: string;
+export interface Network {
+  id: number;
+  name: string;
+  contactDetails?: string | null;
+  allowDuplicateConversions: boolean;
+  status: NetworkStatus;
+  createdAt: string;
+  updatedAt?: string;
 }
 
-export interface MasterReportSummary {
-  totalClicks: number;
-  totalSalesVolume: number;
-  totalGrossComm: number;
-  directProfit: number;
-  subOverrideProfit: number;
-  subPayableLiability: number;
+export interface OfferTargetingGroup {
+  id?: number;
+  name: string;
+  condition: 'AND' | 'OR';
+  devices: string[];
+  countries: string[];
+  excludeCountries: boolean;
+  cities: string[];
+  excludeCities: boolean;
+  regions: string[];
+  excludeRegions: boolean;
 }
 
-export interface DirectVsSubItem {
-  category: string;
+export interface OfferPayout {
+  id?: number;
+  paymentModel: PaymentModel;
+  currency: string;
+  revenue: number;
+  payout: number;
+}
+
+export interface Offer {
+  id: number;
+  name: string;
+  advertiserId: number;
+  advertiser?: Network;
+  domainId?: number | null;
+  domain?: Domain | null;
+  visibility: OfferVisibility;
+  status: OfferStatus;
+  previewUrl?: string | null;
+  description?: string | null;
+  baseDestinationUrl: string;
+  enforceIpUniqueness: boolean;
+  blockDuplicateIps: boolean;
+  globalPostbackUrl?: string | null;
+  postbackMacroParam?: string | null;
+  targetingGroups?: OfferTargetingGroup[];
+  payouts?: OfferPayout[];
+  clicksCount?: number;
+  conversionsCount?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DashboardSummary {
   clicks: number;
-  orders: number;
-  total_sale_amount: number;
-  gross_commission: number;
-  sub_payout: number;
-  net_master_profit: number;
-  conversion_rate: number;
-  epc: number;
-}
-
-export interface LeaderboardItem {
-  id: string;
-  full_name: string;
-  ref_code: string;
-  split_pct: number;
-  wallet_pending: number;
-  wallet_approved: number;
-  clicks: number;
-  orders: number;
-  volume: number;
-  gross_commission: number;
-  sub_earnings: number;
-  master_override: number;
-  cr_pct: number;
-  epc: number;
-  is_suspicious_spike: boolean;
-}
-
-export interface TrafficSourceItem {
-  source: string;
-  clicks: number;
+  clicksGrowth: string;
   conversions: number;
-  total_commission: number;
-  cr_pct: number;
-}
-
-export interface ConversionStreamItem {
-  id: string;
-  click_id: string;
-  brand_order_id: string;
-  sale_amount: number;
-  gross_comm: number;
-  sub_pay: number;
-  net_profit: number;
-  status: 'pending' | 'approved' | 'rejected';
-  created_at: string;
-  ref_code: string;
-  src: string;
-  camp: string;
-  promoter: string;
-  brand_name: string;
-  product_title: string;
-}
-
-export interface SubAffiliateStatsResponse {
-  success: boolean;
-  user: {
-    id: string;
-    fullName: string;
-    email: string;
-    refCode: string;
-    splitPct: number;
-    walletPending: number;
-    walletApproved: number;
-  };
-  metrics: {
-    clicks30d: number;
-    orders: number;
-    conversionRate: number;
-    epc: number;
-    totalEarned: number;
-  };
-  trafficBySource: Array<{
-    source: string;
+  conversionsGrowth: string;
+  payout: number;
+  revenue?: number;
+  epc: number;
+  currency: string;
+  trafficStats: Array<{
+    date: string;
+    conversions: number;
     clicks: number;
-    orders_sold: number;
-    earned: number;
-    epc: number;
-    cr_pct: number;
+    profit?: number;
+    income?: number;
   }>;
-  personalLedger: Array<{
-    id: string;
-    click_id: string;
-    brand_order_id: string;
-    sale_amount: number;
-    my_commission: number;
-    status: string;
-    created_at: string;
-    src: string;
-    camp: string;
-    product_name: string;
-    brand_name: string;
+  topOffers: Array<{
+    id: number;
+    name: string;
+    clicks: number;
+    conversions: number;
   }>;
+  topPublishers: Array<{
+    id: number;
+    name: string;
+    clicks: number;
+    conversions: number;
+  }>;
+}
+
+export interface AffiliatesDualList {
+  allAffiliates: Array<{ id: number; name: string; email: string; status: string }>;
+  enabledAffiliates: Array<{ id: number; name: string; email: string; status: string }>;
+}
+
+export interface NetworkReportItem {
+  id: number;
+  name: string;
+  offer: string;
+  clicks: number;
+  conversionsApproved: number;
+  conversionsUnchecked: number;
+  conversionsTotal: number;
+  payout: number;
+  revenue?: number;
+}
+
+export interface NetworkReportResponse {
+  data: NetworkReportItem[];
+  summary: {
+    totalClicks: number;
+    totalApproved: number;
+    totalUnchecked: number;
+    totalConversions: number;
+    totalPayout: number;
+    totalRevenue?: number;
+  };
+}
+
+export interface OfferReportItem {
+  id: number;
+  name: string;
+  conversions: number;
+  payout: number;
+  clicks: number;
+  epc: number;
+}
+
+export interface OfferReportResponse {
+  data: OfferReportItem[];
+  summary: {
+    totalConversions: number;
+    totalPayout: number;
+    totalClicks: number;
+    weightedEpc: number;
+  };
+}
+
+export interface PublisherReportItem {
+  id: number;
+  name: string;
+  offer: string;
+  clicks: number;
+  conversionsApproved: number;
+  conversionsUnchecked: number;
+  conversionsTotal: number;
+  epc: number;
+  payout: number;
+}
+
+export interface PublisherReportResponse {
+  data: PublisherReportItem[];
+  summary: {
+    totalClicks: number;
+    totalApproved: number;
+    totalUnchecked: number;
+    totalConversions: number;
+    weightedEpc: number;
+    totalPayout: number;
+  };
 }

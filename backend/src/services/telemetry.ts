@@ -43,8 +43,8 @@ export function parseTelemetry(userAgentString?: string, ip?: string, headers: R
   return {
     clickId: generateClickId(),
     ipHash: hashIp(ip || '127.0.0.1'),
-    country: countryHeader ? String(countryHeader) : fallbackCountries[randomIdx],
-    city: cityHeader ? String(cityHeader) : fallbackCities[randomIdx],
+    country: countryHeader ? String(countryHeader) : (fallbackCountries[randomIdx] ?? 'United States'),
+    city: cityHeader ? String(cityHeader) : (fallbackCities[randomIdx] ?? 'New York'),
     device: deviceType,
     os,
     browser,

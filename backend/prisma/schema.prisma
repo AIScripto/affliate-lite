@@ -1,0 +1,238 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  ADMIN
+  PUBLISHER
+
+  @@map("user_role")
+}
+
+enum EntityStatus {
+  ACTIVE
+  INACTIVE
+  PAUSED
+  DISABLED
+
+  @@map("entity_status")
+}
+
+enum OfferVisibility {
+  PUBLIC
+  PRIVATE
+  REQUIRES_APPROVAL
+
+  @@map("offer_visibility")
+}
+
+enum OfferStatus {
+  ACTIVE
+  PAUSED
+  DISABLED
+
+  @@map("offer_status")
+}
+
+enum ConditionOperator {
+  AND
+  OR
+
+  @@map("condition_operator")
+}
+
+enum PaymentModel {
+  CPA_FIXED
+  CPC
+  CPM
+  REVSHARE
+
+  @@map("payment_model")
+}
+
+enum CurrencyCode {
+  USD
+  EUR
+  GBP
+  PKR
+  AED
+
+  @@map("currency_code")
+}
+
+enum ConversionStatus {
+  APPROVED
+  UNCHECKED
+  DECLINED
+
+  @@map("conversion_status")
+}
+
+model User {
+  id           Int          @id @default(autoincrement())
+  name         String       @db.VarChar(150)
+  email        String       @unique @db.VarChar(255)
+  passwordHash String       @map("password_hash") @db.VarChar(255)
+  role         UserRole     @default(PUBLISHER)
+  status       EntityStatus @default(ACTIVE)
+  postbackUrl  String?      @map("postback_url")
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  assignedOffers OfferPublisher[]
+  clicks         Click[]
+  conversions    Conversion[]
+
+  @@index([role, status], map: "idx_users_role_status")
+  @@map("users")
+}
+
+model Domain {
+  id        Int          @id @default(autoincrement())
+  name      String       @unique @db.VarChar(255)
+  status    EntityStatus @default(ACTIVE)
+  isDefault Boolean      @default(false) @map("is_default")
+  createdAt DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  offers Offer[]
+
+  @@map("domains")
+}
+
+model Network {
+  id                        Int          @id @default(autoincrement())
+  name                      String       @db.VarChar(150)
+  contactDetails            String?      @map("contact_details")
+  allowDuplicateConversions Boolean      @default(false) @map("allow_duplicate_conversions")
+  status                    EntityStatus @default(ACTIVE)
+  createdAt                 DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  offers      Offer[]
+  conversions Conversion[]
+
+  @@map("networks")
+}
+
+model Offer {
+  id                  Int             @id @default(autoincrement())
+  name                String          @db.VarChar(255)
+  networkId           Int             @map("network_id")
+  domainId            Int?            @map("domain_id")
+  visibility          OfferVisibility @default(PRIVATE)
+  status              OfferStatus     @default(ACTIVE)
+  previewUrl          String?         @map("preview_url")
+  description         String?
+  destinationUrl      String          @map("destination_url")
+  enforceIpUniqueness Boolean         @default(false) @map("enforce_ip_uniqueness")
+  blockDuplicateIps   Boolean         @default(false) @map("block_duplicate_ips")
+  createdAt           DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  network         Network               @relation(fields: [networkId], references: [id], onDelete: Restrict)
+  domain          Domain?               @relation(fields: [domainId], references: [id], onDelete: SetNull)
+  targetingGroups OfferTargetingGroup[]
+  publishers      OfferPublisher[]
+  payouts         OfferPayout[]
+  clicks          Click[]
+  conversions     Conversion[]
+
+  @@index([status, visibility], map: "idx_offers_status_visibility")
+  @@map("offers")
+}
+
+model OfferTargetingGroup {
+  id               Int               @id @default(autoincrement())
+  offerId          Int               @map("offer_id")
+  name             String            @default("Targeting group #1") @db.VarChar(150)
+  conditionOp      ConditionOperator @default(AND) @map("condition_op")
+  isEnabled        Boolean           @default(true) @map("is_enabled")
+  countries        String[]          @default([])
+  excludeCountries Boolean           @default(false) @map("exclude_countries")
+  devices          String[]          @default([])
+  cities           String[]          @default([])
+  regions          String[]          @default([])
+  excludeRegions   Boolean           @default(false) @map("exclude_regions")
+  additionalUrls   Json              @default("[]") @map("additional_urls")
+
+  offer Offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+
+  @@map("offer_targeting_groups")
+}
+
+model OfferPublisher {
+  offerId        Int      @map("offer_id")
+  publisherId    Int      @map("publisher_id")
+  isEnabled      Boolean  @default(true) @map("is_enabled")
+  approvalStatus String   @default("APPROVED") @map("approval_status") @db.VarChar(30)
+  assignedAt     DateTime @default(now()) @map("assigned_at") @db.Timestamptz
+
+  offer     Offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  publisher User  @relation(fields: [publisherId], references: [id], onDelete: Cascade)
+
+  @@id([offerId, publisherId])
+  @@map("offer_publishers")
+}
+
+model OfferPayout {
+  id               Int          @id @default(autoincrement())
+  offerId          Int          @map("offer_id")
+  title            String       @default("Default") @db.VarChar(100)
+  goalValue        String       @default("1") @map("goal_value") @db.VarChar(50)
+  paymentModel     PaymentModel @default(CPA_FIXED) @map("payment_model")
+  currency         CurrencyCode @default(USD)
+  revenue          Decimal      @default(0.00) @db.Decimal(12, 2)
+  payout           Decimal      @default(0.00) @db.Decimal(12, 2)
+  countries        String[]     @default([])
+  excludeCountries Boolean      @default(false) @map("exclude_countries")
+
+  offer Offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+
+  @@map("offer_payouts")
+}
+
+model Click {
+  id          String   @id @default(uuid()) @db.Uuid
+  offerId     Int      @map("offer_id")
+  publisherId Int      @map("publisher_id")
+  subId       String?  @map("sub_id") @db.VarChar(255)
+  ipAddress   String   @map("ip_address") @db.VarChar(45)
+  countryCode String?  @map("country_code") @db.VarChar(10)
+  deviceType  String?  @map("device_type") @db.VarChar(30)
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  offer       Offer        @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  publisher   User         @relation(fields: [publisherId], references: [id], onDelete: Cascade)
+  conversions Conversion[]
+
+  @@index([offerId, publisherId, createdAt], map: "idx_clicks_offer_pub_date")
+  @@map("clicks")
+}
+
+model Conversion {
+  id           Int              @id @default(autoincrement())
+  clickId      String           @map("click_id") @db.Uuid
+  offerId      Int              @map("offer_id")
+  publisherId  Int              @map("publisher_id")
+  networkId    Int              @map("network_id")
+  goalValue    String           @default("1") @map("goal_value") @db.VarChar(50)
+  status       ConversionStatus @default(UNCHECKED)
+  currency     CurrencyCode     @default(USD)
+  revenue      Decimal          @default(0.00) @db.Decimal(12, 2)
+  payout       Decimal          @default(0.00) @db.Decimal(12, 2)
+  externalTxId String?          @map("external_tx_id") @db.VarChar(255)
+  createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamptz
+
+  click     Click   @relation(fields: [clickId], references: [id], onDelete: Restrict)
+  offer     Offer   @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  publisher User    @relation(fields: [publisherId], references: [id], onDelete: Cascade)
+  network   Network @relation(fields: [networkId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt, networkId, offerId, publisherId, status], map: "idx_conversions_report")
+  @@map("conversions")
+}

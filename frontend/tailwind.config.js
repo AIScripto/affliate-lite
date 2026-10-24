@@ -8,41 +8,33 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
-          950: '#1e1b4b',
+        canvas: 'var(--color-canvas)',
+        surface: 'var(--color-surface)',
+        'surface-elevated': 'var(--color-surface-elevated)',
+        'border-subtle': 'var(--color-border-subtle)',
+        primary: {
+          DEFAULT: 'var(--color-primary)',
+          hover: 'var(--color-primary-hover)',
         },
-        dark: {
-          bg: '#0B0F19',
-          surface: '#111827',
-          card: '#161F30',
-          border: '#1F293D',
-          hover: '#243047',
+        success: {
+          DEFAULT: 'var(--color-success)',
+          hover: 'var(--color-success-hover)',
         },
-        accent: {
-          emerald: '#10B981',
-          cyan: '#06B6D4',
-          amber: '#F59E0B',
-          rose: '#F43F5E',
-          purple: '#8B5CF6',
-        }
+        info: 'var(--color-info)',
+        warning: 'var(--color-warning)',
+        danger: 'var(--color-danger)',
+        fg: {
+          DEFAULT: 'var(--color-fg)',
+          muted: 'var(--color-fg-muted)',
+        },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       boxShadow: {
-        'glow-brand': '0 0 25px -5px rgba(99, 102, 241, 0.3)',
-        'glow-emerald': '0 0 25px -5px rgba(16, 185, 129, 0.3)',
+        'glow-primary': '0 0 20px -3px rgba(108, 92, 231, 0.35)',
+        'glow-success': '0 0 20px -3px rgba(46, 204, 113, 0.35)',
       }
     },
   },

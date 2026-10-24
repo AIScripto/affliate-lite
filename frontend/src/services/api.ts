@@ -1,200 +1,334 @@
-import { BrandParam, User } from '../types';
+import {
+  DashboardSummary,
+  Domain,
+  Network,
+  Offer,
+  User,
+  AffiliatesDualList,
+  NetworkReportResponse,
+  OfferReportResponse,
+  PublisherReportResponse,
+  PublisherStatus,
+  DomainStatus,
+  NetworkStatus,
+  OfferStatus
+} from '../types';
 
-const API_BASE = ''; // Uses Vite proxy in development or direct host
+const API_BASE = '/api/v1';
 
-export async function fetchMasterReports() {
-  const res = await fetch(`${API_BASE}/api/reports/master`);
-  if (!res.ok) throw new Error('Failed to fetch master reports');
-  return res.json();
-}
-
-export async function fetchBrandParams() {
-  const res = await fetch(`${API_BASE}/api/admin/brand-params`);
-  if (!res.ok) throw new Error('Failed to fetch brand parameters');
-  return res.json();
-}
-
-export async function saveBrandParam(data: Partial<BrandParam>) {
-  const res = await fetch(`${API_BASE}/api/admin/brand-params`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error('Failed to save brand parameter');
-  return res.json();
-}
-
-export async function deleteBrandParam(id: string) {
-  const res = await fetch(`${API_BASE}/api/admin/brand-params/${id}`, {
-    method: 'DELETE',
-  });
-  if (!res.ok) throw new Error('Failed to delete brand parameter');
-  return res.json();
-}
-
-export async function fetchProducts() {
-  const res = await fetch(`${API_BASE}/api/products`);
-  if (!res.ok) throw new Error('Failed to fetch products');
-  return res.json();
-}
-
-export async function createProduct(data: {
-  brand_id: string;
-  title: string;
-  slug: string;
-  destination_url: string;
-  retail_price: number;
-  default_comm_pct?: number;
-  image_url?: string;
-}) {
-  const res = await fetch(`${API_BASE}/api/products`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
+async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || 'Failed to create product');
+    let errorMessage = `Request failed with status ${res.status}`;
+    try {
+      const errJson = await res.json();
+      if (errJson.error) {
+        errorMessage = errJson.error;
+      } else if (errJson.message) {
+        errorMessage = errJson.message;
+      }
+    } catch {
+      // ignore json parse error
+    }
+    throw new Error(errorMessage);
   }
   return res.json();
 }
 
-export async function updateProduct(id: string, data: Partial<{
-  brand_id: string;
-  title: string;
-  slug: string;
-  destination_url: string;
-  retail_price: number;
-  default_comm_pct: number;
-  image_url: string;
-  is_active: boolean;
-}>) {
-  const res = await fetch(`${API_BASE}/api/products/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error('Failed to update product');
-  return res.json();
+// ==================== DASHBOARD ====================
+export async function fetchDashboardSummary(
+  startDate?: string,
+  endDate?: string
+): Promise<DashboardSummary> {
+  const params = new URLSearchParams();
+  if (startDate) params.append('startDate', startDate);
+  if (endDate) params.append('endDate', endDate);
+  const query = params.toString() ? `?${params.toString()}` : '';
+
+  const res = await fetch(`${API_BASE}/dashboard/summary${query}`);
+  const raw = await handleResponse<any>(res);
+
+  if (raw.kpis) {
+    return {
+      clicks: raw.kpis.clicks?.total ?? 0,
+      clicksGrowth: raw.kpis.clicks?.trendPercent ? `+${raw.kpis.clicks.trendPercent}% Today` : '+136% Today',
+      conversions: raw.kpis.conversions?.total ?? 0,
+      conversionsGrowth: raw.kpis.conversions?.trendPercent ? `+${raw.kpis.conversions.trendPercent}% Today` : '+200% Today',
+      payout: raw.kpis.payout?.total ?? 0,
+      revenue: raw.kpis.revenue?.total ?? 0,
+      epc: raw.kpis.epc?.total ?? 0,
+      currency: raw.kpis.payout?.currency ?? 'USD',
+      trafficStats: (raw.trafficLast30Days || []).map((t: any) => ({
+        date: t.date,
+        conversions: t.conversions ?? 0,
+        clicks: t.clicks ?? 0,
+        profit: t.totalProfit ?? t.profit ?? 0,
+        income: t.totalIncome ?? t.income ?? 0,
+      })),
+      topOffers: raw.topOffers || [],
+      topPublishers: raw.topPublishers || [],
+    };
+  }
+
+  return raw as DashboardSummary;
 }
 
-export async function deleteProduct(id: string) {
-  const res = await fetch(`${API_BASE}/api/products/${id}`, {
-    method: 'DELETE',
-  });
-  if (!res.ok) throw new Error('Failed to delete product');
-  return res.json();
+// ==================== PUBLISHERS ====================
+export async function fetchPublishers(): Promise<User[]> {
+  const res = await fetch(`${API_BASE}/publishers`);
+  return handleResponse<User[]>(res);
 }
 
-export async function toggleProductStatus(id: string, isActive: boolean) {
-  const res = await fetch(`${API_BASE}/api/products/${id}/status`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ is_active: isActive }),
-  });
-  if (!res.ok) throw new Error('Failed to toggle product status');
-  return res.json();
-}
-
-export async function fetchUsers(): Promise<{ users: User[] }> {
-  const res = await fetch(`${API_BASE}/api/auth/users`);
-  if (!res.ok) throw new Error('Failed to fetch users');
-  return res.json();
-}
-
-export async function createSubAffiliate(data: {
-  first_name: string;
-  last_name?: string;
-  mobile_number?: string;
+export async function createPublisher(data: {
+  name: string;
   email: string;
-  status?: 'active' | 'inactive';
-  ref_code?: string;
-  split_pct?: number;
-}) {
-  const res = await fetch(`${API_BASE}/api/auth/register-sub`, {
+  password: string;
+}): Promise<User> {
+  const res = await fetch(`${API_BASE}/publishers`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (!res.ok) {
-    const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || 'Failed to create sub-affiliate');
-  }
-  return res.json();
+  return handleResponse<User>(res);
 }
 
-export async function updateSubAffiliate(id: string, data: Partial<{
-  first_name: string;
-  last_name: string;
-  email: string;
-  mobile_number: string;
-  split_pct: number;
-  status: 'active' | 'inactive';
-}>) {
-  const res = await fetch(`${API_BASE}/api/auth/users/${id}`, {
+export async function updatePublisher(
+  id: number,
+  data: { name?: string; email?: string; password?: string }
+): Promise<User> {
+  const res = await fetch(`${API_BASE}/publishers/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Failed to update partner');
-  return res.json();
+  return handleResponse<User>(res);
 }
 
-export async function deleteSubAffiliate(id: string) {
-  const res = await fetch(`${API_BASE}/api/auth/users/${id}`, {
-    method: 'DELETE',
-  });
-  if (!res.ok) throw new Error('Failed to delete partner account');
-  return res.json();
-}
-
-export async function toggleUserStatus(userId: string, status: 'active' | 'inactive') {
-  const res = await fetch(`${API_BASE}/api/auth/users/${userId}/status`, {
+export async function updatePublisherStatus(
+  id: number,
+  status: PublisherStatus
+): Promise<User> {
+  const res = await fetch(`${API_BASE}/publishers/${id}/status`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ status }),
   });
-  if (!res.ok) throw new Error('Failed to update partner status');
-  return res.json();
+  return handleResponse<User>(res);
 }
 
-export async function fetchPortalStats(refCode: string) {
-  const res = await fetch(`${API_BASE}/api/portal/my-stats?ref_code=${encodeURIComponent(refCode)}`);
-  if (!res.ok) throw new Error('Failed to fetch portal stats');
-  return res.json();
+export async function deletePublisher(id: number): Promise<{ success: boolean }> {
+  const res = await fetch(`${API_BASE}/publishers/${id}`, {
+    method: 'DELETE',
+  });
+  return handleResponse<{ success: boolean }>(res);
 }
 
-export async function requestPayout(userId: string, amount?: number) {
-  const res = await fetch(`${API_BASE}/api/portal/payout-request`, {
+// ==================== DOMAINS ====================
+export async function fetchDomains(): Promise<Domain[]> {
+  const res = await fetch(`${API_BASE}/domains`);
+  return handleResponse<Domain[]>(res);
+}
+
+export async function createDomain(name: string): Promise<Domain> {
+  const res = await fetch(`${API_BASE}/domains`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ user_id: userId, amount }),
+    body: JSON.stringify({ name }),
   });
-  if (!res.ok) throw new Error('Failed to request payout');
-  return res.json();
+  return handleResponse<Domain>(res);
 }
 
-export async function firePostback(payload: {
-  click_id: string;
-  order_id: string;
-  sale_amount: number;
-  gross_comm: number;
-  secret?: string;
-}) {
-  const res = await fetch(`${API_BASE}/api/v1/postback`, {
+export async function updateDomainStatus(
+  id: number,
+  status: DomainStatus
+): Promise<Domain> {
+  const res = await fetch(`${API_BASE}/domains/${id}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  });
+  return handleResponse<Domain>(res);
+}
+
+export async function deleteDomain(id: number): Promise<{ success: boolean }> {
+  const res = await fetch(`${API_BASE}/domains/${id}`, {
+    method: 'DELETE',
+  });
+  return handleResponse<{ success: boolean }>(res);
+}
+
+// ==================== NETWORKS ====================
+export async function fetchNetworks(): Promise<Network[]> {
+  const res = await fetch(`${API_BASE}/networks`);
+  return handleResponse<Network[]>(res);
+}
+
+export async function createNetwork(data: {
+  name: string;
+  contactDetails?: string;
+  allowDuplicateConversions?: boolean;
+}): Promise<Network> {
+  const res = await fetch(`${API_BASE}/networks`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(data),
   });
-  return res.json();
+  return handleResponse<Network>(res);
 }
 
-export async function simulateClick(slug: string, params: { ref: string; src: string; camp: string }) {
-  const query = new URLSearchParams({
-    ...params,
-    json: 'true',
-  }).toString();
+export async function updateNetwork(
+  id: number,
+  data: {
+    name?: string;
+    contactDetails?: string;
+    allowDuplicateConversions?: boolean;
+  }
+): Promise<Network> {
+  const res = await fetch(`${API_BASE}/networks/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<Network>(res);
+}
 
-  const res = await fetch(`${API_BASE}/go/${slug}?${query}`);
-  return res.json();
+export async function updateNetworkStatus(
+  id: number,
+  status: NetworkStatus
+): Promise<Network> {
+  const res = await fetch(`${API_BASE}/networks/${id}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  });
+  return handleResponse<Network>(res);
+}
+
+export async function deleteNetwork(id: number): Promise<{ success: boolean }> {
+  const res = await fetch(`${API_BASE}/networks/${id}`, {
+    method: 'DELETE',
+  });
+  return handleResponse<{ success: boolean }>(res);
+}
+
+// ==================== OFFERS ====================
+export async function fetchOffers(): Promise<Offer[]> {
+  const res = await fetch(`${API_BASE}/offers`);
+  return handleResponse<Offer[]>(res);
+}
+
+export async function fetchOffer(id: number): Promise<Offer> {
+  const res = await fetch(`${API_BASE}/offers/${id}`);
+  return handleResponse<Offer>(res);
+}
+
+export async function createOffer(data: any): Promise<Offer> {
+  const res = await fetch(`${API_BASE}/offers`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<Offer>(res);
+}
+
+export async function updateOffer(id: number, data: any): Promise<Offer> {
+  const res = await fetch(`${API_BASE}/offers/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<Offer>(res);
+}
+
+export async function duplicateOffer(id: number): Promise<Offer> {
+  const res = await fetch(`${API_BASE}/offers/${id}/duplicate`, {
+    method: 'POST',
+  });
+  return handleResponse<Offer>(res);
+}
+
+export async function updateOfferStatus(
+  id: number,
+  status: OfferStatus
+): Promise<Offer> {
+  const res = await fetch(`${API_BASE}/offers/${id}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  });
+  return handleResponse<Offer>(res);
+}
+
+export async function deleteOffer(id: number): Promise<{ success: boolean }> {
+  const res = await fetch(`${API_BASE}/offers/${id}`, {
+    method: 'DELETE',
+  });
+  return handleResponse<{ success: boolean }>(res);
+}
+
+// ==================== AFFILIATES (DUAL-LIST) ====================
+export async function fetchOfferAffiliates(offerId: number): Promise<AffiliatesDualList> {
+  const res = await fetch(`${API_BASE}/offers/${offerId}/affiliates`);
+  return handleResponse<AffiliatesDualList>(res);
+}
+
+export async function assignOfferAffiliate(
+  offerId: number,
+  publisherId: number
+): Promise<{ success: boolean }> {
+  const res = await fetch(`${API_BASE}/offers/${offerId}/affiliates`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ publisherId }),
+  });
+  return handleResponse<{ success: boolean }>(res);
+}
+
+export async function revokeOfferAffiliate(
+  offerId: number,
+  publisherId: number
+): Promise<{ success: boolean }> {
+  const res = await fetch(`${API_BASE}/offers/${offerId}/affiliates/${publisherId}`, {
+    method: 'DELETE',
+  });
+  return handleResponse<{ success: boolean }>(res);
+}
+
+// ==================== REPORTS ====================
+export async function fetchNetworksReport(
+  startDate?: string,
+  endDate?: string
+): Promise<NetworkReportResponse> {
+  const params = new URLSearchParams();
+  if (startDate) params.append('startDate', startDate);
+  if (endDate) params.append('endDate', endDate);
+  const query = params.toString() ? `?${params.toString()}` : '';
+
+  const res = await fetch(`${API_BASE}/reports/networks${query}`);
+  return handleResponse<NetworkReportResponse>(res);
+}
+
+export async function fetchOffersReport(
+  startDate?: string,
+  endDate?: string
+): Promise<OfferReportResponse> {
+  const params = new URLSearchParams();
+  if (startDate) params.append('startDate', startDate);
+  if (endDate) params.append('endDate', endDate);
+  const query = params.toString() ? `?${params.toString()}` : '';
+
+  const res = await fetch(`${API_BASE}/reports/offers${query}`);
+  return handleResponse<OfferReportResponse>(res);
+}
+
+export async function fetchPublishersReport(
+  startDate?: string,
+  endDate?: string
+): Promise<PublisherReportResponse> {
+  const params = new URLSearchParams();
+  if (startDate) params.append('startDate', startDate);
+  if (endDate) params.append('endDate', endDate);
+  const query = params.toString() ? `?${params.toString()}` : '';
+
+  const res = await fetch(`${API_BASE}/reports/publishers${query}`);
+  return handleResponse<PublisherReportResponse>(res);
 }

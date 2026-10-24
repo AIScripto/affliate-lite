@@ -1,31 +1,45 @@
 {
   "name": "affiliate-tracker-backend",
   "version": "1.0.0",
-  "description": "Multi-tier Affiliate & Sub-Affiliate Tracking Platform Backend",
+  "description": "Unified CPA Affiliate Tracking Platform Backend (Oval Media + Max Wave)",
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
-    "db:init": "tsx src/db/init.ts",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "NODE_ENV=test tsx --test tests/api.test.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
     "db:seed": "tsx src/db/seed.ts"
   },
   "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.3",
     "ua-parser-js": "^2.0.0",
     "uuid": "^11.1.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.8",
     "@types/node": "^22.13.4",
     "@types/pg": "^8.11.11",
     "@types/ua-parser-js": "^0.7.39",
     "@types/uuid": "^10.0.0",
+    "prisma": "^6.4.1",
     "tsx": "^4.19.3",
     "typescript": "^5.7.3"
   }

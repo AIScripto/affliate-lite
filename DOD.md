@@ -65,7 +65,18 @@ Every feature, configuration module, and update must meet this **Definition of D
 
 ---
 
-### 7. Production Readiness Checklist
+### 7. Modular Component-Based Architecture & Zero-Hardcoding Standard
+- [ ] **Component-First & Modular Design**:
+  - Always build modular, reusable components rather than monolithic, copy-pasted UI blocks.
+  - Form controls (textboxes, textareas, dropdowns, radio groups, switches, buttons, modals, tabs, tables) must use generic, typed components from `frontend/src/components/common/`.
+- [ ] **Strict Zero-Hardcoding Rule**:
+  - Never hardcode raw domain values (status labels, categories, options lists, currency codes, macro token names, endpoints, or magic numbers).
+  - All options and metadata must be defined in centralized constants files (e.g., `frontend/src/constants/`) or received dynamically via typed props.
+  - Colors, gradients, and typography tokens must use CSS variables or Tailwind theme tokens, not inline hardcoded hex strings.
+
+---
+
+### 8. Production Readiness Checklist
 - [ ] TypeScript check (`tsc --noEmit`) passes with **0 errors**.
 - [ ] Database schema changes are documented in `schema.sql` and backwards-compatible.
 - [ ] Docker containers build and run cleanly.

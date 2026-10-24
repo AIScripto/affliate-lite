@@ -1,0 +1,392 @@
+import { Request, Response } from 'express';
+import { prisma } from '../db/prisma';
+
+export async function createOffer(req: Request, res: Response): Promise<void> {
+  const { general, tracking, targeting, affiliates, revenuePayouts } = req.body;
+
+  const result = await prisma.$transaction(async (tx) => {
+    // 1. Create Base Offer
+    const offer = await tx.offer.create({
+      data: {
+        name: general.name,
+        networkId: general.networkId,
+        domainId: tracking.domainId || null,
+        visibility: general.visibility,
+        status: general.status,
+        previewUrl: general.previewUrl || null,
+        description: general.description || null,
+        destinationUrl: tracking.destinationUrl,
+        enforceIpUniqueness: Boolean(tracking.enforceIpUniqueness),
+        blockDuplicateIps: Boolean(tracking.blockDuplicateIps),
+      },
+    });
+
+    // 2. Create Targeting Group
+    await tx.offerTargetingGroup.create({
+      data: {
+        offerId: offer.id,
+        name: targeting.name || 'Targeting group #1',
+        conditionOp: targeting.conditionOp || 'AND',
+        isEnabled: targeting.isEnabled ?? true,
+        devices: targeting.devices || ['ALL'],
+        countries: targeting.countries || ['ALL'],
+        excludeCountries: Boolean(targeting.excludeCountries),
+        cities: targeting.cities || [],
+        regions: targeting.regions || [],
+      },
+    });
+
+    // 3. Create Offer Payout
+    await tx.offerPayout.create({
+      data: {
+        offerId: offer.id,
+        title: revenuePayouts.title || 'Default',
+        goalValue: revenuePayouts.goalValue || '1',
+        paymentModel: revenuePayouts.paymentModel || 'CPA_FIXED',
+        currency: revenuePayouts.currency || 'USD',
+        revenue: revenuePayouts.revenue || 0,
+        payout: revenuePayouts.payout || 0,
+      },
+    });
+
+    // 4. Handle Visibility State Machine & Affiliates Assignment
+    if (general.visibility === 'PRIVATE' && affiliates.enabledPublisherIds.length > 0) {
+      await tx.offerPublisher.createMany({
+        data: affiliates.enabledPublisherIds.map((pubId: number) => ({
+          offerId: offer.id,
+          publisherId: pubId,
+          isEnabled: true,
+          approvalStatus: 'APPROVED',
+        })),
+        skipDuplicates: true,
+      });
+    }
+
+    return offer;
+  });
+
+  const fullOffer = await prisma.offer.findUnique({
+    where: { id: result.id },
+    include: {
+      network: true,
+      domain: true,
+      targetingGroups: true,
+      payouts: true,
+      publishers: {
+        include: { publisher: { select: { id: true, name: true, email: true } } },
+      },
+    },
+  });
+
+  res.status(201).json(fullOffer);
+}
+
+export async function getOffers(req: Request, res: Response): Promise<void> {
+  const isPublisher = req.user?.role === 'PUBLISHER';
+  const publisherId = isPublisher ? req.user?.id : undefined;
+
+  let whereClause: Record<string, unknown> = {};
+
+  if (isPublisher && publisherId) {
+    // Publisher can see PUBLIC active offers OR PRIVATE active offers assigned to them
+    whereClause = {
+      status: 'ACTIVE',
+      OR: [
+        { visibility: 'PUBLIC' },
+        {
+          visibility: 'PRIVATE',
+          publishers: {
+            some: {
+              publisherId,
+              isEnabled: true,
+            },
+          },
+        },
+        { visibility: 'REQUIRES_APPROVAL' },
+      ],
+    };
+  }
+
+  const offers = await prisma.offer.findMany({
+    where: whereClause,
+    orderBy: { id: 'desc' },
+    include: {
+      network: { select: { id: true, name: true } },
+      domain: { select: { id: true, name: true } },
+      payouts: true,
+      targetingGroups: true,
+      _count: {
+        select: {
+          clicks: true,
+          conversions: true,
+          publishers: true,
+        },
+      },
+    },
+  });
+
+  const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
+
+  const formatted = offers.map((o) => {
+    const defaultPayout = o.payouts[0];
+    const postbackUrl = `${baseUrl}/postback?clickid={clickid}`;
+
+    return {
+      id: o.id,
+      name: o.name,
+      domain: o.domain?.name || 'Default Domain',
+      network: o.network.name,
+      networkId: o.network.id,
+      visibility: o.visibility,
+      status: o.status,
+      clicks: o._count.clicks,
+      conversions: o._count.conversions,
+      postbackUrl,
+      payout: defaultPayout ? Number(defaultPayout.payout) : 0.0,
+      revenue: defaultPayout ? Number(defaultPayout.revenue) : 0.0,
+      currency: defaultPayout?.currency || 'USD',
+      paymentModel: defaultPayout?.paymentModel || 'CPA_FIXED',
+      previewUrl: o.previewUrl,
+      destinationUrl: o.destinationUrl,
+      description: o.description,
+      createdAt: o.createdAt,
+    };
+  });
+
+  res.json({ offers: formatted });
+}
+
+export async function getOfferById(req: Request, res: Response): Promise<void> {
+  const id = parseInt(req.params.id as string, 10);
+  if (isNaN(id)) {
+    res.status(400).json({ error: 'Bad Request', message: 'Invalid offer ID' });
+    return;
+  }
+
+  const offer = await prisma.offer.findUnique({
+    where: { id },
+    include: {
+      network: true,
+      domain: true,
+      targetingGroups: true,
+      payouts: true,
+      publishers: {
+        include: {
+          publisher: { select: { id: true, name: true, email: true, status: true } },
+        },
+      },
+      _count: {
+        select: { clicks: true, conversions: true },
+      },
+    },
+  });
+
+  if (!offer) {
+    res.status(404).json({ error: 'Not Found', message: 'Offer not found' });
+    return;
+  }
+
+  res.json({ offer });
+}
+
+export async function updateOffer(req: Request, res: Response): Promise<void> {
+  const id = parseInt(req.params.id as string, 10);
+  if (isNaN(id)) {
+    res.status(400).json({ error: 'Bad Request', message: 'Invalid offer ID' });
+    return;
+  }
+
+  const { general, tracking, targeting, affiliates, revenuePayouts } = req.body;
+
+  await prisma.$transaction(async (tx) => {
+    // 1. Update Core Offer
+    await tx.offer.update({
+      where: { id },
+      data: {
+        name: general.name,
+        networkId: general.networkId,
+        domainId: tracking.domainId || null,
+        visibility: general.visibility,
+        status: general.status,
+        previewUrl: general.previewUrl || null,
+        description: general.description || null,
+        destinationUrl: tracking.destinationUrl,
+        enforceIpUniqueness: Boolean(tracking.enforceIpUniqueness),
+        blockDuplicateIps: Boolean(tracking.blockDuplicateIps),
+      },
+    });
+
+    // 2. Upsert Targeting Group
+    const existingGroup = await tx.offerTargetingGroup.findFirst({ where: { offerId: id } });
+    if (existingGroup) {
+      await tx.offerTargetingGroup.update({
+        where: { id: existingGroup.id },
+        data: {
+          name: targeting.name || existingGroup.name,
+          conditionOp: targeting.conditionOp || existingGroup.conditionOp,
+          isEnabled: targeting.isEnabled ?? existingGroup.isEnabled,
+          devices: targeting.devices || existingGroup.devices,
+          countries: targeting.countries || existingGroup.countries,
+          excludeCountries: Boolean(targeting.excludeCountries),
+          cities: targeting.cities || existingGroup.cities,
+          regions: targeting.regions || existingGroup.regions,
+        },
+      });
+    }
+
+    // 3. Upsert Payout
+    const existingPayout = await tx.offerPayout.findFirst({ where: { offerId: id } });
+    if (existingPayout) {
+      await tx.offerPayout.update({
+        where: { id: existingPayout.id },
+        data: {
+          title: revenuePayouts.title || existingPayout.title,
+          goalValue: revenuePayouts.goalValue || existingPayout.goalValue,
+          paymentModel: revenuePayouts.paymentModel || existingPayout.paymentModel,
+          currency: revenuePayouts.currency || existingPayout.currency,
+          revenue: revenuePayouts.revenue || existingPayout.revenue,
+          payout: revenuePayouts.payout || existingPayout.payout,
+        },
+      });
+    }
+
+    // 4. Update Affiliates based on visibility state machine
+    if (general.visibility === 'PUBLIC') {
+      // Clear enabled affiliates list per client directive at [04:10]
+      await tx.offerPublisher.deleteMany({ where: { offerId: id } });
+    } else if (general.visibility === 'PRIVATE' && affiliates?.enabledPublisherIds) {
+      await tx.offerPublisher.deleteMany({ where: { offerId: id } });
+      if (affiliates.enabledPublisherIds.length > 0) {
+        await tx.offerPublisher.createMany({
+          data: affiliates.enabledPublisherIds.map((pubId: number) => ({
+            offerId: id,
+            publisherId: pubId,
+            isEnabled: true,
+            approvalStatus: 'APPROVED',
+          })),
+          skipDuplicates: true,
+        });
+      }
+    }
+  });
+
+  const updatedOffer = await prisma.offer.findUnique({
+    where: { id },
+    include: {
+      network: true,
+      domain: true,
+      targetingGroups: true,
+      payouts: true,
+      publishers: {
+        include: { publisher: { select: { id: true, name: true, email: true } } },
+      },
+    },
+  });
+
+  res.json({ message: 'Offer updated successfully', offer: updatedOffer });
+}
+
+export async function updateOfferStatus(req: Request, res: Response): Promise<void> {
+  const id = parseInt(req.params.id as string, 10);
+  if (isNaN(id)) {
+    res.status(400).json({ error: 'Bad Request', message: 'Invalid offer ID' });
+    return;
+  }
+
+  const { status } = req.body;
+
+  const updated = await prisma.offer.update({
+    where: { id },
+    data: { status },
+  });
+
+  res.json({ message: `Offer status updated to ${status}`, offer: updated });
+}
+
+export async function deleteOffer(req: Request, res: Response): Promise<void> {
+  const id = parseInt(req.params.id as string, 10);
+  if (isNaN(id)) {
+    res.status(400).json({ error: 'Bad Request', message: 'Invalid offer ID' });
+    return;
+  }
+
+  await prisma.offer.delete({
+    where: { id },
+  });
+
+  res.json({ message: 'Offer deleted successfully' });
+}
+
+export async function duplicateOffer(req: Request, res: Response): Promise<void> {
+  const id = parseInt(req.params.id as string, 10);
+  if (isNaN(id)) {
+    res.status(400).json({ error: 'Bad Request', message: 'Invalid offer ID' });
+    return;
+  }
+
+  const source = await prisma.offer.findUnique({
+    where: { id },
+    include: {
+      targetingGroups: true,
+      payouts: true,
+    },
+  });
+
+  if (!source) {
+    res.status(404).json({ error: 'Not Found', message: 'Source offer not found' });
+    return;
+  }
+
+  const clone = await prisma.$transaction(async (tx) => {
+    const newOffer = await tx.offer.create({
+      data: {
+        name: `${source.name} - Copy`,
+        networkId: source.networkId,
+        domainId: source.domainId,
+        visibility: source.visibility,
+        status: 'PAUSED', // Duplicated offer starts as paused for safety
+        previewUrl: source.previewUrl,
+        description: source.description,
+        destinationUrl: source.destinationUrl,
+        enforceIpUniqueness: source.enforceIpUniqueness,
+        blockDuplicateIps: source.blockDuplicateIps,
+      },
+    });
+
+    if (source.targetingGroups.length > 0) {
+      await tx.offerTargetingGroup.createMany({
+        data: source.targetingGroups.map((tg) => ({
+          offerId: newOffer.id,
+          name: tg.name,
+          conditionOp: tg.conditionOp,
+          isEnabled: tg.isEnabled,
+          devices: tg.devices,
+          countries: tg.countries,
+          excludeCountries: tg.excludeCountries,
+          cities: tg.cities,
+          regions: tg.regions,
+        })),
+      });
+    }
+
+    if (source.payouts.length > 0) {
+      await tx.offerPayout.createMany({
+        data: source.payouts.map((p) => ({
+          offerId: newOffer.id,
+          title: p.title,
+          goalValue: p.goalValue,
+          paymentModel: p.paymentModel,
+          currency: p.currency,
+          revenue: p.revenue,
+          payout: p.payout,
+          countries: p.countries,
+          excludeCountries: p.excludeCountries,
+        })),
+      });
+    }
+
+    return newOffer;
+  });
+
+  res.status(201).json({ message: 'Offer duplicated successfully', offer: clone });
+}

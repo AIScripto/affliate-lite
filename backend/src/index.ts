@@ -1,57 +1,59 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import router from './routes';
-import { pool } from './config/db';
-import { initializeDatabase } from './db/init';
-import { seedDatabase } from './db/seed';
+import apiRouter from './routes';
+import { handleClickRedirect, handlePostback } from './controllers/trackingController';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Postback-Secret', 'X-Ref-Code']
-}));
-
+// Middleware
+app.use(
+  cors({
+    origin: '*',
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Attach routes
-app.use(router);
-
-// Auto-bootstrap DB if empty
-async function bootstrap() {
-  try {
-    console.log('🔍 Checking database readiness...');
-    const tableCheck = await pool.query(`
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables 
-        WHERE table_schema = 'public' 
-        AND table_name = 'clicks_traffic'
-      );
-    `);
-
-    if (!tableCheck.rows[0].exists) {
-      console.log('⚡ Empty database detected. Auto-running schema initialization and seed...');
-      await initializeDatabase();
-      await seedDatabase();
-    } else {
-      console.log('✅ PostgreSQL database tables verified.');
-    }
-  } catch (error) {
-    console.warn('⚠️ Auto-bootstrap warning (will retry on next request):', error);
-  }
-}
-
-app.listen(PORT, async () => {
-  console.log(`🚀 Affiliate Tracking Hub Backend listening on port ${PORT}`);
-  console.log(`🔗 Inbound Redirect: http://localhost:${PORT}/go/:product_slug?ref=sub_ali_05`);
-  console.log(`🔔 S2S Postback: http://localhost:${PORT}/api/v1/postback`);
-  await bootstrap();
+// Health Check
+app.get('/health', (_req: Request, res: Response) => {
+  res.json({ status: 'ok', service: 'affiliate-tracking-backend', timestamp: new Date().toISOString() });
 });
 
+// Root & API Tracking Click Redirect Engines ([04:40]–[05:00])
+app.get('/click', handleClickRedirect);
+app.get('/api/v1/click', handleClickRedirect);
+
+// Global S2S Postback Receiver ([03:48], [06:24]–[06:58])
+app.get('/postback', handlePostback);
+app.post('/postback', handlePostback);
+app.get('/api/v1/postback', handlePostback);
+app.post('/api/v1/postback', handlePostback);
+
+// Mount Unified API Router
+app.use('/api/v1', apiRouter);
+
+// Global 404 Handler
+app.use((_req: Request, res: Response) => {
+  res.status(404).json({ error: 'Not Found', message: 'API route not found' });
+});
+
+// Global Error Handler
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  console.error('Unhandled Server Error:', err);
+  res.status(500).json({ error: 'Internal Server Error', message: err.message || 'Something went wrong' });
+});
+
+// Start Server if not imported by test runner
+if (process.env.NODE_ENV !== 'test' && !process.env.TEST && !process.argv.some((a) => a.includes('test'))) {
+  app.listen(PORT, () => {
+    console.log(`[Affiliate Backend] Unified CPA Platform Server running on port ${PORT}`);
+  });
+}
+
 export default app;
+export { app };
