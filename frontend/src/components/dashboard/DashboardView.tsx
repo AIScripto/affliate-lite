@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { fetchDashboardSummary } from '../../services/api';
 import { DashboardSummary } from '../../types';
+import { TrafficAnalyticsGraphs } from './TrafficAnalyticsGraphs';
 
 export function DashboardView() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -16,15 +17,6 @@ export function DashboardView() {
   const [dateRange, setDateRange] = useState('October 1, 2026 - October 22, 2026');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [currency, setCurrency] = useState('USD');
-
-  // Chart legend visibility toggles
-  const [showConversions, setShowConversions] = useState(true);
-  const [showClicks, setShowClicks] = useState(true);
-  const [showProfit, setShowProfit] = useState(true);
-  const [showIncome, setShowIncome] = useState(true);
-
-  // Hover state for chart
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const loadData = async () => {
     try {
@@ -64,9 +56,6 @@ export function DashboardView() {
         { date: '2026-10-20', conversions: 5, clicks: 68, profit: 375, income: 1125 },
         { date: '2026-10-22', conversions: 5, clicks: 68, profit: 375, income: 1125 },
       ];
-
-  const maxClicks = Math.max(...trafficData.map((d) => d.clicks), 70);
-  const maxConversions = Math.max(...trafficData.map((d) => d.conversions), 10);
 
   return (
     <div className="space-y-6">
@@ -239,246 +228,12 @@ export function DashboardView() {
         </div>
       </div>
 
-      {/* 100%-Width 30-Day Traffic Statistics Chart (Client Directive: full width, no clutter widgets) */}
-      <div className="panel-card p-5">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border-subtle pb-4 mb-4">
-          <div>
-            <h2 className="text-sm font-bold text-fg">
-              Traffic statistics for the last 30 day
-            </h2>
-            <p className="text-xs text-fg-muted mt-0.5">
-              Dual-axis trend: Clicks, Conversions, Profit, and Gross Revenue
-            </p>
-          </div>
-
-          {/* Interactive Legend Toggles */}
-          <div className="flex flex-wrap items-center gap-3 text-xs">
-            <button
-              type="button"
-              onClick={() => setShowConversions(!showConversions)}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded border transition ${
-                showConversions
-                  ? 'bg-primary/10 border-primary text-primary font-semibold'
-                  : 'bg-surface border-border-subtle text-fg-muted opacity-50'
-              }`}
-            >
-              <span className="w-2.5 h-2.5 rounded-full bg-primary" />
-              <span>Total Conversions</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowClicks(!showClicks)}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded border transition ${
-                showClicks
-                  ? 'bg-pink-500/10 border-pink-500 text-pink-500 font-semibold'
-                  : 'bg-surface border-border-subtle text-fg-muted opacity-50'
-              }`}
-            >
-              <span className="w-2.5 h-2.5 rounded-full bg-pink-500" />
-              <span>Clicks</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowProfit(!showProfit)}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded border transition ${
-                showProfit
-                  ? 'bg-cyan-500/10 border-cyan-500 text-cyan-500 font-semibold'
-                  : 'bg-surface border-border-subtle text-fg-muted opacity-50'
-              }`}
-            >
-              <span className="w-2.5 h-2.5 rounded-full bg-cyan-500" />
-              <span>Total Profit</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowIncome(!showIncome)}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded border transition ${
-                showIncome
-                  ? 'bg-blue-500/10 border-blue-500 text-blue-500 font-semibold'
-                  : 'bg-surface border-border-subtle text-fg-muted opacity-50'
-              }`}
-            >
-              <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-              <span>Total Income</span>
-            </button>
-          </div>
-        </div>
-
-        {/* SVG Composed Chart with Hover Tooltip */}
-        <div className="relative w-full h-72">
-          {isLoading ? (
-            <div className="w-full h-full bg-surface-elevated animate-pulse rounded-lg" />
-          ) : (
-            <div className="w-full h-full flex flex-col justify-between">
-              {/* Chart Canvas */}
-              <div
-                className="relative flex-1 w-full"
-                onMouseLeave={() => setHoveredIndex(null)}
-              >
-                <svg
-                  className="w-full h-full overflow-visible"
-                  viewBox={`0 0 ${trafficData.length * 100} 200`}
-                  preserveAspectRatio="none"
-                >
-                  <defs>
-                    <linearGradient id="primaryGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#6C5CE7" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#6C5CE7" stopOpacity="0.0" />
-                    </linearGradient>
-                    <linearGradient id="clicksBarGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#EC4899" stopOpacity="0.8" />
-                      <stop offset="100%" stopColor="#EC4899" stopOpacity="0.2" />
-                    </linearGradient>
-                  </defs>
-
-                  {/* Horizontal Grid lines */}
-                  {[0, 50, 100, 150].map((y) => (
-                    <line
-                      key={y}
-                      x1="0"
-                      y1={y}
-                      x2={trafficData.length * 100}
-                      y2={y}
-                      stroke="currentColor"
-                      className="text-border-subtle"
-                      strokeDasharray="4 4"
-                    />
-                  ))}
-
-                  {/* Bars for Clicks */}
-                  {showClicks &&
-                    trafficData.map((d, i) => {
-                      const barHeight = (d.clicks / maxClicks) * 160;
-                      const x = i * 100 + 35;
-                      const y = 190 - barHeight;
-                      return (
-                        <rect
-                          key={`bar-${i}`}
-                          x={x}
-                          y={y}
-                          width="30"
-                          height={barHeight}
-                          rx="4"
-                          fill="url(#clicksBarGradient)"
-                          className="transition-all hover:opacity-100 opacity-80"
-                        />
-                      );
-                    })}
-
-                  {/* Line for Conversions */}
-                  {showConversions && (
-                    <>
-                      <path
-                        d={trafficData
-                          .map((d, i) => {
-                            const x = i * 100 + 50;
-                            const y = 190 - (d.conversions / maxConversions) * 160;
-                            return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-                          })
-                          .join(' ')}
-                        fill="none"
-                        stroke="#6C5CE7"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                      />
-                      {trafficData.map((d, i) => {
-                        const x = i * 100 + 50;
-                        const y = 190 - (d.conversions / maxConversions) * 160;
-                        return (
-                          <circle
-                            key={`dot-${i}`}
-                            cx={x}
-                            cy={y}
-                            r="5"
-                            fill="#6C5CE7"
-                            stroke="#ffffff"
-                            strokeWidth="2"
-                            className="cursor-pointer hover:r-7 transition-all"
-                          />
-                        );
-                      })}
-                    </>
-                  )}
-
-                  {/* Transparent hover columns */}
-                  {trafficData.map((_, i) => (
-                    <rect
-                      key={`hit-${i}`}
-                      x={i * 100}
-                      y="0"
-                      width="100"
-                      height="200"
-                      fill="transparent"
-                      className="cursor-pointer"
-                      onMouseEnter={() => setHoveredIndex(i)}
-                    />
-                  ))}
-                </svg>
-
-                {/* Floating Tooltip matching Max Wave spec [00:53] */}
-                {hoveredIndex !== null && trafficData[hoveredIndex] && (
-                  <div
-                    className="absolute z-20 pointer-events-none bg-surface/95 backdrop-blur-md border border-border-subtle p-3 rounded-lg shadow-xl text-xs space-y-1"
-                    style={{
-                      left: `${((hoveredIndex + 0.5) / trafficData.length) * 100}%`,
-                      top: '20px',
-                      transform: 'translateX(-50%)',
-                    }}
-                  >
-                    <div className="font-bold text-fg border-b border-border-subtle pb-1">
-                      {trafficData[hoveredIndex].date}
-                    </div>
-                    {showConversions && (
-                      <div className="flex items-center justify-between gap-4 text-primary">
-                        <span>Total Conversions:</span>
-                        <strong className="tabular-nums">
-                          {trafficData[hoveredIndex].conversions}
-                        </strong>
-                      </div>
-                    )}
-                    {showClicks && (
-                      <div className="flex items-center justify-between gap-4 text-pink-500">
-                        <span>Clicks:</span>
-                        <strong className="tabular-nums">
-                          {trafficData[hoveredIndex].clicks}
-                        </strong>
-                      </div>
-                    )}
-                    {showProfit && (
-                      <div className="flex items-center justify-between gap-4 text-cyan-500">
-                        <span>Total Profit:</span>
-                        <strong className="tabular-nums">
-                          $ {trafficData[hoveredIndex].profit ?? 375}.00
-                        </strong>
-                      </div>
-                    )}
-                    {showIncome && (
-                      <div className="flex items-center justify-between gap-4 text-blue-500">
-                        <span>Total Income:</span>
-                        <strong className="tabular-nums">
-                          $ {trafficData[hoveredIndex].income ?? 1125}.00
-                        </strong>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* X-Axis Dates */}
-              <div className="flex justify-between text-[11px] text-fg-muted pt-2 border-t border-border-subtle">
-                {trafficData.map((d) => (
-                  <span key={d.date} className="truncate">
-                    {d.date.slice(5)}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Performance Intelligence Suite (Replaces monolithic ugly chart with dimensional dual-split graphs) */}
+      <TrafficAnalyticsGraphs
+        data={trafficData}
+        isLoading={isLoading}
+        currencySymbol={currencySymbol}
+      />
 
       {/* Bottom 2-Column Top Performers Grid (Sorted by Conversions DESC, Clicks DESC) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
