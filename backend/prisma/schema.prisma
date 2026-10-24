@@ -78,10 +78,11 @@ model User {
   name         String       @db.VarChar(150)
   email        String       @unique @db.VarChar(255)
   passwordHash String       @map("password_hash") @db.VarChar(255)
-  role         UserRole     @default(PUBLISHER)
-  status       EntityStatus @default(ACTIVE)
-  postbackUrl  String?      @map("postback_url")
-  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  role          UserRole     @default(PUBLISHER)
+  status        EntityStatus @default(ACTIVE)
+  publisherType String       @default("Publisher") @map("publisher_type") @db.VarChar(50)
+  postbackUrl   String?      @map("postback_url")
+  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz
   updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   assignedOffers OfferPublisher[]

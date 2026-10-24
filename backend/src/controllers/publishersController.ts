@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { prisma } from '../db/prisma';
 
 export async function createPublisher(req: Request, res: Response): Promise<void> {
-  const { name, email, password } = req.body;
+  const { name, email, password, publisherType, postbackUrl, offerIds } = req.body;
 
   const existing = await prisma.user.findUnique({
     where: { email: email.toLowerCase() },
@@ -16,21 +16,53 @@ export async function createPublisher(req: Request, res: Response): Promise<void
 
   const passwordHash = await bcrypt.hash(password, 10);
 
-  const publisher = await prisma.user.create({
-    data: {
-      name,
-      email: email.toLowerCase(),
-      passwordHash,
-      role: 'PUBLISHER',
-      status: 'ACTIVE',
-    },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      status: true,
-      createdAt: true,
-    },
+  const publisher = await prisma.$transaction(async (tx) => {
+    const user = await tx.user.create({
+      data: {
+        name,
+        email: email.toLowerCase(),
+        passwordHash,
+        role: 'PUBLISHER',
+        status: 'ACTIVE',
+        publisherType: publisherType || 'Publisher',
+        postbackUrl: postbackUrl?.trim() || null,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        status: true,
+        publisherType: true,
+        postbackUrl: true,
+        createdAt: true,
+      },
+    });
+
+    if (Array.isArray(offerIds) && offerIds.length > 0) {
+      await tx.offerPublisher.createMany({
+        data: offerIds.map((offerId: number) => ({
+          offerId: Number(offerId),
+          publisherId: user.id,
+          isEnabled: true,
+          approvalStatus: 'APPROVED',
+        })),
+        skipDuplicates: true,
+      });
+    }
+
+    const assigned = await tx.offerPublisher.findMany({
+      where: { publisherId: user.id },
+      select: {
+        offer: {
+          select: { id: true, name: true },
+        },
+      },
+    });
+
+    return {
+      ...user,
+      assignedOffers: assigned,
+    };
   });
 
   res.status(201).json(publisher);
@@ -66,8 +98,16 @@ export async function getPublishers(req: Request, res: Response): Promise<void> 
         name: true,
         email: true,
         status: true,
+        publisherType: true,
         postbackUrl: true,
         createdAt: true,
+        assignedOffers: {
+          select: {
+            offer: {
+              select: { id: true, name: true },
+            },
+          },
+        },
         _count: {
           select: {
             assignedOffers: true,
@@ -104,8 +144,16 @@ export async function getPublisherById(req: Request, res: Response): Promise<voi
       name: true,
       email: true,
       status: true,
+      publisherType: true,
       postbackUrl: true,
       createdAt: true,
+      assignedOffers: {
+        select: {
+          offer: {
+            select: { id: true, name: true },
+          },
+        },
+      },
     },
   });
 
@@ -124,25 +172,61 @@ export async function updatePublisher(req: Request, res: Response): Promise<void
     return;
   }
 
-  const { name, email, password, postbackUrl } = req.body;
+  const { name, email, password, publisherType, postbackUrl, offerIds } = req.body;
   const updateData: Record<string, unknown> = {};
 
   if (name) updateData.name = name;
   if (email) updateData.email = email.toLowerCase();
   if (password) updateData.passwordHash = await bcrypt.hash(password, 10);
-  if (postbackUrl !== undefined) updateData.postbackUrl = postbackUrl;
+  if (publisherType) updateData.publisherType = publisherType;
+  if (postbackUrl !== undefined) updateData.postbackUrl = postbackUrl?.trim() || null;
 
-  const updated = await prisma.user.update({
-    where: { id },
-    data: updateData,
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      status: true,
-      postbackUrl: true,
-      updatedAt: true,
-    },
+  const updated = await prisma.$transaction(async (tx) => {
+    const user = await tx.user.update({
+      where: { id },
+      data: updateData,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        status: true,
+        publisherType: true,
+        postbackUrl: true,
+        updatedAt: true,
+      },
+    });
+
+    if (Array.isArray(offerIds)) {
+      await tx.offerPublisher.deleteMany({
+        where: { publisherId: id },
+      });
+
+      if (offerIds.length > 0) {
+        await tx.offerPublisher.createMany({
+          data: offerIds.map((offerId: number) => ({
+            offerId: Number(offerId),
+            publisherId: id,
+            isEnabled: true,
+            approvalStatus: 'APPROVED',
+          })),
+          skipDuplicates: true,
+        });
+      }
+    }
+
+    const assigned = await tx.offerPublisher.findMany({
+      where: { publisherId: id },
+      select: {
+        offer: {
+          select: { id: true, name: true },
+        },
+      },
+    });
+
+    return {
+      ...user,
+      assignedOffers: assigned,
+    };
   });
 
   res.json({ publisher: updated });

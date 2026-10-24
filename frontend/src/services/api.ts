@@ -83,6 +83,9 @@ export async function createPublisher(data: {
   name: string;
   email: string;
   password: string;
+  publisherType?: 'Publisher' | 'SubPublisher';
+  postbackUrl?: string;
+  offerIds?: number[];
 }): Promise<User> {
   const res = await fetch(`${API_BASE}/publishers`, {
     method: 'POST',
@@ -94,7 +97,14 @@ export async function createPublisher(data: {
 
 export async function updatePublisher(
   id: number,
-  data: { name?: string; email?: string; password?: string }
+  data: {
+    name?: string;
+    email?: string;
+    password?: string;
+    publisherType?: 'Publisher' | 'SubPublisher';
+    postbackUrl?: string;
+    offerIds?: number[];
+  }
 ): Promise<User> {
   const res = await fetch(`${API_BASE}/publishers/${id}`, {
     method: 'PUT',

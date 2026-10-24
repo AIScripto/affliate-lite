@@ -9,13 +9,18 @@ export const CreatePublisherSchema = z.object({
   name: z.string().trim().min(1, 'Please fill out this field.'),
   email: z.string().trim().email('Please enter a valid email address.'),
   password: z.string().min(6, 'Please fill out this field.'),
+  publisherType: z.enum(['Publisher', 'SubPublisher']).default('Publisher').optional(),
+  postbackUrl: z.string().optional().or(z.literal('')),
+  offerIds: z.array(z.number().int()).optional(),
 });
 
 export const UpdatePublisherSchema = z.object({
   name: z.string().trim().min(1).optional(),
   email: z.string().trim().email().optional(),
   password: z.string().min(6).optional(),
-  postbackUrl: z.string().url().optional().or(z.literal('')),
+  publisherType: z.enum(['Publisher', 'SubPublisher']).optional(),
+  postbackUrl: z.string().optional().or(z.literal('')),
+  offerIds: z.array(z.number().int()).optional(),
 });
 
 export const UpdatePublisherStatusSchema = z.object({

@@ -6,14 +6,24 @@ export type OfferVisibility = 'PUBLIC' | 'PRIVATE' | 'REQUIRES_APPROVAL';
 export type OfferStatus = 'ACTIVE' | 'PAUSED' | 'DISABLED';
 export type PaymentModel = 'CPA' | 'CPC' | 'CPM' | 'REVSHARE';
 
+export type PublisherType = 'Publisher' | 'SubPublisher';
+
 export interface User {
   id: number;
   name: string;
   email: string;
   role: UserRole;
   status: PublisherStatus;
+  publisherType?: PublisherType;
+  postbackUrl?: string | null;
+  assignedOffers?: Array<{ offer: { id: number; name: string } }>;
   createdAt?: string;
   offersCount?: number;
+  _count?: {
+    assignedOffers?: number;
+    clicks?: number;
+    conversions?: number;
+  };
 }
 
 export interface Domain {
