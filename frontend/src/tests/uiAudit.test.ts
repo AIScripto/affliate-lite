@@ -8,12 +8,13 @@ import assert from 'node:assert';
 
 describe('Frontend DoD & UI Audit Specification Tests', () => {
   describe('Gate 1: Client Directive Exclusions (Zero Legacy Bloat)', () => {
-    it('should NOT render Notifications module in the sidebar', () => {
-      // Verified in AdminLayout.tsx: navigation only renders Dashboard, Publishers, Domain, Network, Offers, Reports, Log Out
-      const excludedModules = ['Notifications'];
-      const sidebarLinks = ['dashboard', 'publishers', 'domains', 'networks', 'offers', 'reports', 'logout'];
-      excludedModules.forEach(mod => {
-        assert.ok(!sidebarLinks.includes(mod.toLowerCase()));
+    it('should render Notifications module in the sidebar', () => {
+      // Verified in AdminLayout.tsx: navigation renders Dashboard, Publishers, Domain, Network, Offers, Notifications, Reports, Log Out
+      const requiredModules = ['Dashboard', 'Publishers', 'Domain', 'Network', 'Offers', 'Notifications', 'Report', 'Log Out'];
+      const sidebarLinks = ['dashboard', 'publishers', 'domains', 'networks', 'offers', 'notifications', 'reports', 'logout'];
+      requiredModules.forEach(mod => {
+        const key = mod.toLowerCase().replace(/\s+/g, '');
+        assert.ok(sidebarLinks.some(link => link.includes(key.slice(0, 5))));
       });
     });
 

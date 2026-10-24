@@ -9,6 +9,7 @@ import { OffersView } from './components/offers/OffersView';
 import { NetworksReportView } from './components/reports/NetworksReportView';
 import { OffersReportView } from './components/reports/OffersReportView';
 import { PublishersReportView } from './components/reports/PublishersReportView';
+import { NotificationsView } from './components/notifications/NotificationsView';
 
 export function App() {
   const [currentNav, setCurrentNav] = useState<NavItem>('dashboard');
@@ -25,6 +26,8 @@ export function App() {
         return <NetworksView />;
       case 'offers':
         return <OffersView />;
+      case 'notifications':
+        return <NotificationsView />;
       case 'report-networks':
         return <NetworksReportView />;
       case 'report-offers':

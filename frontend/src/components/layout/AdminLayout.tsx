@@ -14,6 +14,7 @@ import {
   Moon,
   ShieldCheck,
   User as UserIcon,
+  BookmarkPlus,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -23,6 +24,7 @@ export type NavItem =
   | 'domains'
   | 'networks'
   | 'offers'
+  | 'notifications'
   | 'report-networks'
   | 'report-offers'
   | 'report-publishers';
@@ -52,6 +54,8 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
         return 'Network';
       case 'offers':
         return 'Offers';
+      case 'notifications':
+        return 'Notifications';
       case 'report-networks':
         return 'Networks Report';
       case 'report-offers':
@@ -93,13 +97,13 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
 
         {/* User Profile Block */}
         <div className="px-5 py-4 border-b border-border-subtle/60 flex items-center gap-3 bg-surface-elevated/40">
-          <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary font-bold">
+          <div className="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-500 font-bold">
             <UserIcon className="w-5 h-5" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-xs font-semibold text-fg flex items-center gap-1.5 truncate">
-              <span>adren v</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-success"></span>
+              <span>admin</span>
+              <ChevronDown className="w-3.5 h-3.5 text-fg-muted" />
             </div>
             <div className="text-[11px] text-fg-muted truncate">zeeshan@gmail.com</div>
           </div>
@@ -154,6 +158,20 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
           >
             <Tag className="w-4 h-4" />
             <span>Offers</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onNavigate('notifications')}
+            className={`w-full justify-between ${navItemClass(currentNav === 'notifications')}`}
+          >
+            <div className="flex items-center gap-3">
+              <BookmarkPlus className="w-4 h-4" />
+              <span>Notifications</span>
+            </div>
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-primary/20 text-primary border border-primary/30">
+              3
+            </span>
           </button>
 
           {/* Expandable Reports Item */}
