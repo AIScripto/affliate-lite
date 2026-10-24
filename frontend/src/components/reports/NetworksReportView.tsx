@@ -199,7 +199,7 @@ export function NetworksReportView() {
                       {item.conversionsTotal}
                     </td>
                     <td className="py-2.5 px-4 text-right tabular-nums font-semibold text-fg">
-                      $ {item.payout.toFixed(2)}
+                      $ {Number(item.payout ?? 0).toFixed(2)}
                     </td>
                   </tr>
                 ))
@@ -220,19 +220,19 @@ export function NetworksReportView() {
                     Total / Summary
                   </td>
                   <td className="py-3 px-3 text-right tabular-nums border-r border-border-subtle">
-                    {report.summary.totalClicks}
+                    {report.summary.totalClicks ?? 0}
                   </td>
                   <td className="py-3 px-3 text-right tabular-nums border-r border-border-subtle text-emerald-500">
-                    {report.summary.totalApproved}
+                    {report.summary.totalApproved ?? 0}
                   </td>
                   <td className="py-3 px-3 text-right tabular-nums border-r border-border-subtle text-amber-500">
-                    {report.summary.totalUnchecked}
+                    {report.summary.totalUnchecked ?? 0}
                   </td>
                   <td className="py-3 px-3 text-right tabular-nums border-r border-border-subtle text-fg">
-                    {report.summary.totalConversions}
+                    {report.summary.totalConversions ?? 0}
                   </td>
                   <td className="py-3 px-4 text-right tabular-nums text-primary text-sm">
-                    $ {report.summary.totalPayout.toFixed(2)}
+                    $ {Number(report.summary.totalPayout ?? 0).toFixed(2)}
                   </td>
                 </tr>
               </tfoot>

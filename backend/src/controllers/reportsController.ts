@@ -37,6 +37,11 @@ export async function getNetworksReport(req: Request, res: Response): Promise<vo
     id: number;
     networkName: string;
     offerName: string;
+    name?: string;
+    offer?: string;
+    conversionsApproved?: number;
+    conversionsUnchecked?: number;
+    conversionsTotal?: number;
     clicks: number;
     approvedConversions: number;
     uncheckedConversions: number;
@@ -68,11 +73,16 @@ export async function getNetworksReport(req: Request, res: Response): Promise<vo
 
         rows.push({
           id: net.id,
+          name: net.name,
           networkName: net.name,
+          offer: off.name,
           offerName: off.name,
           clicks: off.clicks.length,
+          conversionsApproved: approved,
           approvedConversions: approved,
+          conversionsUnchecked: unchecked,
           uncheckedConversions: unchecked,
+          conversionsTotal: totalConv,
           totalConversions: totalConv,
           payout: Number(payout.toFixed(2)),
           revenue: Number(revenue.toFixed(2)),
@@ -91,7 +101,7 @@ export async function getNetworksReport(req: Request, res: Response): Promise<vo
     totalRevenue: Number(rows.reduce((s, r) => s + r.revenue, 0).toFixed(2)),
   };
 
-  res.json({ rows, summary });
+  res.json({ data: rows, rows, summary });
 }
 
 export async function getOffersReport(req: Request, res: Response): Promise<void> {
@@ -133,6 +143,7 @@ export async function getOffersReport(req: Request, res: Response): Promise<void
 
     return {
       id: off.id,
+      name: off.name,
       offerName: off.name,
       conversions,
       payout: Number(payout.toFixed(2)),
@@ -152,10 +163,11 @@ export async function getOffersReport(req: Request, res: Response): Promise<void
     totalConversions,
     totalPayout,
     totalRevenue: Number(rows.reduce((s, r) => s + r.revenue, 0).toFixed(2)),
+    weightedEpc,
     averageEpc: weightedEpc,
   };
 
-  res.json({ rows, summary });
+  res.json({ data: rows, rows, summary });
 }
 
 export async function getPublishersReport(req: Request, res: Response): Promise<void> {
@@ -184,6 +196,11 @@ export async function getPublishersReport(req: Request, res: Response): Promise<
     id: number;
     publisherName: string;
     offerName: string;
+    name?: string;
+    offer?: string;
+    conversionsApproved?: number;
+    conversionsUnchecked?: number;
+    conversionsTotal?: number;
     clicks: number;
     approvedConversions: number;
     uncheckedConversions: number;
@@ -234,12 +251,17 @@ export async function getPublishersReport(req: Request, res: Response): Promise<
     if (offerMap.size === 0) {
       rows.push({
         id: pub.id,
+        name: pub.name,
         publisherName: pub.name,
+        offer: '-',
         offerName: '-',
         clicks: 0,
         approvedConversions: 0,
+        conversionsApproved: 0,
         uncheckedConversions: 0,
+        conversionsUnchecked: 0,
         totalConversions: 0,
+        conversionsTotal: 0,
         epc: 0.0,
         payout: 0.0,
       });
@@ -248,12 +270,17 @@ export async function getPublishersReport(req: Request, res: Response): Promise<
         const epc = val.clicks > 0 ? Number((val.payout / val.clicks).toFixed(2)) : 0.0;
         rows.push({
           id: pub.id,
+          name: pub.name,
           publisherName: pub.name,
+          offer: val.offerName,
           offerName: val.offerName,
           clicks: val.clicks,
           approvedConversions: val.approved,
+          conversionsApproved: val.approved,
           uncheckedConversions: val.unchecked,
+          conversionsUnchecked: val.unchecked,
           totalConversions: val.total,
+          conversionsTotal: val.total,
           epc,
           payout: Number(val.payout.toFixed(2)),
         });
@@ -263,14 +290,17 @@ export async function getPublishersReport(req: Request, res: Response): Promise<
 
   const totalClicks = rows.reduce((s, r) => s + r.clicks, 0);
   const totalPayout = Number(rows.reduce((s, r) => s + r.payout, 0).toFixed(2));
+  const avgEpc = totalClicks > 0 ? Number((totalPayout / totalClicks).toFixed(2)) : 0.0;
+
   const summary = {
     totalClicks,
     totalApproved: rows.reduce((s, r) => s + r.approvedConversions, 0),
     totalUnchecked: rows.reduce((s, r) => s + r.uncheckedConversions, 0),
     totalConversions: rows.reduce((s, r) => s + r.totalConversions, 0),
     totalPayout,
-    averageEpc: totalClicks > 0 ? Number((totalPayout / totalClicks).toFixed(2)) : 0.0,
+    weightedEpc: avgEpc,
+    averageEpc: avgEpc,
   };
 
-  res.json({ rows, summary });
+  res.json({ data: rows, rows, summary });
 }

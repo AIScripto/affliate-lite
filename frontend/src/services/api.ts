@@ -308,7 +308,30 @@ export async function fetchNetworksReport(
   const query = params.toString() ? `?${params.toString()}` : '';
 
   const res = await fetch(`${API_BASE}/reports/networks${query}`);
-  return handleResponse<NetworkReportResponse>(res);
+  const raw = await handleResponse<any>(res);
+  const rawRows = Array.isArray(raw?.data) ? raw.data : Array.isArray(raw?.rows) ? raw.rows : [];
+  
+  return {
+    data: rawRows.map((r: any) => ({
+      id: r.id,
+      name: r.name || r.networkName || '-',
+      offer: r.offer || r.offerName || '-',
+      clicks: r.clicks ?? 0,
+      conversionsApproved: r.conversionsApproved ?? r.approvedConversions ?? 0,
+      conversionsUnchecked: r.conversionsUnchecked ?? r.uncheckedConversions ?? 0,
+      conversionsTotal: r.conversionsTotal ?? r.totalConversions ?? 0,
+      payout: Number(r.payout ?? 0),
+      revenue: Number(r.revenue ?? 0),
+    })),
+    summary: {
+      totalClicks: raw?.summary?.totalClicks ?? 0,
+      totalApproved: raw?.summary?.totalApproved ?? 0,
+      totalUnchecked: raw?.summary?.totalUnchecked ?? 0,
+      totalConversions: raw?.summary?.totalConversions ?? 0,
+      totalPayout: Number(raw?.summary?.totalPayout ?? 0),
+      totalRevenue: Number(raw?.summary?.totalRevenue ?? 0),
+    },
+  };
 }
 
 export async function fetchOffersReport(
@@ -321,7 +344,25 @@ export async function fetchOffersReport(
   const query = params.toString() ? `?${params.toString()}` : '';
 
   const res = await fetch(`${API_BASE}/reports/offers${query}`);
-  return handleResponse<OfferReportResponse>(res);
+  const raw = await handleResponse<any>(res);
+  const rawRows = Array.isArray(raw?.data) ? raw.data : Array.isArray(raw?.rows) ? raw.rows : [];
+
+  return {
+    data: rawRows.map((r: any) => ({
+      id: r.id,
+      name: r.name || r.offerName || '-',
+      conversions: r.conversions ?? 0,
+      payout: Number(r.payout ?? 0),
+      clicks: r.clicks ?? 0,
+      epc: Number(r.epc ?? 0),
+    })),
+    summary: {
+      totalConversions: raw?.summary?.totalConversions ?? 0,
+      totalPayout: Number(raw?.summary?.totalPayout ?? 0),
+      totalClicks: raw?.summary?.totalClicks ?? 0,
+      weightedEpc: Number(raw?.summary?.weightedEpc ?? raw?.summary?.averageEpc ?? 0),
+    },
+  };
 }
 
 export async function fetchPublishersReport(
@@ -334,5 +375,28 @@ export async function fetchPublishersReport(
   const query = params.toString() ? `?${params.toString()}` : '';
 
   const res = await fetch(`${API_BASE}/reports/publishers${query}`);
-  return handleResponse<PublisherReportResponse>(res);
+  const raw = await handleResponse<any>(res);
+  const rawRows = Array.isArray(raw?.data) ? raw.data : Array.isArray(raw?.rows) ? raw.rows : [];
+
+  return {
+    data: rawRows.map((r: any) => ({
+      id: r.id,
+      name: r.name || r.publisherName || '-',
+      offer: r.offer || r.offerName || '-',
+      clicks: r.clicks ?? 0,
+      conversionsApproved: r.conversionsApproved ?? r.approvedConversions ?? 0,
+      conversionsUnchecked: r.conversionsUnchecked ?? r.uncheckedConversions ?? 0,
+      conversionsTotal: r.conversionsTotal ?? r.totalConversions ?? 0,
+      epc: Number(r.epc ?? 0),
+      payout: Number(r.payout ?? 0),
+    })),
+    summary: {
+      totalClicks: raw?.summary?.totalClicks ?? 0,
+      totalApproved: raw?.summary?.totalApproved ?? 0,
+      totalUnchecked: raw?.summary?.totalUnchecked ?? 0,
+      totalConversions: raw?.summary?.totalConversions ?? 0,
+      weightedEpc: Number(raw?.summary?.weightedEpc ?? raw?.summary?.averageEpc ?? 0),
+      totalPayout: Number(raw?.summary?.totalPayout ?? 0),
+    },
+  };
 }
