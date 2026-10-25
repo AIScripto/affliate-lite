@@ -137,6 +137,8 @@ model Offer {
   blockDuplicateIps              Boolean         @default(false) @map("block_duplicate_ips")
   postbackMacroParam             String?         @default("{clickid}") @map("postback_macro_param")
   advertiserSecurityToken        String?         @map("advertiser_security_token")
+  postbackExtraQuery             String?         @default("") @map("postback_extra_query")
+  postbackCustomParams           Json?           @map("postback_custom_params")
   createdAt                      DateTime        @default(now()) @map("created_at") @db.Timestamptz
   updatedAt                      DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 

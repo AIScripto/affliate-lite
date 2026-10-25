@@ -150,7 +150,7 @@ export function DataTable<T>({
       <div className="overflow-x-auto rounded-lg border border-border-subtle bg-surface">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="bg-surface-elevated/80 border-b border-border-subtle text-fg-muted uppercase tracking-wider text-[11px] font-semibold">
+            <tr className="bg-surface-elevated border-b border-border-subtle text-fg-muted uppercase tracking-wider text-[11px] font-semibold">
               {columns.map((col) => {
                 const isSorted = sortKey === col.key;
                 const isSortable = col.sortable !== false;
@@ -159,7 +159,7 @@ export function DataTable<T>({
                     key={col.key}
                     style={{ width: col.width }}
                     onClick={() => handleSort(col.key, col.sortable)}
-                    className={`py-3 px-4 ${
+                    className={`py-3 px-4 bg-surface-elevated text-black dark:text-white font-bold select-none ${
                       col.align === 'center'
                         ? 'text-center'
                         : col.align === 'right'

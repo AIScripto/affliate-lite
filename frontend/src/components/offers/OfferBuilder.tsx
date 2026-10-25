@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   ArrowLeft,
   Copy,
@@ -43,10 +43,63 @@ import {
 } from './targeting/TargetingGroupCard';
 import { TargetingGuideModal } from './targeting/TargetingGuideModal';
 import { TargetingUrlsGuideModal } from './targeting/TargetingUrlsGuideModal';
+import {
+  ActivePostbackParamsManager,
+  ActiveUrlParam,
+} from './postbacks/ActivePostbackParamsManager';
 import { PostbackIntegrationDocsModal } from './postbacks/PostbackIntegrationDocsModal';
 import { PostbackParamsDocsModal } from './postbacks/PostbackParamsDocsModal';
-import { PostbackParametersTable } from './postbacks/PostbackParametersTable';
+import {
+  PostbackParametersTable,
+  PostbackParamItem,
+  DEFAULT_POSTBACK_PARAMS,
+} from './postbacks/PostbackParametersTable';
 import { RefreshCw } from 'lucide-react';
+
+function parseInitialActiveParams(
+  clickidMacro: string,
+  securityToken: string,
+  extraQuery: string
+): ActiveUrlParam[] {
+  const result: ActiveUrlParam[] = [
+    {
+      key: 'clickid',
+      value: clickidMacro || '{clickid}',
+      enabled: true,
+      isMandatory: true,
+      label: 'Click ID',
+    },
+  ];
+
+  if (securityToken && securityToken.trim()) {
+    result.push({
+      key: 'secure_token',
+      value: securityToken.trim(),
+      enabled: true,
+      isMandatory: false,
+      label: 'Security Token',
+    });
+  }
+
+  if (extraQuery) {
+    const parts = extraQuery.replace(/^\?/, '').split('&').filter(Boolean);
+    parts.forEach((part) => {
+      const [k, ...vParts] = part.split('=');
+      const val = vParts.join('=');
+      const cleanKey = k.trim();
+      if (cleanKey && cleanKey !== 'clickid' && cleanKey !== 'secure_token') {
+        result.push({
+          key: cleanKey,
+          value: val || `{${cleanKey}}`,
+          enabled: true,
+          label: cleanKey.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+        });
+      }
+    });
+  }
+
+  return result;
+}
 
 export interface OfferBuilderProps {
   offer: Offer | null;
@@ -264,7 +317,18 @@ export function OfferBuilder({
   // Tab 5: Postbacks State
   const [postbackMacroParam, setPostbackMacroParam] = useState('{clickid}');
   const [advertiserSecurityToken, setAdvertiserSecurityToken] = useState('');
-  const [postbackExtraQuery, setPostbackExtraQuery] = useState('');
+  const [postbackActiveParams, setPostbackActiveParams] = useState<ActiveUrlParam[]>([
+    {
+      key: 'clickid',
+      value: '{clickid}',
+      enabled: true,
+      isMandatory: true,
+      label: 'Click ID',
+    },
+  ]);
+  const [postbackParamsList, setPostbackParamsList] = useState<PostbackParamItem[]>(
+    DEFAULT_POSTBACK_PARAMS
+  );
   const [showIntegrationDocsModal, setShowIntegrationDocsModal] = useState(false);
   const [showParamsDocsModal, setShowParamsDocsModal] = useState(false);
 
@@ -298,8 +362,17 @@ export function OfferBuilder({
       setEnforceIpUniqueness(Boolean(offer.enforceIpUniqueness));
       setBlockDuplicateIps(Boolean(offer.blockDuplicateIps));
 
-      setPostbackMacroParam(offer.postbackMacroParam || '{clickid}');
-      setAdvertiserSecurityToken(offer.advertiserSecurityToken || '');
+      const initClickid = offer.postbackMacroParam || '{clickid}';
+      const initSec = offer.advertiserSecurityToken || '';
+      const initExtra = offer.postbackExtraQuery || '';
+      setPostbackMacroParam(initClickid);
+      setAdvertiserSecurityToken(initSec);
+      setPostbackActiveParams(parseInitialActiveParams(initClickid, initSec, initExtra));
+      if (offer.postbackCustomParams && Array.isArray(offer.postbackCustomParams) && offer.postbackCustomParams.length > 0) {
+        setPostbackParamsList(offer.postbackCustomParams);
+      } else {
+        setPostbackParamsList(DEFAULT_POSTBACK_PARAMS);
+      }
 
       if (offer.targetingGroups && offer.targetingGroups.length > 0) {
         setTargetingGroups(
@@ -370,7 +443,16 @@ export function OfferBuilder({
 
       setPostbackMacroParam('{clickid}');
       setAdvertiserSecurityToken('');
-      setPostbackExtraQuery('');
+      setPostbackActiveParams([
+        {
+          key: 'clickid',
+          value: '{clickid}',
+          enabled: true,
+          isMandatory: true,
+          label: 'Click ID',
+        },
+      ]);
+      setPostbackParamsList(DEFAULT_POSTBACK_PARAMS);
       setTargetingGroups([defaultTargetingGroup]);
 
       setPaymentModel('CPA');
@@ -544,16 +626,76 @@ export function OfferBuilder({
     setTargetingGroups(targetingGroups.map((g) => (g.id === updated.id ? updated : g)));
   };
 
-  // Postback Param Appending & Token Generation
-  const handleAppendPostbackParam = (param: string) => {
-    if (!postbackExtraQuery.includes(param)) {
-      setPostbackExtraQuery((prev) => `${prev}${param}`);
-      setCopiedToken(`Appended ${param} to URL ✓`);
-      setTimeout(() => setCopiedToken(null), 2000);
+  // Postback Param Appending, Disabling, Deleting & Token Generation
+  const handleAppendPostbackParam = (tokenStr: string) => {
+    const cleanKey = tokenStr.replace(/^&/, '');
+    const existing = postbackActiveParams.find((p) => p.key === cleanKey);
+    if (existing) {
+      if (!existing.enabled) {
+        setPostbackActiveParams((prev) =>
+          prev.map((p) => (p.key === cleanKey ? { ...p, enabled: true } : p))
+        );
+        setCopiedToken(`Enabled ${tokenStr} in URL ✓`);
+      } else {
+        setCopiedToken(`${tokenStr} is already in URL`);
+      }
     } else {
-      setCopiedToken(`${param} already in URL ✓`);
-      setTimeout(() => setCopiedToken(null), 2000);
+      const match = postbackParamsList.find((item) => item.param === tokenStr);
+      const label = match ? match.name : cleanKey.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+      setPostbackActiveParams((prev) => [
+        ...prev,
+        {
+          key: cleanKey,
+          value: `{${cleanKey}}`,
+          enabled: true,
+          label,
+        },
+      ]);
+      setCopiedToken(`Added ${tokenStr} to URL ✓`);
     }
+    setTimeout(() => setCopiedToken(null), 2000);
+  };
+
+  const handleRemovePostbackParamFromUrl = (key: string) => {
+    if (key === 'clickid') return; // Mandatory
+    setPostbackActiveParams((prev) => prev.filter((p) => p.key !== key));
+    if (key === 'secure_token') {
+      setAdvertiserSecurityToken('');
+    }
+    setCopiedToken(`Removed &${key} from URL ✓`);
+    setTimeout(() => setCopiedToken(null), 2000);
+  };
+
+  const handleTogglePostbackParamInUrl = (key: string) => {
+    setPostbackActiveParams((prev) =>
+      prev.map((p) => {
+        if (p.key === key) {
+          const nextState = !p.enabled;
+          setCopiedToken(`${nextState ? 'Enabled' : 'Disabled'} &${key} in URL ✓`);
+          return { ...p, enabled: nextState };
+        }
+        return p;
+      })
+    );
+    setTimeout(() => setCopiedToken(null), 2000);
+  };
+
+  const handleUpdatePostbackParamValue = (key: string, newValue: string) => {
+    setPostbackActiveParams((prev) =>
+      prev.map((p) => (p.key === key ? { ...p, value: newValue } : p))
+    );
+    if (key === 'clickid') {
+      setPostbackMacroParam(newValue);
+    } else if (key === 'secure_token') {
+      setAdvertiserSecurityToken(newValue);
+    }
+  };
+
+  const handleClearOptionalPostbackParams = () => {
+    setPostbackActiveParams((prev) => prev.filter((p) => p.isMandatory));
+    setAdvertiserSecurityToken('');
+    setCopiedToken('Cleared all optional URL parameters ✓');
+    setTimeout(() => setCopiedToken(null), 2000);
   };
 
   const handleGenerateSecurityToken = () => {
@@ -563,6 +705,21 @@ export function OfferBuilder({
       token += chars[Math.floor(Math.random() * chars.length)];
     }
     setAdvertiserSecurityToken(token);
+    setPostbackActiveParams((prev) => {
+      const idx = prev.findIndex((p) => p.key === 'secure_token');
+      if (idx >= 0) {
+        return prev.map((p) => (p.key === 'secure_token' ? { ...p, value: token, enabled: true } : p));
+      }
+      return [
+        ...prev,
+        {
+          key: 'secure_token',
+          value: token,
+          enabled: true,
+          label: 'Security Token',
+        },
+      ];
+    });
     setCopiedToken('Generated new security token ✓');
     setTimeout(() => setCopiedToken(null), 1500);
   };
@@ -604,9 +761,24 @@ export function OfferBuilder({
   // Selected Domain Name & Dynamic Postback URL
   const selectedDomainObj = domains.find((d) => d.id === domainId) || domains[0];
   const domainHost = selectedDomainObj?.name || 'zshe.panel.7tracking.com';
-  const computedPostbackUrl = `https://${domainHost}/api/v1/postback?clickid=${postbackMacroParam}${
-    advertiserSecurityToken.trim() ? `&secure_token=${encodeURIComponent(advertiserSecurityToken.trim())}` : ''
-  }${postbackExtraQuery}`;
+  const computedPostbackUrl = useMemo(() => {
+    const queryParts: string[] = [];
+    postbackActiveParams.forEach((p) => {
+      if (!p.enabled) return;
+      if (p.key === 'clickid') {
+        queryParts.push(`clickid=${postbackMacroParam || '{clickid}'}`);
+      } else if (p.key === 'secure_token') {
+        const secVal = advertiserSecurityToken.trim() || p.value;
+        if (secVal) {
+          queryParts.push(`secure_token=${encodeURIComponent(secVal)}`);
+        }
+      } else {
+        queryParts.push(p.value ? `${p.key}=${p.value}` : p.key);
+      }
+    });
+    const queryString = queryParts.length > 0 ? `?${queryParts.join('&')}` : '';
+    return `https://${domainHost}/api/v1/postback${queryString}`;
+  }, [domainHost, postbackActiveParams, postbackMacroParam, advertiserSecurityToken]);
 
   const handleSave = async (andContinue: boolean = false) => {
     const errors: Record<string, string> = {};
@@ -656,6 +828,11 @@ export function OfferBuilder({
           blockDuplicateIps,
           postbackMacroParam,
           advertiserSecurityToken: advertiserSecurityToken.trim() || null,
+          postbackExtraQuery: postbackActiveParams
+            .filter((p) => p.enabled && p.key !== 'clickid' && p.key !== 'secure_token')
+            .map((p) => (p.value ? `&${p.key}=${p.value}` : `&${p.key}`))
+            .join(''),
+          postbackCustomParams: postbackParamsList,
         },
         targeting: {
           name: primaryTg.name,
@@ -1313,11 +1490,17 @@ export function OfferBuilder({
                     {/* Table-First Macro Dictionary per DOD Rule #2 */}
                     <div className="max-h-[520px] overflow-y-auto rounded-lg border border-border-subtle pr-1">
                       <table className="w-full text-left text-xs border-collapse">
-                        <thead className="bg-surface-elevated/70 sticky top-0 z-10 text-[10px] uppercase font-bold text-black dark:text-white tracking-wider border-b border-border-subtle">
-                          <tr>
-                            <th className="py-2 px-2.5">Macro Token</th>
-                            <th className="py-2 px-2">Description</th>
-                            <th className="py-2 px-2 text-right">Action</th>
+                        <thead className="sticky top-0 z-20 bg-surface-elevated border-b border-border-subtle shadow-sm">
+                          <tr className="bg-surface-elevated">
+                            <th className="py-2.5 px-2.5 bg-surface-elevated text-[10px] uppercase font-bold text-black dark:text-white tracking-wider">
+                              Macro Token
+                            </th>
+                            <th className="py-2.5 px-2 bg-surface-elevated text-[10px] uppercase font-bold text-black dark:text-white tracking-wider">
+                              Description
+                            </th>
+                            <th className="py-2.5 px-2 text-right bg-surface-elevated text-[10px] uppercase font-bold text-black dark:text-white tracking-wider">
+                              Action
+                            </th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-border-subtle text-[11px]">
@@ -1643,6 +1826,15 @@ export function OfferBuilder({
                         <span>Copy</span>
                       </button>
                     </div>
+
+                    {/* Active URL Parameters Manager with Enable, Disable, and Delete */}
+                    <ActivePostbackParamsManager
+                      params={postbackActiveParams}
+                      onToggleParam={handleTogglePostbackParamInUrl}
+                      onRemoveParam={handleRemovePostbackParamFromUrl}
+                      onUpdateValue={handleUpdatePostbackParamValue}
+                      onClearOptional={handleClearOptionalPostbackParams}
+                    />
                   </div>
 
                   {/* Image Pixel */}
@@ -1771,7 +1963,13 @@ export function OfferBuilder({
                       <input
                         type="text"
                         value={postbackMacroParam}
-                        onChange={(e) => setPostbackMacroParam(e.target.value)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setPostbackMacroParam(val);
+                          setPostbackActiveParams((prev) =>
+                            prev.map((p) => (p.key === 'clickid' ? { ...p, value: val } : p))
+                          );
+                        }}
                         placeholder="e.g. {clickid}, {s2}, or {click_id}"
                         className="w-full bg-surface-elevated border border-border-subtle text-fg font-mono rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary"
                       />
@@ -1797,7 +1995,30 @@ export function OfferBuilder({
                       <input
                         type="text"
                         value={advertiserSecurityToken}
-                        onChange={(e) => setAdvertiserSecurityToken(e.target.value)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setAdvertiserSecurityToken(val);
+                          setPostbackActiveParams((prev) => {
+                            const exists = prev.some((p) => p.key === 'secure_token');
+                            if (exists) {
+                              return prev.map((p) =>
+                                p.key === 'secure_token' ? { ...p, value: val, enabled: val.trim().length > 0 } : p
+                              );
+                            }
+                            if (val.trim()) {
+                              return [
+                                ...prev,
+                                {
+                                  key: 'secure_token',
+                                  value: val,
+                                  enabled: true,
+                                  label: 'Security Token',
+                                },
+                              ];
+                            }
+                            return prev;
+                          });
+                        }}
                         placeholder="Optional tamper-protection token"
                         className="w-full bg-surface-elevated border border-border-subtle text-fg font-mono rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary"
                       />
@@ -1809,8 +2030,13 @@ export function OfferBuilder({
               {/* Right Column: Integration Pixels Parameters Table (5 cols) */}
               <div className="lg:col-span-5">
                 <PostbackParametersTable
+                  activeParams={postbackActiveParams}
                   onAppendParam={handleAppendPostbackParam}
-                  onCopyToken={(tok) => handleCopy(tok, `Copied ${tok} ✓`)}
+                  onRemoveParamFromUrl={handleRemovePostbackParamFromUrl}
+                  onToggleParamInUrl={handleTogglePostbackParamInUrl}
+                  onCopyToken={(tok) => handleCopy(tok, tok)}
+                  allParams={postbackParamsList}
+                  onParamsListChange={setPostbackParamsList}
                 />
               </div>
             </div>

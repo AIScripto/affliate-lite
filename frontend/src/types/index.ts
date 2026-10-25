@@ -104,6 +104,8 @@ export interface Offer {
   globalPostbackUrl?: string | null;
   postbackMacroParam?: string | null;
   advertiserSecurityToken?: string | null;
+  postbackExtraQuery?: string | null;
+  postbackCustomParams?: any;
   targetingGroups?: OfferTargetingGroup[];
   payouts?: OfferPayout[];
   clicksCount?: number;

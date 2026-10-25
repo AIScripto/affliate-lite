@@ -63,6 +63,8 @@ export async function createOffer(req: Request, res: Response): Promise<void> {
         blockDuplicateIps: Boolean(tracking.blockDuplicateIps),
         postbackMacroParam: tracking.postbackMacroParam || '{clickid}',
         advertiserSecurityToken: tracking.advertiserSecurityToken || null,
+        postbackExtraQuery: tracking.postbackExtraQuery || '',
+        postbackCustomParams: tracking.postbackCustomParams || null,
       },
     });
 
@@ -296,6 +298,8 @@ export async function updateOffer(req: Request, res: Response): Promise<void> {
     blockDuplicateIps: rawBody.blockDuplicateIps,
     postbackMacroParam: rawBody.postbackMacroParam,
     advertiserSecurityToken: rawBody.advertiserSecurityToken,
+    postbackExtraQuery: rawBody.postbackExtraQuery,
+    postbackCustomParams: rawBody.postbackCustomParams,
   };
   const targeting = rawBody.targeting || {
     name: rawBody.targetingGroups?.[0]?.name || rawBody.targetingName || 'Targeting group #1',
@@ -351,6 +355,8 @@ export async function updateOffer(req: Request, res: Response): Promise<void> {
         blockDuplicateIps: Boolean(tracking.blockDuplicateIps),
         postbackMacroParam: tracking.postbackMacroParam || '{clickid}',
         advertiserSecurityToken: tracking.advertiserSecurityToken || null,
+        postbackExtraQuery: tracking.postbackExtraQuery !== undefined ? tracking.postbackExtraQuery : '',
+        postbackCustomParams: tracking.postbackCustomParams !== undefined ? tracking.postbackCustomParams : null,
       },
     });
 

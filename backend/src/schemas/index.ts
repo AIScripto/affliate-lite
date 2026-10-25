@@ -74,6 +74,8 @@ export const UpsertOfferSchema = z.object({
     blockDuplicateIps: z.boolean().default(false),
     postbackMacroParam: z.string().optional().default('{clickid}'),
     advertiserSecurityToken: z.string().optional().nullable().or(z.literal('')),
+    postbackExtraQuery: z.string().optional().default(''),
+    postbackCustomParams: z.any().optional().nullable(),
   }),
   targeting: z.object({
     name: z.string().default('Targeting group #1'),
