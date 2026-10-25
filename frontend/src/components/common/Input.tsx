@@ -28,7 +28,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-xs font-semibold text-slate-700 dark:text-slate-300"
+          className="block text-xs font-bold text-black dark:text-white"
         >
           {label} {required && <span className="text-rose-500">*</span>}
         </label>
@@ -36,7 +36,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
 
       <div className="relative rounded-xl shadow-inner">
         {leftIcon && (
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
             {leftIcon}
           </div>
         )}
@@ -49,7 +49,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
             w-full rounded-xl text-sm transition-all duration-150
             bg-white dark:bg-slate-900/90
             border ${error ? 'border-rose-400 focus:ring-rose-500' : 'border-slate-300 dark:border-slate-700/80 focus:border-indigo-500 focus:ring-indigo-500/20'}
-            text-slate-900 dark:text-white placeholder:text-slate-400
+            text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400
             py-2 px-3 focus:outline-none focus:ring-2
             disabled:opacity-50 disabled:bg-slate-50 dark:disabled:bg-slate-950
             ${leftIcon ? 'pl-9' : ''}
@@ -69,7 +69,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
       {error ? (
         <p className="text-[11px] font-medium text-rose-500">{error}</p>
       ) : helperText ? (
-        <p className="text-[11px] text-slate-500 dark:text-slate-400">{helperText}</p>
+        <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">{helperText}</p>
       ) : null}
     </div>
   );

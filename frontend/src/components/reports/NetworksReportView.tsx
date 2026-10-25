@@ -136,7 +136,7 @@ export function NetworksReportView() {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               {/* Grouped Header Row */}
-              <tr className="bg-surface-elevated border-b border-border-subtle text-fg-muted uppercase tracking-wider text-[11px] font-semibold">
+              <tr className="bg-surface-elevated border-b border-border-subtle text-black dark:text-white uppercase tracking-wider text-[11px] font-bold">
                 <th rowSpan={2} className="py-2.5 px-3 border-r border-border-subtle text-center w-12">
                   #
                 </th>
@@ -156,7 +156,7 @@ export function NetworksReportView() {
                   Payout
                 </th>
               </tr>
-              <tr className="bg-surface-elevated/90 border-b border-border-subtle text-fg-muted uppercase tracking-wider text-[10px] font-semibold">
+              <tr className="bg-surface-elevated/90 border-b border-border-subtle text-black dark:text-white uppercase tracking-wider text-[10px] font-bold">
                 <th className="py-1.5 px-3 border-r border-border-subtle text-right">Approved</th>
                 <th className="py-1.5 px-3 border-r border-border-subtle text-right">Unchecked</th>
                 <th className="py-1.5 px-3 border-r border-border-subtle text-right font-bold text-fg">

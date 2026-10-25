@@ -150,7 +150,7 @@ export function DomainsView() {
     <div className="space-y-6">
       {/* Toast Alert */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white px-4 py-2.5 rounded-lg shadow-lg text-xs font-semibold flex items-center gap-2 animate-bounce">
+        <div className="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white px-4 py-2.5 rounded-lg shadow-lg text-xs font-semibold flex items-center gap-2 animate-fadeIn transition-all">
           <span>✓</span>
           <span>{toastMessage}</span>
         </div>
@@ -186,7 +186,7 @@ export function DomainsView() {
               Add New Domain
             </h2>
             <div className="max-w-md">
-              <label className="block text-xs font-semibold text-fg-muted mb-1">
+              <label className="block text-xs font-bold text-black dark:text-white mb-1">
                 Name <span className="text-danger">*</span>
               </label>
               <input

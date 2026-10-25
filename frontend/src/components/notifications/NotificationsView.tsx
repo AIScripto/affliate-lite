@@ -259,7 +259,7 @@ export function NotificationsView() {
         <div className="overflow-x-auto rounded-lg border border-border-subtle bg-surface">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-surface-elevated border-b border-border-subtle text-fg-muted uppercase tracking-wider text-[11px] font-semibold">
+              <tr className="bg-surface-elevated border-b border-border-subtle text-black dark:text-white uppercase tracking-wider text-[11px] font-bold">
                 <th className="py-3 px-3 text-center w-12">#</th>
                 <th className="py-3 px-4 w-32">Category</th>
                 <th className="py-3 px-4">Title & Details</th>

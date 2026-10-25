@@ -4,10 +4,10 @@
 
 @layer base {
   :root {
-    --color-canvas: #181924;
-    --color-surface: #212332;
-    --color-surface-elevated: #282A3C;
-    --color-border-subtle: #2E3248;
+    --color-canvas: #12131C;
+    --color-surface: #1B1D2C;
+    --color-surface-elevated: #24273A;
+    --color-border-subtle: #2F344D;
     --color-primary: #6C5CE7;
     --color-primary-hover: #7C3AED;
     --color-success: #2ECC71;
@@ -15,15 +15,17 @@
     --color-info: #007BFF;
     --color-warning: #F39C12;
     --color-danger: #E74C3C;
-    --color-fg: #F1F5F9;
-    --color-fg-muted: #94A3B8;
+    --color-fg: #FFFFFF;
+    --color-fg-heading: #FFFFFF;
+    --color-fg-muted: #CBD5E1;
+    --color-fg-subtle: #94A3B8;
   }
   
   html.light, .light {
     --color-canvas: #F4F6FA;
     --color-surface: #FFFFFF;
-    --color-surface-elevated: #F8FAFC;
-    --color-border-subtle: #E2E8F0;
+    --color-surface-elevated: #F1F5F9;
+    --color-border-subtle: #CBD5E1;
     --color-primary: #6D28D9;
     --color-primary-hover: #5B21B6;
     --color-success: #16A34A;
@@ -31,8 +33,10 @@
     --color-info: #2563EB;
     --color-warning: #D97706;
     --color-danger: #DC2626;
-    --color-fg: #000000;
-    --color-fg-muted: #475569;
+    --color-fg: #0F172A;
+    --color-fg-heading: #000000;
+    --color-fg-muted: #334155;
+    --color-fg-subtle: #64748B;
   }
 
   body {
@@ -43,6 +47,28 @@
     margin: 0;
     padding: 0;
     min-height: 100vh;
+  }
+
+  /* Universal Field Headings & Form Labels Readability - Never Merging into Background */
+  label {
+    color: var(--color-fg-heading);
+    font-weight: 700;
+  }
+
+  /* Headings Hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--color-fg-heading);
+    font-weight: 700;
+  }
+
+  /* Form controls text clarity */
+  input, select, textarea {
+    color: var(--color-fg);
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: var(--color-fg-subtle);
+    opacity: 0.85;
   }
 }
 

@@ -36,7 +36,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   return (
     <div className={`space-y-1.5 ${containerClassName}`}>
       {label && (
-        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+        <label className="block text-xs font-bold text-black dark:text-white">
           {label}
         </label>
       )}
@@ -54,8 +54,8 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
                 className={`
                   flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-150 flex items-center justify-center gap-1.5
                   ${isSelected
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm border border-slate-200/80 dark:border-slate-700 font-bold'
-                    : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
+                    ? 'bg-white dark:bg-slate-800 text-black dark:text-white shadow-sm border border-slate-300 dark:border-slate-700 font-bold'
+                    : 'text-slate-600 hover:text-black dark:text-slate-300 dark:hover:text-white'
                   }
                   ${disabled ? 'opacity-50 pointer-events-none' : ''}
                 `}
@@ -63,7 +63,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
                 {opt.dotColor && <span className={`w-2 h-2 rounded-full ${opt.dotColor}`} />}
                 <span>{opt.label}</span>
                 {opt.badge && (
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 font-mono">
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-indigo-50 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-mono font-semibold">
                     {opt.badge}
                   </span>
                 )}
@@ -82,8 +82,8 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
                 className={`
                   cursor-pointer p-3 rounded-xl border transition-all duration-150 flex flex-col justify-between
                   ${isSelected
-                    ? 'bg-indigo-50/70 dark:bg-indigo-950/30 border-indigo-400 dark:border-indigo-500 shadow-sm ring-1 ring-indigo-400'
-                    : 'bg-white dark:bg-slate-900/80 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                    ? 'bg-indigo-50/70 dark:bg-indigo-950/30 border-indigo-500 dark:border-indigo-500 shadow-sm ring-1 ring-indigo-500'
+                    : 'bg-white dark:bg-slate-900/80 border-slate-300 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700'
                   }
                   ${disabled ? 'opacity-50 pointer-events-none' : ''}
                 `}
@@ -99,7 +99,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
                       disabled={disabled}
                       className="text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5"
                     />
-                    <span className="text-xs font-bold text-slate-900 dark:text-white">
+                    <span className="text-xs font-bold text-black dark:text-white">
                       {opt.label}
                     </span>
                   </div>
@@ -110,7 +110,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
                   )}
                 </div>
                 {opt.description && (
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal pl-5">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium leading-normal pl-5">
                     {opt.description}
                   </p>
                 )}

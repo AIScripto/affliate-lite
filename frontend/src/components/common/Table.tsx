@@ -29,7 +29,7 @@ export function Table<T>({
     <div className={`overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm ${className}`}>
       <table className="w-full text-left text-xs border-collapse">
         <thead>
-          <tr className="bg-slate-50 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[11px]">
+          <tr className="bg-slate-100 dark:bg-slate-900/90 border-b border-slate-300 dark:border-slate-800 text-black dark:text-white font-bold uppercase tracking-wider text-[11px]">
             {columns.map((col) => (
               <th
                 key={col.key}
@@ -53,7 +53,7 @@ export function Table<T>({
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className={`py-3 px-4 text-slate-700 dark:text-slate-300 ${
+                    className={`py-3 px-4 text-slate-900 dark:text-slate-100 font-medium ${
                       col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : 'text-left'
                     }`}
                   >

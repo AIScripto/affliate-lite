@@ -283,7 +283,7 @@ export function TargetingGroupCard({
         <div className="p-6 space-y-5 text-xs">
           {/* Affiliates Selector */}
           <div>
-            <label className="block font-semibold text-black dark:text-white mb-1.5">
+            <label className="block font-bold text-black dark:text-white mb-1.5">
               Affiliates
             </label>
             <select
@@ -304,7 +304,7 @@ export function TargetingGroupCard({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Presets */}
             <div>
-              <label className="block font-semibold text-black dark:text-white mb-1.5">
+              <label className="block font-bold text-black dark:text-white mb-1.5">
                 Presets
               </label>
               <select
@@ -326,7 +326,7 @@ export function TargetingGroupCard({
             {/* Countries with Exclude Checkbox */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="font-semibold text-black dark:text-white">Countries</label>
+                <label className="font-bold text-black dark:text-white">Countries</label>
                 <label className="flex items-center gap-1.5 text-xs cursor-pointer select-none">
                   <input
                     type="checkbox"
@@ -373,7 +373,7 @@ export function TargetingGroupCard({
             {/* Cities */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="font-semibold text-black dark:text-white">Cities</label>
+                <label className="font-bold text-black dark:text-white">Cities</label>
                 <label className="flex items-center gap-1.5 text-xs cursor-pointer select-none">
                   <input
                     type="checkbox"
@@ -440,7 +440,7 @@ export function TargetingGroupCard({
             {/* Regions */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="font-semibold text-black dark:text-white">Regions / States</label>
+                <label className="font-bold text-black dark:text-white">Regions / States</label>
                 <label className="flex items-center gap-1.5 text-xs cursor-pointer select-none">
                   <input
                     type="checkbox"
@@ -587,7 +587,7 @@ export function TargetingGroupCard({
                   <tbody className="divide-y divide-border-subtle bg-surface">
                     {group.urls.map((u) => (
                       <tr key={u.id} className="hover:bg-surface-elevated/40">
-                        <td className="py-2 px-3 font-semibold text-black dark:text-white">
+                        <td className="py-2 px-3 font-bold text-black dark:text-white">
                           {u.title}
                         </td>
                         <td className="py-2 px-3 font-mono text-[11px] text-fg-muted truncate max-w-xs">
@@ -639,7 +639,7 @@ export function TargetingGroupCard({
               <div className="p-5 space-y-4 border-t border-border-subtle bg-surface">
                 {/* Devices */}
                 <div>
-                  <label className="block font-semibold text-black dark:text-white mb-1.5">
+                  <label className="block font-bold text-black dark:text-white mb-1.5">
                     Devices
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -667,7 +667,7 @@ export function TargetingGroupCard({
 
                 {/* Operating Systems */}
                 <div>
-                  <label className="block font-semibold text-black dark:text-white mb-1.5">
+                  <label className="block font-bold text-black dark:text-white mb-1.5">
                     Operating Systems
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -700,7 +700,7 @@ export function TargetingGroupCard({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Browsers */}
                   <div>
-                    <label className="block font-semibold text-black dark:text-white mb-1.5">
+                    <label className="block font-bold text-black dark:text-white mb-1.5">
                       Browsers
                     </label>
                     <div className="flex flex-wrap gap-1.5">
@@ -731,7 +731,7 @@ export function TargetingGroupCard({
 
                   {/* Connection Types */}
                   <div>
-                    <label className="block font-semibold text-black dark:text-white mb-1.5">
+                    <label className="block font-bold text-black dark:text-white mb-1.5">
                       Connection Types
                     </label>
                     <div className="flex flex-wrap gap-1.5">
@@ -763,7 +763,7 @@ export function TargetingGroupCard({
 
                 {/* Mobile Carriers */}
                 <div>
-                  <label className="block font-semibold text-black dark:text-white mb-1.5">
+                  <label className="block font-bold text-black dark:text-white mb-1.5">
                     Mobile Carriers & ISPs
                   </label>
                   <div className="flex flex-wrap gap-1.5">
@@ -794,7 +794,7 @@ export function TargetingGroupCard({
 
                 {/* Languages */}
                 <div>
-                  <label className="block font-semibold text-black dark:text-white mb-1.5">
+                  <label className="block font-bold text-black dark:text-white mb-1.5">
                     Browser Languages
                   </label>
                   <div className="flex flex-wrap gap-1.5">
@@ -825,7 +825,7 @@ export function TargetingGroupCard({
 
                 {/* IP Range / CIDR Whitelist */}
                 <div>
-                  <label className="block font-semibold text-black dark:text-white mb-1">
+                  <label className="block font-bold text-black dark:text-white mb-1">
                     IP Filtering (CIDR / IP Subnets)
                   </label>
                   <textarea

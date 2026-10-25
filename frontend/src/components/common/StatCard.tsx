@@ -34,7 +34,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/80 dark:via-white/15 to-transparent pointer-events-none" />
 
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 tracking-wider uppercase">{title}</span>
+        <span className="text-xs font-bold text-black dark:text-white tracking-wider uppercase">{title}</span>
         <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 flex items-center justify-center text-indigo-600 dark:text-slate-300 shadow-sm group-hover:scale-110 group-hover:border-indigo-400/50 transition-all duration-300">
           <Icon className="w-4 h-4" />
         </div>
@@ -52,7 +52,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       </div>
 
       {subtitle && (
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1 font-medium">
+        <p className="text-xs text-slate-700 dark:text-slate-300 mt-1 flex items-center gap-1 font-medium">
           {subtitle}
         </p>
       )}

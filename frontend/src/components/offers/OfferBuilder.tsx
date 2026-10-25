@@ -962,7 +962,7 @@ export function OfferBuilder({
     <div className="w-full space-y-6 pb-24 animate-fadeIn">
       {/* Toast Feedback */}
       {copiedToken && (
-        <div className="fixed bottom-20 right-8 z-50 bg-emerald-600 text-white px-4 py-2.5 rounded-lg shadow-xl text-xs font-semibold flex items-center gap-2 animate-bounce">
+        <div className="fixed bottom-20 right-8 z-50 bg-emerald-600 text-white px-4 py-2.5 rounded-lg shadow-xl text-xs font-semibold flex items-center gap-2 animate-fadeIn transition-all">
           <Check className="w-4 h-4" />
           <span>{copiedToken}</span>
         </div>
@@ -1073,7 +1073,7 @@ export function OfferBuilder({
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block font-semibold text-black dark:text-white mb-1 text-xs">
+                <label className="block font-bold text-black dark:text-white mb-1 text-xs">
                   Name <span className="text-danger">*</span>
                 </label>
                 <input
@@ -1094,7 +1094,7 @@ export function OfferBuilder({
               </div>
 
               <div>
-                <label className="block font-semibold text-black dark:text-white mb-1 text-xs">
+                <label className="block font-bold text-black dark:text-white mb-1 text-xs">
                   Advertiser (Network) <span className="text-danger">*</span>
                 </label>
                 <select
@@ -1120,7 +1120,7 @@ export function OfferBuilder({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-semibold text-black dark:text-white mb-1 text-xs">
+                  <label className="block font-bold text-black dark:text-white mb-1 text-xs">
                     Visibility <span className="text-danger">*</span>
                   </label>
                   <select
@@ -1141,7 +1141,7 @@ export function OfferBuilder({
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-black dark:text-white mb-1 text-xs">
+                  <label className="block font-bold text-black dark:text-white mb-1 text-xs">
                     Status <span className="text-danger">*</span>
                   </label>
                   <select
@@ -1157,7 +1157,7 @@ export function OfferBuilder({
               </div>
 
               <div>
-                <label className="block font-semibold text-black dark:text-white mb-1 text-xs">Preview URL</label>
+                <label className="block font-bold text-black dark:text-white mb-1 text-xs">Preview URL</label>
                 <input
                   type="url"
                   placeholder="https://landingpage-preview.com"
@@ -1168,7 +1168,7 @@ export function OfferBuilder({
               </div>
 
               <div>
-                <label className="block font-semibold text-black dark:text-white mb-1 text-xs">Description</label>
+                <label className="block font-bold text-black dark:text-white mb-1 text-xs">Description</label>
                 <textarea
                   rows={4}
                   placeholder="Campaign restrictions, conversion conditions, and instructions..."
@@ -1210,7 +1210,7 @@ export function OfferBuilder({
                 {/* Tracking Domain */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="font-semibold text-black dark:text-white text-xs">
+                    <label className="font-bold text-black dark:text-white text-xs">
                       Select Tracking Domain
                     </label>
                     {domainId !== null && (
@@ -1244,7 +1244,7 @@ export function OfferBuilder({
                 {/* Base Destination URL */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="font-semibold text-black dark:text-white text-xs">
+                    <label className="font-bold text-black dark:text-white text-xs">
                       Base Destination URL <span className="text-danger">*</span>
                     </label>
                     <button
@@ -1314,7 +1314,7 @@ export function OfferBuilder({
                 {/* Trafficback URL */}
                 <div className="pt-2 border-t border-border-subtle">
                   <div className="flex items-center justify-between mb-1">
-                    <label className="font-semibold text-black dark:text-white text-xs">
+                    <label className="font-bold text-black dark:text-white text-xs">
                       Trafficback URL
                     </label>
                     <div className="flex items-center gap-3">
@@ -1380,7 +1380,7 @@ export function OfferBuilder({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Cookie Lifetime / Attribution Window */}
                   <div>
-                    <label className="block font-semibold text-black dark:text-white mb-1 text-xs">
+                    <label className="block font-bold text-black dark:text-white mb-1 text-xs">
                       Cookie Lifetime (Attribution Window)
                     </label>
                     <div className="flex items-center gap-2">
@@ -1408,7 +1408,7 @@ export function OfferBuilder({
 
                   {/* Click Session Lifespan */}
                   <div>
-                    <label className="block font-semibold text-black dark:text-white mb-1 text-xs">
+                    <label className="block font-bold text-black dark:text-white mb-1 text-xs">
                       Click Session Lifespan
                     </label>
                     <div className="flex items-center gap-2">
@@ -1957,7 +1957,7 @@ export function OfferBuilder({
                   {/* Advertiser Click ID Macro & Security Token Inputs */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border-subtle text-xs">
                     <div>
-                      <label className="block font-semibold text-black dark:text-white mb-1">
+                      <label className="block font-bold text-black dark:text-white mb-1">
                         Advertiser Click ID Macro
                       </label>
                       <input
@@ -1980,7 +1980,7 @@ export function OfferBuilder({
 
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="font-semibold text-black dark:text-white">
+                        <label className="font-bold text-black dark:text-white">
                           Security Token (Anti-Fraud)
                         </label>
                         <button
@@ -2054,7 +2054,7 @@ export function OfferBuilder({
             <div className="space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-semibold text-black dark:text-white mb-1">Payment Model</label>
+                  <label className="block font-bold text-black dark:text-white mb-1">Payment Model</label>
                   <select
                     value={paymentModel}
                     onChange={(e) => setPaymentModel(e.target.value as PaymentModel)}
@@ -2068,7 +2068,7 @@ export function OfferBuilder({
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-black dark:text-white mb-1">Currency</label>
+                  <label className="block font-bold text-black dark:text-white mb-1">Currency</label>
                   <select
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value)}
@@ -2085,7 +2085,7 @@ export function OfferBuilder({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-semibold text-black dark:text-white mb-1">
+                  <label className="block font-bold text-black dark:text-white mb-1">
                     Advertiser Revenue ({currency})
                   </label>
                   <input
@@ -2099,7 +2099,7 @@ export function OfferBuilder({
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-black dark:text-white mb-1">
+                  <label className="block font-bold text-black dark:text-white mb-1">
                     Affiliate Payout ({currency})
                   </label>
                   <input

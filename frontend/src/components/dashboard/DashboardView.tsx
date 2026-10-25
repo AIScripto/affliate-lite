@@ -115,7 +115,7 @@ export function DashboardView() {
         {/* Card 1: Clicks */}
         <div className="panel-card p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-fg-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-black dark:text-white">
               Clicks
             </span>
             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
@@ -126,7 +126,7 @@ export function DashboardView() {
             <div className="h-8 bg-surface-elevated animate-pulse rounded mt-2 w-24" />
           ) : (
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-bold tabular-nums text-fg">
+              <span className="text-3xl font-extrabold tabular-nums text-black dark:text-white">
                 {summary?.clicks ?? 68}
               </span>
               <span className="text-[11px] font-semibold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">
@@ -134,13 +134,13 @@ export function DashboardView() {
               </span>
             </div>
           )}
-          <p className="text-[11px] text-fg-muted mt-2">Active routing clicks across all campaigns</p>
+          <p className="text-[11px] text-fg-muted mt-2 font-medium">Active routing clicks across all campaigns</p>
         </div>
 
         {/* Card 2: Conversions */}
         <div className="panel-card p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-fg-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-black dark:text-white">
               Conversions
             </span>
             <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
@@ -151,7 +151,7 @@ export function DashboardView() {
             <div className="h-8 bg-surface-elevated animate-pulse rounded mt-2 w-20" />
           ) : (
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-bold tabular-nums text-fg">
+              <span className="text-3xl font-extrabold tabular-nums text-black dark:text-white">
                 {summary?.conversions ?? 5}
               </span>
               <span className="text-[11px] font-semibold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">
@@ -159,13 +159,13 @@ export function DashboardView() {
               </span>
             </div>
           )}
-          <p className="text-[11px] text-fg-muted mt-2">Attributed conversions from postback engine</p>
+          <p className="text-[11px] text-fg-muted mt-2 font-medium">Attributed conversions from postback engine</p>
         </div>
 
         {/* Card 3: Payout */}
         <div className="panel-card p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-fg-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-black dark:text-white">
               Payout
             </span>
             <div className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-500 flex items-center justify-center">
@@ -176,21 +176,21 @@ export function DashboardView() {
             <div className="h-8 bg-surface-elevated animate-pulse rounded mt-2 w-32" />
           ) : (
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-bold tabular-nums text-fg">
+              <span className="text-3xl font-extrabold tabular-nums text-black dark:text-white">
                 {currencySymbol} {Number(summary?.payout ?? 750).toFixed(2)}
               </span>
-              <span className="text-[11px] font-medium text-fg-muted uppercase">
+              <span className="text-[11px] font-semibold text-fg-muted uppercase">
                 {currency}
               </span>
             </div>
           )}
-          <p className="text-[11px] text-fg-muted mt-2">Total affiliate publisher earnings payable</p>
+          <p className="text-[11px] text-fg-muted mt-2 font-medium">Total affiliate publisher earnings payable</p>
         </div>
 
         {/* Card 4: EPC & Interactive Currency Selector */}
         <div className="panel-card p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-fg-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-black dark:text-white">
               EPC
             </span>
             <div className="flex items-center gap-1.5">

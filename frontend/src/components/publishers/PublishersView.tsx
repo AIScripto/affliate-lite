@@ -446,7 +446,7 @@ export function PublishersView() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Name */}
               <div>
-                <label className="block text-xs font-semibold text-fg-muted mb-1">
+                <label className="block text-xs font-bold text-black dark:text-white mb-1">
                   Name <span className="text-danger">*</span>
                 </label>
                 <input
@@ -466,7 +466,7 @@ export function PublishersView() {
 
               {/* Email */}
               <div>
-                <label className="block text-xs font-semibold text-fg-muted mb-1">
+                <label className="block text-xs font-bold text-black dark:text-white mb-1">
                   Email <span className="text-danger">*</span>
                 </label>
                 <input
@@ -486,7 +486,7 @@ export function PublishersView() {
 
               {/* Password */}
               <div>
-                <label className="block text-xs font-semibold text-fg-muted mb-1">
+                <label className="block text-xs font-bold text-black dark:text-white mb-1">
                   Password <span className="text-danger">*</span>
                 </label>
                 <input
@@ -507,7 +507,7 @@ export function PublishersView() {
 
             {/* Publisher Type */}
             <div>
-              <label className="block text-xs font-semibold text-fg-muted mb-1">
+              <label className="block text-xs font-bold text-black dark:text-white mb-1">
                 Publisher Type
               </label>
               <select
@@ -523,7 +523,7 @@ export function PublishersView() {
             {/* Offers Multi-Select (Matches Oval Media badge chips with '×' removal) */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="block text-xs font-semibold text-fg-muted">
+                <label className="block text-xs font-bold text-black dark:text-white">
                   Offers
                 </label>
                 <div className="flex items-center gap-3 text-[11px]">
@@ -622,7 +622,7 @@ export function PublishersView() {
             {/* Postback (Optional) with 1-Click Parameter Token Appender */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-semibold text-fg-muted">
+                <label className="block text-xs font-bold text-black dark:text-white">
                   Postback (Optional)
                 </label>
                 <span className="text-[11px] text-fg-muted">
@@ -720,7 +720,7 @@ export function PublishersView() {
         <div className="space-y-4 text-xs">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold text-fg-muted mb-1">Name</label>
+              <label className="block font-bold text-black dark:text-white mb-1">Name</label>
               <input
                 type="text"
                 value={editName}
@@ -729,7 +729,7 @@ export function PublishersView() {
               />
             </div>
             <div>
-              <label className="block font-semibold text-fg-muted mb-1">Email</label>
+              <label className="block font-bold text-black dark:text-white mb-1">Email</label>
               <input
                 type="email"
                 value={editEmail}
@@ -741,7 +741,7 @@ export function PublishersView() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold text-fg-muted mb-1">Publisher Type</label>
+              <label className="block font-bold text-black dark:text-white mb-1">Publisher Type</label>
               <select
                 value={editPublisherType}
                 onChange={(e) => setEditPublisherType(e.target.value as PublisherType)}
@@ -752,7 +752,7 @@ export function PublishersView() {
               </select>
             </div>
             <div>
-              <label className="block font-semibold text-fg-muted mb-1">
+              <label className="block font-bold text-black dark:text-white mb-1">
                 Reset Password (Optional)
               </label>
               <input
@@ -768,7 +768,7 @@ export function PublishersView() {
           {/* Edit Offers */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block font-semibold text-fg-muted">Assigned Offers</label>
+              <label className="block font-bold text-black dark:text-white">Assigned Offers</label>
               <div className="flex items-center gap-2 text-[10px]">
                 <button
                   type="button"
@@ -843,7 +843,7 @@ export function PublishersView() {
 
           {/* Edit Postback URL */}
           <div>
-            <label className="block font-semibold text-fg-muted mb-1">
+            <label className="block font-bold text-black dark:text-white mb-1">
               Postback URL (Optional)
             </label>
             <input

@@ -25,7 +25,9 @@ export default {
         danger: 'var(--color-danger)',
         fg: {
           DEFAULT: 'var(--color-fg)',
+          heading: 'var(--color-fg-heading)',
           muted: 'var(--color-fg-muted)',
+          subtle: 'var(--color-fg-subtle)',
         },
       },
       fontFamily: {

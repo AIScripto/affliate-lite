@@ -219,7 +219,7 @@ export function NetworksView() {
     <div className="space-y-6">
       {/* Toast Alert */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white px-4 py-2.5 rounded-lg shadow-lg text-xs font-semibold flex items-center gap-2 animate-bounce">
+        <div className="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white px-4 py-2.5 rounded-lg shadow-lg text-xs font-semibold flex items-center gap-2 animate-fadeIn transition-all">
           <span>✓</span>
           <span>{toastMessage}</span>
         </div>
@@ -257,7 +257,7 @@ export function NetworksView() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Name */}
               <div>
-                <label className="block text-xs font-semibold text-fg-muted mb-1">
+                <label className="block text-xs font-bold text-black dark:text-white mb-1">
                   Name <span className="text-danger">*</span>
                 </label>
                 <input
@@ -279,7 +279,7 @@ export function NetworksView() {
 
               {/* Free-text Contact Details replacing legacy software dropdown */}
               <div>
-                <label className="block text-xs font-semibold text-fg-muted mb-1">
+                <label className="block text-xs font-bold text-black dark:text-white mb-1">
                   Contact Details
                 </label>
                 <input
@@ -352,7 +352,7 @@ export function NetworksView() {
       >
         <div className="space-y-4 text-xs">
           <div>
-            <label className="block font-semibold text-fg-muted mb-1">Name</label>
+            <label className="block font-bold text-black dark:text-white mb-1">Name</label>
             <input
               type="text"
               value={editName}
@@ -361,7 +361,7 @@ export function NetworksView() {
             />
           </div>
           <div>
-            <label className="block font-semibold text-fg-muted mb-1">Contact Details</label>
+            <label className="block font-bold text-black dark:text-white mb-1">Contact Details</label>
             <input
               type="text"
               value={editContact}
