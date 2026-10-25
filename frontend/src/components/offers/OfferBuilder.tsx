@@ -1067,58 +1067,60 @@ export function OfferBuilder({
         {/* TAB 1: GENERAL */}
         {/* ============================================================== */}
         {activeTab === 'general' && (
-          <div className="panel-card p-6 border border-border-subtle bg-surface space-y-6 max-w-4xl">
+          <div className="panel-card p-6 border border-border-subtle bg-surface space-y-6 w-full">
             <h2 className="text-base font-bold text-black dark:text-white border-b border-border-subtle pb-3">
               Core Information
             </h2>
             <div className="space-y-4">
-              <div>
-                <label className="block font-bold text-black dark:text-white mb-1 text-xs">
-                  Name <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Layvaris Keto"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (fieldErrors.name) setFieldErrors({ ...fieldErrors, name: '' });
-                  }}
-                  className={`w-full bg-surface-elevated border ${
-                    fieldErrors.name ? 'border-danger' : 'border-border-subtle'
-                  } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary`}
-                />
-                {fieldErrors.name && (
-                  <p className="text-[11px] text-danger mt-1">{fieldErrors.name}</p>
-                )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-black dark:text-white mb-1 text-xs">
+                    Name <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Layvaris Keto"
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      if (fieldErrors.name) setFieldErrors({ ...fieldErrors, name: '' });
+                    }}
+                    className={`w-full bg-surface-elevated border ${
+                      fieldErrors.name ? 'border-danger' : 'border-border-subtle'
+                    } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary`}
+                  />
+                  {fieldErrors.name && (
+                    <p className="text-[11px] text-danger mt-1">{fieldErrors.name}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block font-bold text-black dark:text-white mb-1 text-xs">
+                    Advertiser (Network) <span className="text-danger">*</span>
+                  </label>
+                  <select
+                    value={advertiserId}
+                    onChange={(e) => {
+                      setAdvertiserId(Number(e.target.value));
+                      if (fieldErrors.advertiserId)
+                        setFieldErrors({ ...fieldErrors, advertiserId: '' });
+                    }}
+                    className="w-full bg-surface-elevated border border-border-subtle text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary"
+                  >
+                    <option value={0}>Select Advertiser...</option>
+                    {networks.map((net) => (
+                      <option key={net.id} value={net.id}>
+                        {net.name} {net.contactDetails ? `(${net.contactDetails})` : ''}
+                      </option>
+                    ))}
+                  </select>
+                  {fieldErrors.advertiserId && (
+                    <p className="text-[11px] text-danger mt-1">{fieldErrors.advertiserId}</p>
+                  )}
+                </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-black dark:text-white mb-1 text-xs">
-                  Advertiser (Network) <span className="text-danger">*</span>
-                </label>
-                <select
-                  value={advertiserId}
-                  onChange={(e) => {
-                    setAdvertiserId(Number(e.target.value));
-                    if (fieldErrors.advertiserId)
-                      setFieldErrors({ ...fieldErrors, advertiserId: '' });
-                  }}
-                  className="w-full bg-surface-elevated border border-border-subtle text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary"
-                >
-                  <option value={0}>Select Advertiser...</option>
-                  {networks.map((net) => (
-                    <option key={net.id} value={net.id}>
-                      {net.name} {net.contactDetails ? `(${net.contactDetails})` : ''}
-                    </option>
-                  ))}
-                </select>
-                {fieldErrors.advertiserId && (
-                  <p className="text-[11px] text-danger mt-1">{fieldErrors.advertiserId}</p>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-bold text-black dark:text-white mb-1 text-xs">
                     Visibility <span className="text-danger">*</span>
@@ -1580,7 +1582,7 @@ export function OfferBuilder({
         {/* TAB 3: TARGETING */}
         {/* ============================================================== */}
         {activeTab === 'targeting' && (
-          <div className="space-y-6 max-w-5xl">
+          <div className="space-y-6 w-full">
             {/* Header with Title and Actions */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border-subtle">
               <div>
@@ -1765,7 +1767,7 @@ export function OfferBuilder({
         {/* TAB 5: POSTBACKS */}
         {/* ============================================================== */}
         {activeTab === 'postbacks' && (
-          <div className="space-y-6 max-w-6xl">
+          <div className="space-y-6 w-full">
             {/* Header with Title and Integration Docs button */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border-subtle">
               <div>
@@ -2047,7 +2049,7 @@ export function OfferBuilder({
         {/* TAB 6: REVENUE & PAYOUTS */}
         {/* ============================================================== */}
         {activeTab === 'revenue' && (
-          <div className="panel-card p-6 border border-border-subtle bg-surface space-y-5 max-w-4xl">
+          <div className="panel-card p-6 border border-border-subtle bg-surface space-y-5 w-full">
             <h2 className="text-base font-bold text-black dark:text-white border-b border-border-subtle pb-3">
               Revenue & Payout Spread Settings
             </h2>
@@ -2137,15 +2139,15 @@ export function OfferBuilder({
       </div>
 
       {/* STICKY BOTTOM ACTION BAR */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-md border-t border-border-subtle px-6 py-3.5 shadow-2xl">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+      <div className="fixed bottom-0 left-0 lg:left-64 right-0 z-40 bg-surface/95 backdrop-blur-md border-t border-border-subtle px-4 sm:px-6 py-3.5 shadow-2xl">
+        <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
             {offer?.id && (
               <button
                 type="button"
                 onClick={handleDuplicate}
                 disabled={isSubmitting}
-                className="px-3.5 py-2 rounded-lg border border-border-subtle bg-surface hover:bg-surface-elevated text-fg font-semibold flex items-center gap-1.5 transition disabled:opacity-50"
+                className="btn-3d-subtle px-3.5 py-2 rounded-xl border border-border-subtle bg-surface hover:bg-surface-elevated text-fg font-semibold flex items-center gap-1.5 transition disabled:opacity-50 cursor-pointer"
               >
                 <Layers className="w-3.5 h-3.5 text-sky-500" />
                 <span>Duplicate offer</span>
@@ -2158,7 +2160,7 @@ export function OfferBuilder({
               type="button"
               onClick={onBack}
               disabled={isSubmitting}
-              className="px-4 py-2 rounded-lg border border-border-subtle bg-surface hover:bg-surface-elevated text-fg font-medium transition"
+              className="btn-3d-subtle px-4 py-2 rounded-xl border border-border-subtle bg-surface hover:bg-surface-elevated text-fg font-medium transition cursor-pointer"
             >
               Cancel
             </button>
@@ -2166,7 +2168,7 @@ export function OfferBuilder({
               type="button"
               onClick={() => handleSave(true)}
               disabled={isSubmitting}
-              className="px-4 py-2 rounded-lg border border-primary text-primary hover:bg-primary/10 font-semibold transition"
+              className="btn-3d-subtle px-4 py-2 rounded-xl border border-primary/40 text-primary hover:bg-primary/10 font-semibold transition cursor-pointer"
             >
               Save & continue
             </button>
@@ -2174,7 +2176,7 @@ export function OfferBuilder({
               type="button"
               onClick={() => handleSave(false)}
               disabled={isSubmitting}
-              className="px-5 py-2 rounded-lg bg-primary hover:bg-primary-hover active:scale-95 text-white font-semibold shadow-md transition disabled:opacity-50 flex items-center gap-1.5"
+              className="btn-3d-primary px-5 py-2 rounded-xl text-white font-semibold shadow-md shadow-primary/25 transition disabled:opacity-50 flex items-center gap-1.5 cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>{isSubmitting ? 'Saving...' : 'Save changes'}</span>

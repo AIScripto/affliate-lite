@@ -4,17 +4,17 @@
 
 @layer base {
   :root {
-    --color-canvas: #12131C;
-    --color-surface: #1B1D2C;
-    --color-surface-elevated: #24273A;
-    --color-border-subtle: #2F344D;
-    --color-primary: #6C5CE7;
-    --color-primary-hover: #7C3AED;
-    --color-success: #2ECC71;
-    --color-success-hover: #27AE60;
-    --color-info: #007BFF;
-    --color-warning: #F39C12;
-    --color-danger: #E74C3C;
+    --color-canvas: #0B0E14;
+    --color-surface: #121620;
+    --color-surface-elevated: #1A1F2C;
+    --color-border-subtle: #252C3E;
+    --color-primary: #6366F1;
+    --color-primary-hover: #4F46E5;
+    --color-success: #10B981;
+    --color-success-hover: #059669;
+    --color-info: #0284C7;
+    --color-warning: #F59E0B;
+    --color-danger: #EF4444;
     --color-fg: #FFFFFF;
     --color-fg-heading: #FFFFFF;
     --color-fg-muted: #CBD5E1;
@@ -22,15 +22,15 @@
   }
   
   html.light, .light {
-    --color-canvas: #F4F6FA;
+    --color-canvas: #F4F6FB;
     --color-surface: #FFFFFF;
-    --color-surface-elevated: #F1F5F9;
+    --color-surface-elevated: #F8FAFC;
     --color-border-subtle: #CBD5E1;
-    --color-primary: #6D28D9;
-    --color-primary-hover: #5B21B6;
-    --color-success: #16A34A;
-    --color-success-hover: #15803D;
-    --color-info: #2563EB;
+    --color-primary: #4F46E5;
+    --color-primary-hover: #4338CA;
+    --color-success: #059669;
+    --color-success-hover: #047857;
+    --color-info: #0284C7;
     --color-warning: #D97706;
     --color-danger: #DC2626;
     --color-fg: #0F172A;
@@ -76,14 +76,89 @@
 .panel-card {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border-subtle);
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  border-radius: 0.875rem;
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+    0 8px 24px -4px rgba(0, 0, 0, 0.3),
+    0 2px 6px -1px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.light .panel-card, html.light .panel-card {
+  box-shadow: 
+    inset 0 1px 0 0 #FFFFFF,
+    0 8px 20px -4px rgba(15, 23, 42, 0.06),
+    0 1px 3px 0 rgba(15, 23, 42, 0.03);
 }
 
 .panel-card-hover:hover {
-  border-color: rgba(108, 92, 231, 0.4);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
+    0 14px 28px -4px rgba(0, 0, 0, 0.4),
+    0 0 20px -2px rgba(99, 102, 241, 0.15);
+  transform: translateY(-1px);
+}
+
+/* 3D Executive Button System */
+.btn-3d-primary {
+  background: linear-gradient(180deg, #6366F1 0%, #4F46E5 100%);
+  color: #FFFFFF;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 
+    0 4px 14px -1px rgba(79, 70, 229, 0.45),
+    0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  transition: all 0.15s ease;
+}
+.btn-3d-primary:hover {
+  background: linear-gradient(180deg, #6E71F4 0%, #5850EC 100%);
+  box-shadow: 
+    0 6px 18px -1px rgba(79, 70, 229, 0.55),
+    0 2px 4px 0 rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
+}
+.btn-3d-primary:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.btn-3d-success {
+  background: linear-gradient(180deg, #10B981 0%, #059669 100%);
+  color: #FFFFFF;
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 
+    0 4px 14px -1px rgba(16, 185, 129, 0.45),
+    0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  transition: all 0.15s ease;
+}
+.btn-3d-success:hover {
+  background: linear-gradient(180deg, #18C58C 0%, #07A373 100%);
+  box-shadow: 
+    0 6px 18px -1px rgba(16, 185, 129, 0.55),
+    0 2px 4px 0 rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
+}
+.btn-3d-success:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.btn-3d-subtle {
+  background: linear-gradient(180deg, var(--color-surface-elevated) 0%, var(--color-surface) 100%);
+  border: 1px solid var(--color-border-subtle);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.15s ease;
+}
+.btn-3d-subtle:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+.btn-3d-subtle:active {
+  transform: translateY(1px);
 }
 
 /* Custom Scrollbar */

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
+import { ChevronUp, ChevronDown, ChevronsUpDown, Search, X } from 'lucide-react';
 
 export interface Column<T> {
   key: string;
@@ -110,7 +110,7 @@ export function DataTable<T>({
   };
 
   return (
-    <div className="w-full flex flex-col gap-3">
+    <div className="w-full flex flex-col gap-3.5">
       {/* Top Control Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-fg-muted">
         <div className="flex items-center gap-2">
@@ -121,7 +121,7 @@ export function DataTable<T>({
               setPageSize(Number(e.target.value));
               setCurrentPage(1);
             }}
-            className="bg-surface-elevated border border-border-subtle text-fg rounded px-2.5 py-1 text-xs focus:outline-none focus:border-primary transition"
+            className="bg-surface-elevated border border-border-subtle text-fg rounded-lg px-2.5 py-1.5 text-xs font-medium focus:outline-none focus:border-primary transition shadow-xs cursor-pointer"
           >
             <option value={10}>10</option>
             <option value={25}>25</option>
@@ -131,8 +131,8 @@ export function DataTable<T>({
           <span>entries</span>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <span>Search:</span>
+        <div className="relative w-full sm:w-64">
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-fg-muted pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
@@ -141,16 +141,29 @@ export function DataTable<T>({
               setCurrentPage(1);
             }}
             placeholder={searchPlaceholder}
-            className="w-full sm:w-56 bg-surface-elevated border border-border-subtle text-fg rounded px-3 py-1.5 text-xs placeholder:text-fg-muted/60 focus:outline-none focus:border-primary transition"
+            className="w-full bg-surface-elevated border border-border-subtle text-fg rounded-lg pl-8.5 pr-8 py-1.5 text-xs placeholder:text-fg-muted/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition shadow-xs"
           />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery('');
+                setCurrentPage(1);
+              }}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-fg-muted hover:text-fg p-0.5"
+              title="Clear search"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          )}
         </div>
       </div>
 
       {/* Table Container */}
-      <div className="overflow-x-auto rounded-lg border border-border-subtle bg-surface">
+      <div className="panel-card overflow-x-auto rounded-xl border border-border-subtle bg-surface">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="bg-surface-elevated border-b border-border-subtle text-fg-muted uppercase tracking-wider text-[11px] font-semibold">
+            <tr className="bg-surface-elevated/80 border-b border-border-subtle text-fg-muted uppercase tracking-wider text-[11px] font-semibold">
               {columns.map((col) => {
                 const isSorted = sortKey === col.key;
                 const isSortable = col.sortable !== false;
@@ -252,11 +265,11 @@ export function DataTable<T>({
           {totalEntries !== data.length && ` (filtered from ${data.length} total)`}
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage <= 1 || isLoading}
-            className="px-3 py-1.5 rounded border border-border-subtle bg-surface hover:bg-surface-elevated text-fg disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="btn-3d-subtle px-3 py-1.5 rounded-lg border border-border-subtle bg-surface hover:bg-surface-elevated text-fg font-medium disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
           >
             Previous
           </button>
@@ -268,13 +281,13 @@ export function DataTable<T>({
               const showEllipsis = prev && page - prev > 1;
               return (
                 <React.Fragment key={page}>
-                  {showEllipsis && <span className="px-1 text-fg-muted">...</span>}
+                  {showEllipsis && <span className="px-1 text-fg-muted font-bold">...</span>}
                   <button
                     onClick={() => setCurrentPage(page)}
-                    className={`min-w-8 py-1.5 px-2 rounded border text-center transition ${
+                    className={`min-w-8 py-1.5 px-2.5 rounded-lg text-center transition cursor-pointer text-xs ${
                       currentPage === page
-                        ? 'bg-primary border-primary text-white font-semibold'
-                        : 'bg-surface border-border-subtle hover:bg-surface-elevated text-fg'
+                        ? 'bg-gradient-to-r from-primary via-indigo-600 to-indigo-700 text-white font-bold shadow-md shadow-primary/25 border-t border-white/20'
+                        : 'btn-3d-subtle bg-surface border border-border-subtle hover:bg-surface-elevated text-fg font-medium'
                     }`}
                   >
                     {page}
@@ -286,7 +299,7 @@ export function DataTable<T>({
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage >= totalPages || isLoading}
-            className="px-3 py-1.5 rounded border border-border-subtle bg-surface hover:bg-surface-elevated text-fg disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="btn-3d-subtle px-3 py-1.5 rounded-lg border border-border-subtle bg-surface hover:bg-surface-elevated text-fg font-medium disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
           >
             Next
           </button>

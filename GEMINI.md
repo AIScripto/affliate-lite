@@ -1,8 +1,9 @@
 # Workspace Rules & Execution Guidelines
 
 ## 1. Automated Testing Rule
-- Only run automated tests where strictly required or when explicitly requested by the user.
-- Do not run automated test suites prematurely or unnecessarily.
+- Do NOT run end-to-end (E2E) tests or automated test suites after finishing tasks or code changes.
+- End-to-end tests must ONLY be run upon explicit request from the user ("run end-to-end test" or "run tests").
+- Verification before completion must rely on TypeScript compilation (`tsc --noEmit`), code quality scripts, and non-destructive syntax checks.
 
 ## 2. Autonomous Execution & Permissions Rule
 - Do not prompt or ask for permission/confirmation before running commands, executing scripts, editing code, or progressing tasks, unless the user explicitly asks to be prompted for permission.

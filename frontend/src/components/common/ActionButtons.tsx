@@ -33,7 +33,7 @@ export function ActionButtons({
             onEdit();
           }}
           title={editTitle}
-          className="w-8 h-8 rounded bg-amber-500 hover:bg-amber-600 active:scale-95 text-white flex items-center justify-center transition shadow-sm"
+          className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-surface border border-border-subtle text-amber-500 hover:bg-amber-500/15 hover:border-amber-500/40 hover:text-amber-400 active:scale-90 flex items-center justify-center transition-all duration-150 shadow-xs hover:shadow-sm cursor-pointer"
         >
           <Edit2 className="w-3.5 h-3.5" />
         </button>
@@ -47,7 +47,7 @@ export function ActionButtons({
             onDuplicate();
           }}
           title={duplicateTitle}
-          className="w-8 h-8 rounded bg-sky-500 hover:bg-sky-600 active:scale-95 text-white flex items-center justify-center transition shadow-sm"
+          className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-surface border border-border-subtle text-sky-500 hover:bg-sky-500/15 hover:border-sky-500/40 hover:text-sky-400 active:scale-90 flex items-center justify-center transition-all duration-150 shadow-xs hover:shadow-sm cursor-pointer"
         >
           <Copy className="w-3.5 h-3.5" />
         </button>
@@ -61,11 +61,11 @@ export function ActionButtons({
             onToggleStatus();
           }}
           title={statusTitle}
-          className={`w-8 h-8 rounded ${
+          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg border active:scale-90 flex items-center justify-center transition-all duration-150 shadow-xs hover:shadow-sm cursor-pointer ${
             isStatusActive
-              ? 'bg-emerald-500 hover:bg-emerald-600'
-              : 'bg-primary hover:bg-primary-hover'
-          } active:scale-95 text-white flex items-center justify-center transition shadow-sm`}
+              ? 'bg-emerald-500/15 border-emerald-500/35 text-emerald-500 hover:bg-emerald-500/25 hover:border-emerald-500/50 hover:text-emerald-400'
+              : 'bg-surface border-border-subtle text-fg-muted hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/30'
+          }`}
         >
           <Power className="w-3.5 h-3.5" />
         </button>
@@ -79,7 +79,7 @@ export function ActionButtons({
             onDelete();
           }}
           title={deleteTitle}
-          className="w-8 h-8 rounded bg-danger hover:bg-red-700 active:scale-95 text-white flex items-center justify-center transition shadow-sm"
+          className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-surface border border-border-subtle text-rose-500 hover:bg-rose-500/15 hover:border-rose-500/40 hover:text-rose-400 active:scale-90 flex items-center justify-center transition-all duration-150 shadow-xs hover:shadow-sm cursor-pointer"
         >
           <Trash2 className="w-3.5 h-3.5" />
         </button>
