@@ -26,7 +26,7 @@ export const Switch: React.FC<SwitchProps> = ({
       <div className="space-y-0.5">
         <label
           htmlFor={switchId}
-          className="text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer select-none"
+          className="text-xs font-semibold text-black dark:text-white cursor-pointer select-none"
         >
           {label}
         </label>

@@ -31,8 +31,8 @@
     --color-info: #2563EB;
     --color-warning: #D97706;
     --color-danger: #DC2626;
-    --color-fg: #0F172A;
-    --color-fg-muted: #64748B;
+    --color-fg: #000000;
+    --color-fg-muted: #475569;
   }
 
   body {
