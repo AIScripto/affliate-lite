@@ -44,10 +44,21 @@ export interface Network {
   updatedAt?: string;
 }
 
+export interface OfferTargetingUrl {
+  id?: string;
+  title: string;
+  url: string;
+  weight?: number;
+  isEnabled?: boolean;
+}
+
 export interface OfferTargetingGroup {
   id?: number;
   name: string;
   condition: 'AND' | 'OR';
+  isEnabled?: boolean;
+  preset?: string | null;
+  affiliateIds?: number[];
   devices: string[];
   countries: string[];
   excludeCountries: boolean;
@@ -55,6 +66,13 @@ export interface OfferTargetingGroup {
   excludeCities: boolean;
   regions: string[];
   excludeRegions: boolean;
+  operatingSystems?: string[];
+  browsers?: string[];
+  connectionTypes?: string[];
+  carriers?: string[];
+  ips?: string[];
+  languages?: string[];
+  additionalUrls?: OfferTargetingUrl[];
 }
 
 export interface OfferPayout {
@@ -85,6 +103,7 @@ export interface Offer {
   blockDuplicateIps: boolean;
   globalPostbackUrl?: string | null;
   postbackMacroParam?: string | null;
+  advertiserSecurityToken?: string | null;
   targetingGroups?: OfferTargetingGroup[];
   payouts?: OfferPayout[];
   clicksCount?: number;

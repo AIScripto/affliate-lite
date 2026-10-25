@@ -37,6 +37,16 @@ import {
 } from '../../services/api';
 import { Switch } from '../common/Switch';
 import { Modal } from '../common/Modal';
+import {
+  TargetingGroupCard,
+  TargetingGroupState,
+} from './targeting/TargetingGroupCard';
+import { TargetingGuideModal } from './targeting/TargetingGuideModal';
+import { TargetingUrlsGuideModal } from './targeting/TargetingUrlsGuideModal';
+import { PostbackIntegrationDocsModal } from './postbacks/PostbackIntegrationDocsModal';
+import { PostbackParamsDocsModal } from './postbacks/PostbackParamsDocsModal';
+import { PostbackParametersTable } from './postbacks/PostbackParametersTable';
+import { RefreshCw } from 'lucide-react';
 
 export interface OfferBuilderProps {
   offer: Offer | null;
@@ -215,16 +225,35 @@ export function OfferBuilder({
   const [showHowItWorksModal, setShowHowItWorksModal] = useState(false);
   const [showTrafficbackModal, setShowTrafficbackModal] = useState(false);
 
-  // Tab 3: Targeting
-  const [targetingName, setTargetingName] = useState('Targeting group #1');
-  const [condition, setCondition] = useState<'AND' | 'OR'>('AND');
-  const [devices, setDevices] = useState<string[]>(['All']);
-  const [countries, setCountries] = useState<string[]>(['United States', 'United Kingdom']);
-  const [excludeCountries, setExcludeCountries] = useState(false);
-  const [cities, setCities] = useState<string[]>([]);
-  const [excludeCities, setExcludeCities] = useState(false);
-  const [regions, setRegions] = useState<string[]>([]);
-  const [excludeRegions, setExcludeRegions] = useState(false);
+  const defaultTargetingGroup: TargetingGroupState = {
+    id: 'tg_1',
+    name: 'Targeting group #1',
+    condition: 'AND',
+    isEnabled: true,
+    isExpanded: true,
+    affiliates: 'ALL',
+    preset: '',
+    countries: ['United States', 'United Kingdom'],
+    excludeCountries: false,
+    cities: [],
+    excludeCities: false,
+    regions: [],
+    excludeRegions: false,
+    urls: [],
+    showAdvanced: false,
+    devices: ['All'],
+    operatingSystems: [],
+    browsers: [],
+    connectionTypes: [],
+    carriers: [],
+    ips: '',
+    languages: [],
+  };
+
+  // Tab 3: Targeting Groups State
+  const [targetingGroups, setTargetingGroups] = useState<TargetingGroupState[]>([defaultTargetingGroup]);
+  const [showTargetingGuideModal, setShowTargetingGuideModal] = useState(false);
+  const [showTargetingUrlsModal, setShowTargetingUrlsModal] = useState(false);
 
   // Tab 4: Affiliates Dual-List
   const [allAffiliates, setAllAffiliates] = useState<Array<{ id: number; name: string; email: string }>>([]);
@@ -232,8 +261,12 @@ export function OfferBuilder({
   const [allAffSearch, setAllAffSearch] = useState('');
   const [enabledAffSearch, setEnabledAffSearch] = useState('');
 
-  // Tab 5: Postbacks
+  // Tab 5: Postbacks State
   const [postbackMacroParam, setPostbackMacroParam] = useState('{clickid}');
+  const [advertiserSecurityToken, setAdvertiserSecurityToken] = useState('');
+  const [postbackExtraQuery, setPostbackExtraQuery] = useState('');
+  const [showIntegrationDocsModal, setShowIntegrationDocsModal] = useState(false);
+  const [showParamsDocsModal, setShowParamsDocsModal] = useState(false);
 
   // Tab 6: Revenue & Payouts
   const [paymentModel, setPaymentModel] = useState<PaymentModel>('CPA');
@@ -266,18 +299,44 @@ export function OfferBuilder({
       setBlockDuplicateIps(Boolean(offer.blockDuplicateIps));
 
       setPostbackMacroParam(offer.postbackMacroParam || '{clickid}');
+      setAdvertiserSecurityToken(offer.advertiserSecurityToken || '');
 
-      const tg = offer.targetingGroups?.[0];
-      if (tg) {
-        setTargetingName(tg.name || 'Targeting group #1');
-        setCondition(tg.condition || 'AND');
-        setDevices(tg.devices?.length ? tg.devices : ['All']);
-        setCountries(tg.countries?.length ? tg.countries : ['United States']);
-        setExcludeCountries(Boolean(tg.excludeCountries));
-        setCities(tg.cities || []);
-        setExcludeCities(Boolean(tg.excludeCities));
-        setRegions(tg.regions || []);
-        setExcludeRegions(Boolean(tg.excludeRegions));
+      if (offer.targetingGroups && offer.targetingGroups.length > 0) {
+        setTargetingGroups(
+          offer.targetingGroups.map((tg, idx) => ({
+            id: String(tg.id || `tg_${idx + 1}`),
+            name: tg.name || `Targeting group #${idx + 1}`,
+            condition: tg.condition || 'AND',
+            isEnabled: tg.isEnabled ?? true,
+            isExpanded: idx === 0,
+            affiliates: tg.affiliateIds?.length ? String(tg.affiliateIds[0]) : 'ALL',
+            preset: tg.preset || '',
+            countries: tg.countries?.length ? tg.countries : ['United States'],
+            excludeCountries: Boolean(tg.excludeCountries),
+            cities: tg.cities || [],
+            excludeCities: Boolean(tg.excludeCities),
+            regions: tg.regions || [],
+            excludeRegions: Boolean(tg.excludeRegions),
+            urls: tg.additionalUrls || [],
+            showAdvanced: Boolean(
+              tg.operatingSystems?.length ||
+              tg.browsers?.length ||
+              tg.connectionTypes?.length ||
+              tg.carriers?.length ||
+              tg.ips?.length ||
+              tg.languages?.length
+            ),
+            devices: tg.devices?.length ? tg.devices : ['All'],
+            operatingSystems: tg.operatingSystems || [],
+            browsers: tg.browsers || [],
+            connectionTypes: tg.connectionTypes || [],
+            carriers: tg.carriers || [],
+            ips: tg.ips?.join('\n') || '',
+            languages: tg.languages || [],
+          }))
+        );
+      } else {
+        setTargetingGroups([defaultTargetingGroup]);
       }
 
       const po = offer.payouts?.[0];
@@ -310,15 +369,9 @@ export function OfferBuilder({
       setBlockDuplicateIps(false);
 
       setPostbackMacroParam('{clickid}');
-      setTargetingName('Targeting group #1');
-      setCondition('AND');
-      setDevices(['All']);
-      setCountries(['United States']);
-      setExcludeCountries(false);
-      setCities([]);
-      setExcludeCities(false);
-      setRegions([]);
-      setExcludeRegions(false);
+      setAdvertiserSecurityToken('');
+      setPostbackExtraQuery('');
+      setTargetingGroups([defaultTargetingGroup]);
 
       setPaymentModel('CPA');
       setCurrency('USD');
@@ -436,19 +489,82 @@ export function OfferBuilder({
     }
   };
 
-  const handleToggleDevice = (dev: string) => {
-    if (dev === 'All') {
-      setDevices(['All']);
-      return;
-    }
-    let updated = devices.filter((d) => d !== 'All');
-    if (updated.includes(dev)) {
-      updated = updated.filter((d) => d !== dev);
-      if (updated.length === 0) updated = ['All'];
+  // Targeting Groups Operations
+  const handleAddTargetingGroup = () => {
+    const newNum = targetingGroups.length + 1;
+    const newGroup: TargetingGroupState = {
+      id: `tg_${Date.now()}`,
+      name: `Targeting group #${newNum}`,
+      condition: 'AND',
+      isEnabled: true,
+      isExpanded: true,
+      affiliates: 'ALL',
+      preset: '',
+      countries: ['United States', 'United Kingdom'],
+      excludeCountries: false,
+      cities: [],
+      excludeCities: false,
+      regions: [],
+      excludeRegions: false,
+      urls: [],
+      showAdvanced: false,
+      devices: ['All'],
+      operatingSystems: [],
+      browsers: [],
+      connectionTypes: [],
+      carriers: [],
+      ips: '',
+      languages: [],
+    };
+    setTargetingGroups([...targetingGroups, newGroup]);
+    setCopiedToken(`Added Targeting group #${newNum} ✓`);
+    setTimeout(() => setCopiedToken(null), 1500);
+  };
+
+  const handleDuplicateTargetingGroup = (source: TargetingGroupState) => {
+    const cloned: TargetingGroupState = {
+      ...source,
+      id: `tg_${Date.now()}`,
+      name: `${source.name} (Copy)`,
+      isExpanded: true,
+    };
+    setTargetingGroups([...targetingGroups, cloned]);
+    setCopiedToken(`Duplicated ${source.name} ✓`);
+    setTimeout(() => setCopiedToken(null), 1500);
+  };
+
+  const handleDeleteTargetingGroup = (id: string) => {
+    if (targetingGroups.length <= 1) return;
+    setTargetingGroups(targetingGroups.filter((g) => g.id !== id));
+    setCopiedToken('Targeting group deleted ✓');
+    setTimeout(() => setCopiedToken(null), 1500);
+  };
+
+  const handleUpdateTargetingGroup = (updated: TargetingGroupState) => {
+    setTargetingGroups(targetingGroups.map((g) => (g.id === updated.id ? updated : g)));
+  };
+
+  // Postback Param Appending & Token Generation
+  const handleAppendPostbackParam = (param: string) => {
+    if (!postbackExtraQuery.includes(param)) {
+      setPostbackExtraQuery((prev) => `${prev}${param}`);
+      setCopiedToken(`Appended ${param} to URL ✓`);
+      setTimeout(() => setCopiedToken(null), 2000);
     } else {
-      updated.push(dev);
+      setCopiedToken(`${param} already in URL ✓`);
+      setTimeout(() => setCopiedToken(null), 2000);
     }
-    setDevices(updated);
+  };
+
+  const handleGenerateSecurityToken = () => {
+    const chars = 'abcdef0123456789';
+    let token = 'sec_';
+    for (let i = 0; i < 24; i++) {
+      token += chars[Math.floor(Math.random() * chars.length)];
+    }
+    setAdvertiserSecurityToken(token);
+    setCopiedToken('Generated new security token ✓');
+    setTimeout(() => setCopiedToken(null), 1500);
   };
 
   const handleAssignAffiliate = async (pub: { id: number; name: string; email: string }) => {
@@ -485,10 +601,12 @@ export function OfferBuilder({
   const netProfit = Number((revenue - payout).toFixed(2));
   const profitMarginPct = revenue > 0 ? Number(((netProfit / revenue) * 100).toFixed(1)) : 0;
 
-  // Selected Domain Name
+  // Selected Domain Name & Dynamic Postback URL
   const selectedDomainObj = domains.find((d) => d.id === domainId) || domains[0];
   const domainHost = selectedDomainObj?.name || 'zshe.panel.7tracking.com';
-  const globalPostbackUrl = `https://${domainHost}/api/v1/postback?clickid=${postbackMacroParam}`;
+  const computedPostbackUrl = `https://${domainHost}/api/v1/postback?clickid=${postbackMacroParam}${
+    advertiserSecurityToken.trim() ? `&secure_token=${encodeURIComponent(advertiserSecurityToken.trim())}` : ''
+  }${postbackExtraQuery}`;
 
   const handleSave = async (andContinue: boolean = false) => {
     const errors: Record<string, string> = {};
@@ -516,6 +634,8 @@ export function OfferBuilder({
           ? clickSessionLifespanHours * 24
           : clickSessionLifespanHours;
 
+      const primaryTg = targetingGroups[0] || defaultTargetingGroup;
+
       const payload = {
         general: {
           name,
@@ -534,19 +654,57 @@ export function OfferBuilder({
           allowConversionsWithoutSession,
           enforceIpUniqueness,
           blockDuplicateIps,
+          postbackMacroParam,
+          advertiserSecurityToken: advertiserSecurityToken.trim() || null,
         },
         targeting: {
-          name: targetingName,
-          conditionOp: condition,
-          isEnabled: true,
-          devices: devices.length ? devices : ['ALL'],
-          countries: countries.length ? countries : ['ALL'],
-          excludeCountries,
-          cities,
-          excludeCities,
-          regions,
-          excludeRegions,
+          name: primaryTg.name,
+          conditionOp: primaryTg.condition,
+          isEnabled: primaryTg.isEnabled,
+          preset: primaryTg.preset || null,
+          affiliateIds:
+            primaryTg.affiliates !== 'ALL' && !isNaN(Number(primaryTg.affiliates))
+              ? [Number(primaryTg.affiliates)]
+              : [],
+          devices: primaryTg.devices.length ? primaryTg.devices : ['ALL'],
+          countries: primaryTg.countries.length ? primaryTg.countries : ['ALL'],
+          excludeCountries: primaryTg.excludeCountries,
+          cities: primaryTg.cities,
+          excludeCities: primaryTg.excludeCities,
+          regions: primaryTg.regions,
+          excludeRegions: primaryTg.excludeRegions,
+          operatingSystems: primaryTg.operatingSystems,
+          browsers: primaryTg.browsers,
+          connectionTypes: primaryTg.connectionTypes,
+          carriers: primaryTg.carriers,
+          ips: primaryTg.ips
+            ? primaryTg.ips.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean)
+            : [],
+          languages: primaryTg.languages,
+          additionalUrls: primaryTg.urls,
         },
+        targetingGroups: targetingGroups.map((tg) => ({
+          name: tg.name,
+          condition: tg.condition,
+          isEnabled: tg.isEnabled,
+          preset: tg.preset || null,
+          affiliateIds:
+            tg.affiliates !== 'ALL' && !isNaN(Number(tg.affiliates)) ? [Number(tg.affiliates)] : [],
+          devices: tg.devices,
+          countries: tg.countries,
+          excludeCountries: tg.excludeCountries,
+          cities: tg.cities,
+          excludeCities: tg.excludeCities,
+          regions: tg.regions,
+          excludeRegions: tg.excludeRegions,
+          operatingSystems: tg.operatingSystems,
+          browsers: tg.browsers,
+          connectionTypes: tg.connectionTypes,
+          carriers: tg.carriers,
+          ips: tg.ips ? tg.ips.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean) : [],
+          languages: tg.languages,
+          additionalUrls: tg.urls,
+        })),
         affiliates: {
           enabledPublisherIds: enabledAffiliates.map((a) => a.id),
         },
@@ -1239,117 +1397,50 @@ export function OfferBuilder({
         {/* TAB 3: TARGETING */}
         {/* ============================================================== */}
         {activeTab === 'targeting' && (
-          <div className="panel-card p-6 border border-border-subtle bg-surface space-y-5 max-w-4xl">
-            <h2 className="text-base font-bold text-black dark:text-white border-b border-border-subtle pb-3">
-              Targeting Rules & Geo Filters
-            </h2>
-            <div className="space-y-4 text-xs">
+          <div className="space-y-6 max-w-5xl">
+            {/* Header with Title and Actions */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border-subtle">
               <div>
-                <label className="block font-semibold text-black dark:text-white mb-1">
-                  Targeting Group Name
-                </label>
-                <input
-                  type="text"
-                  value={targetingName}
-                  onChange={(e) => setTargetingName(e.target.value)}
-                  className="w-full bg-surface-elevated border border-border-subtle text-fg rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
+                <h2 className="text-xl font-bold text-black dark:text-white">Targeting</h2>
+                <p className="text-xs text-fg-muted mt-0.5">
+                  Define geographic filters, device types, carrier constraints, and localized destination URLs.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowTargetingGuideModal(true)}
+                  className="px-3.5 py-1.5 rounded-lg border border-border-subtle bg-surface hover:bg-surface-elevated text-black dark:text-white font-semibold text-xs transition flex items-center gap-1.5 shadow-sm"
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-primary" />
+                  <span>How to use it?</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddTargetingGroup}
+                  className="px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary-hover active:scale-95 text-white font-semibold text-xs transition shadow-sm flex items-center gap-1.5"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add New Targeting Group</span>
+                </button>
+              </div>
+            </div>
+
+            {/* List of Targeting Group Cards */}
+            <div className="space-y-5">
+              {targetingGroups.map((group, idx) => (
+                <TargetingGroupCard
+                  key={group.id}
+                  group={group}
+                  index={idx}
+                  totalGroups={targetingGroups.length}
+                  allPublishers={allAffiliates.concat(enabledAffiliates)}
+                  onUpdate={handleUpdateTargetingGroup}
+                  onDuplicate={handleDuplicateTargetingGroup}
+                  onDelete={handleDeleteTargetingGroup}
+                  onOpenUrlsGuide={() => setShowTargetingUrlsModal(true)}
                 />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-black dark:text-white mb-1">Rule Condition</label>
-                <div className="inline-flex rounded-lg border border-border-subtle p-0.5 bg-surface-elevated">
-                  <button
-                    type="button"
-                    onClick={() => setCondition('AND')}
-                    className={`px-4 py-1.5 rounded-md font-semibold text-xs transition ${
-                      condition === 'AND'
-                        ? 'bg-primary text-white shadow-sm'
-                        : 'text-fg-muted hover:text-fg'
-                    }`}
-                  >
-                    AND
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCondition('OR')}
-                    className={`px-4 py-1.5 rounded-md font-semibold text-xs transition ${
-                      condition === 'OR'
-                        ? 'bg-primary text-white shadow-sm'
-                        : 'text-fg-muted hover:text-fg'
-                    }`}
-                  >
-                    OR
-                  </button>
-                </div>
-              </div>
-
-              {/* Devices Multi-Select */}
-              <div>
-                <label className="block font-semibold text-black dark:text-white mb-1">Devices</label>
-                <div className="flex flex-wrap gap-2">
-                  {['All', 'PC', 'Android', 'iOS', 'Tablet'].map((dev) => {
-                    const isSelected = devices.includes(dev);
-                    return (
-                      <button
-                        key={dev}
-                        type="button"
-                        onClick={() => handleToggleDevice(dev)}
-                        className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition ${
-                          isSelected
-                            ? 'bg-primary border-primary text-white'
-                            : 'bg-surface-elevated border-border-subtle text-fg-muted hover:text-fg'
-                        }`}
-                      >
-                        {dev}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Countries */}
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="font-semibold text-black dark:text-white">Countries</label>
-                  <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={excludeCountries}
-                      onChange={(e) => setExcludeCountries(e.target.checked)}
-                      className="rounded border-border-subtle text-danger"
-                    />
-                    <span className="text-danger font-semibold">Exclude</span>
-                  </label>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {['United States', 'United Kingdom', 'Canada', 'Australia', 'Germany', 'France'].map(
-                    (country) => {
-                      const isSelected = countries.includes(country);
-                      return (
-                        <button
-                          key={country}
-                          type="button"
-                          onClick={() => {
-                            if (isSelected) {
-                              setCountries(countries.filter((c) => c !== country));
-                            } else {
-                              setCountries([...countries, country]);
-                            }
-                          }}
-                          className={`px-3 py-1 rounded-lg border text-xs font-medium transition ${
-                            isSelected
-                              ? 'bg-primary border-primary text-white'
-                              : 'bg-surface-elevated border-border-subtle text-fg-muted hover:text-fg'
-                          }`}
-                        >
-                          {country}
-                        </button>
-                      );
-                    }
-                  )}
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         )}
@@ -1491,71 +1582,236 @@ export function OfferBuilder({
         {/* TAB 5: POSTBACKS */}
         {/* ============================================================== */}
         {activeTab === 'postbacks' && (
-          <div className="panel-card p-6 border border-border-subtle bg-surface space-y-5 max-w-4xl">
-            <h2 className="text-base font-bold text-black dark:text-white border-b border-border-subtle pb-3">
-              Postback Integration & Pixels
-            </h2>
-            <div className="space-y-4 text-xs">
+          <div className="space-y-6 max-w-6xl">
+            {/* Header with Title and Integration Docs button */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border-subtle">
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="font-semibold text-black dark:text-white">Global S2S Postback URL</label>
-                  <button
-                    type="button"
-                    onClick={() => handleCopy(globalPostbackUrl, 'Postback URL copied ✓')}
-                    className="text-primary hover:underline flex items-center gap-1 text-[11px]"
-                  >
-                    <Copy className="w-3 h-3" />
-                    <span>Copy</span>
-                  </button>
-                </div>
-                <input
-                  type="text"
-                  readOnly
-                  value={globalPostbackUrl}
-                  className="w-full bg-surface-elevated border border-border-subtle text-fg rounded-lg px-3 py-2 font-mono text-[11px] select-all"
-                />
-                <p className="text-[11px] text-fg-muted mt-1">
-                  Provide this link to the Advertiser. When a conversion triggers on their end,
-                  they must call this URL with the clickid parameter.
+                <h2 className="text-xl font-bold text-black dark:text-white">Postbacks</h2>
+                <p className="text-xs text-fg-muted mt-0.5">
+                  Configure server-to-server (S2S) conversion attribution postbacks, HTML pixels, and parameter tokens.
                 </p>
               </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowIntegrationDocsModal(true)}
+                  className="px-3.5 py-1.5 rounded-lg border border-border-subtle bg-surface hover:bg-surface-elevated text-black dark:text-white font-semibold text-xs transition flex items-center gap-1.5 shadow-sm"
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-primary" />
+                  <span>Integration docs</span>
+                </button>
+              </div>
+            </div>
 
-              <div>
-                <label className="block font-semibold text-black dark:text-white mb-1">
-                  Advertiser Click ID Macro
-                </label>
-                <input
-                  type="text"
-                  value={postbackMacroParam}
-                  onChange={(e) => setPostbackMacroParam(e.target.value)}
-                  placeholder="e.g. {clickid}, {s2}, or {click_id}"
-                  className="w-full bg-surface-elevated border border-border-subtle text-fg rounded-lg px-3 py-2 font-mono text-xs focus:outline-none focus:border-primary"
-                />
+            {/* Two-Column Split Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Left Column: Integration Pixels (7 cols) */}
+              <div className="lg:col-span-7 space-y-5">
+                <div className="panel-card p-6 border border-border-subtle bg-surface space-y-5 rounded-xl shadow-sm">
+                  <div>
+                    <h3 className="text-base font-bold text-black dark:text-white">Integration pixels</h3>
+                    <p className="text-xs text-fg-muted mt-0.5">
+                      Insert this script at advertiser success-page to integrate by pixel or call S2S postback
+                    </p>
+                  </div>
+
+                  {/* S2S (Postback) */}
+                  <div className="space-y-2 pt-2 border-t border-border-subtle">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-black dark:text-white text-xs">S2S (Postback)</span>
+                      <button
+                        type="button"
+                        onClick={() => setShowParamsDocsModal(true)}
+                        className="text-primary hover:underline flex items-center gap-1 text-[11px] font-semibold"
+                      >
+                        <BookOpen className="w-3 h-3" />
+                        <span>Params docs</span>
+                      </button>
+                    </div>
+
+                    <div className="relative">
+                      <div className="w-full bg-surface-elevated border border-border-subtle rounded-lg p-3 pr-20 font-mono text-xs text-black dark:text-slate-100 break-all select-all">
+                        {computedPostbackUrl}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(computedPostbackUrl, 'S2S Postback URL copied ✓')}
+                        className="absolute right-2 top-2 px-2.5 py-1.5 rounded-md bg-surface border border-border-subtle hover:bg-surface-elevated text-fg font-semibold text-xs flex items-center gap-1 shadow-sm transition"
+                        title="Copy S2S Postback URL"
+                      >
+                        <Copy className="w-3.5 h-3.5 text-primary" />
+                        <span>Copy</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Image Pixel */}
+                  <div className="space-y-2 pt-2 border-t border-border-subtle">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-black dark:text-white text-xs">Image</span>
+                      <button
+                        type="button"
+                        onClick={() => setShowParamsDocsModal(true)}
+                        className="text-primary hover:underline flex items-center gap-1 text-[11px] font-semibold"
+                      >
+                        <BookOpen className="w-3 h-3" />
+                        <span>Params docs</span>
+                      </button>
+                    </div>
+
+                    <div className="relative">
+                      <div className="w-full bg-surface-elevated border border-border-subtle rounded-lg p-3 pr-20 font-mono text-[11px] text-fg-muted break-all select-all">
+                        {`<!-- Offer Conversion -->\n<img src="${computedPostbackUrl.replace(
+                          '/api/v1/postback',
+                          `/api/v1/postback/pixel.jpg?offer_id=${offer?.id || '7'}`
+                        )}" height="1" width="1" alt=""/>\n<!-- End Offer Conversion -->`}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleCopy(
+                            `<img src="${computedPostbackUrl.replace(
+                              '/api/v1/postback',
+                              `/api/v1/postback/pixel.jpg?offer_id=${offer?.id || '7'}`
+                            )}" height="1" width="1" alt=""/>`,
+                            'Image Pixel copied ✓'
+                          )
+                        }
+                        className="absolute right-2 top-2 px-2.5 py-1.5 rounded-md bg-surface border border-border-subtle hover:bg-surface-elevated text-fg font-semibold text-xs flex items-center gap-1 shadow-sm transition"
+                        title="Copy Image Pixel"
+                      >
+                        <Copy className="w-3.5 h-3.5 text-primary" />
+                        <span>Copy</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Iframe Pixel */}
+                  <div className="space-y-2 pt-2 border-t border-border-subtle">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-black dark:text-white text-xs">IFrame</span>
+                      <button
+                        type="button"
+                        onClick={() => setShowParamsDocsModal(true)}
+                        className="text-primary hover:underline flex items-center gap-1 text-[11px] font-semibold"
+                      >
+                        <BookOpen className="w-3 h-3" />
+                        <span>Params docs</span>
+                      </button>
+                    </div>
+
+                    <div className="relative">
+                      <div className="w-full bg-surface-elevated border border-border-subtle rounded-lg p-3 pr-20 font-mono text-[11px] text-fg-muted break-all select-all">
+                        {`<!-- Offer Conversion -->\n<iframe src="${computedPostbackUrl.replace(
+                          '/api/v1/postback',
+                          `/api/v1/postback/pixel.html?offer_id=${offer?.id || '7'}`
+                        )}" scrolling="no" frameborder="0" width="1" height="1"></iframe>\n<!-- End Offer Conversion -->`}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleCopy(
+                            `<iframe src="${computedPostbackUrl.replace(
+                              '/api/v1/postback',
+                              `/api/v1/postback/pixel.html?offer_id=${offer?.id || '7'}`
+                            )}" scrolling="no" frameborder="0" width="1" height="1"></iframe>`,
+                            'IFrame Pixel copied ✓'
+                          )
+                        }
+                        className="absolute right-2 top-2 px-2.5 py-1.5 rounded-md bg-surface border border-border-subtle hover:bg-surface-elevated text-fg font-semibold text-xs flex items-center gap-1 shadow-sm transition"
+                        title="Copy Iframe Pixel"
+                      >
+                        <Copy className="w-3.5 h-3.5 text-primary" />
+                        <span>Copy</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* JavaScript Web Pixel Snippet */}
+                  <div className="space-y-2 pt-2 border-t border-border-subtle">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-black dark:text-white text-xs">JavaScript Client Pixel</span>
+                      <button
+                        type="button"
+                        onClick={() => setShowParamsDocsModal(true)}
+                        className="text-primary hover:underline flex items-center gap-1 text-[11px] font-semibold"
+                      >
+                        <BookOpen className="w-3 h-3" />
+                        <span>Params docs</span>
+                      </button>
+                    </div>
+
+                    <div className="relative">
+                      <div className="w-full bg-surface-elevated border border-border-subtle rounded-lg p-3 pr-20 font-mono text-[11px] text-fg-muted break-all select-all">
+                        {`<script>\n  (function(w,d,s,u){var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.src=u;f.parentNode.insertBefore(j,f);})(window,document,'script','https://${domainHost}/sdk/pixel.js?offer_id=${offer?.id || '7'}&clickid=${postbackMacroParam}');\n</script>`}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleCopy(
+                            `<script>(function(w,d,s,u){var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.src=u;f.parentNode.insertBefore(j,f);})(window,document,'script','https://${domainHost}/sdk/pixel.js?offer_id=${offer?.id || '7'}&clickid=${postbackMacroParam}');</script>`,
+                            'JavaScript Pixel copied ✓'
+                          )
+                        }
+                        className="absolute right-2 top-2 px-2.5 py-1.5 rounded-md bg-surface border border-border-subtle hover:bg-surface-elevated text-fg font-semibold text-xs flex items-center gap-1 shadow-sm transition"
+                        title="Copy JavaScript Pixel"
+                      >
+                        <Copy className="w-3.5 h-3.5 text-primary" />
+                        <span>Copy</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Advertiser Click ID Macro & Security Token Inputs */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border-subtle text-xs">
+                    <div>
+                      <label className="block font-semibold text-black dark:text-white mb-1">
+                        Advertiser Click ID Macro
+                      </label>
+                      <input
+                        type="text"
+                        value={postbackMacroParam}
+                        onChange={(e) => setPostbackMacroParam(e.target.value)}
+                        placeholder="e.g. {clickid}, {s2}, or {click_id}"
+                        className="w-full bg-surface-elevated border border-border-subtle text-fg font-mono rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary"
+                      />
+                      <p className="text-[10px] text-fg-muted mt-1">
+                        Updates macros across all postback snippets in real-time.
+                      </p>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="font-semibold text-black dark:text-white">
+                          Security Token (Anti-Fraud)
+                        </label>
+                        <button
+                          type="button"
+                          onClick={handleGenerateSecurityToken}
+                          className="text-primary hover:underline text-[10px] font-semibold flex items-center gap-1"
+                        >
+                          <RefreshCw className="w-3 h-3" />
+                          <span>Generate</span>
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        value={advertiserSecurityToken}
+                        onChange={(e) => setAdvertiserSecurityToken(e.target.value)}
+                        placeholder="Optional tamper-protection token"
+                        className="w-full bg-surface-elevated border border-border-subtle text-fg font-mono rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="space-y-3 pt-2 border-t border-border-subtle">
-                <div>
-                  <label className="block font-semibold text-black dark:text-white mb-1">
-                    HTML Image Pixel (Fallback)
-                  </label>
-                  <input
-                    type="text"
-                    readOnly
-                    value={`<img src="${globalPostbackUrl}" width="1" height="1" />`}
-                    className="w-full bg-surface-elevated border border-border-subtle text-fg-muted rounded-lg px-3 py-2 font-mono text-[11px]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-black dark:text-white mb-1">
-                    HTML Iframe Pixel (Fallback)
-                  </label>
-                  <input
-                    type="text"
-                    readOnly
-                    value={`<iframe src="${globalPostbackUrl}" scrolling="no" frameborder="0" width="1" height="1"></iframe>`}
-                    className="w-full bg-surface-elevated border border-border-subtle text-fg-muted rounded-lg px-3 py-2 font-mono text-[11px]"
-                  />
-                </div>
+              {/* Right Column: Integration Pixels Parameters Table (5 cols) */}
+              <div className="lg:col-span-5">
+                <PostbackParametersTable
+                  onAppendParam={handleAppendPostbackParam}
+                  onCopyToken={(tok) => handleCopy(tok, `Copied ${tok} ✓`)}
+                />
               </div>
             </div>
           </div>
@@ -1790,6 +2046,31 @@ export function OfferBuilder({
           </div>
         </div>
       </Modal>
+
+      {/* TARGETING GUIDE MODAL */}
+      <TargetingGuideModal
+        isOpen={showTargetingGuideModal}
+        onClose={() => setShowTargetingGuideModal(false)}
+      />
+
+      {/* TARGETING URLS GUIDE MODAL */}
+      <TargetingUrlsGuideModal
+        isOpen={showTargetingUrlsModal}
+        onClose={() => setShowTargetingUrlsModal(false)}
+      />
+
+      {/* POSTBACK INTEGRATION DOCS MODAL */}
+      <PostbackIntegrationDocsModal
+        isOpen={showIntegrationDocsModal}
+        onClose={() => setShowIntegrationDocsModal(false)}
+        postbackUrl={computedPostbackUrl}
+      />
+
+      {/* POSTBACK PARAMS QUICK REFERENCE MODAL */}
+      <PostbackParamsDocsModal
+        isOpen={showParamsDocsModal}
+        onClose={() => setShowParamsDocsModal(false)}
+      />
     </div>
   );
 }

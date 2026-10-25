@@ -135,8 +135,10 @@ model Offer {
   allowConversionsWithoutSession Boolean         @default(false) @map("allow_conversions_without_session")
   enforceIpUniqueness            Boolean         @default(false) @map("enforce_ip_uniqueness")
   blockDuplicateIps              Boolean         @default(false) @map("block_duplicate_ips")
+  postbackMacroParam             String?         @default("{clickid}") @map("postback_macro_param")
+  advertiserSecurityToken        String?         @map("advertiser_security_token")
   createdAt                      DateTime        @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt           DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  updatedAt                      DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   network         Network               @relation(fields: [networkId], references: [id], onDelete: Restrict)
   domain          Domain?               @relation(fields: [domainId], references: [id], onDelete: SetNull)
@@ -156,12 +158,21 @@ model OfferTargetingGroup {
   name             String            @default("Targeting group #1") @db.VarChar(150)
   conditionOp      ConditionOperator @default(AND) @map("condition_op")
   isEnabled        Boolean           @default(true) @map("is_enabled")
+  preset           String?           @map("preset")
+  affiliateIds     Int[]             @default([]) @map("affiliate_ids")
   countries        String[]          @default([])
   excludeCountries Boolean           @default(false) @map("exclude_countries")
   devices          String[]          @default([])
   cities           String[]          @default([])
+  excludeCities    Boolean           @default(false) @map("exclude_cities")
   regions          String[]          @default([])
   excludeRegions   Boolean           @default(false) @map("exclude_regions")
+  operatingSystems String[]          @default([]) @map("operating_systems")
+  browsers         String[]          @default([])
+  connectionTypes  String[]          @default([]) @map("connection_types")
+  carriers         String[]          @default([])
+  ips              String[]          @default([])
+  languages        String[]          @default([])
   additionalUrls   Json              @default("[]") @map("additional_urls")
 
   offer Offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
