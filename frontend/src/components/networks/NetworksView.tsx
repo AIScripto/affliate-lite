@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Network as NetworkIcon, Plus } from 'lucide-react';
+import { Network as NetworkIcon, Plus, CheckCircle2, CopyCheck, AlertCircle } from 'lucide-react';
 import {
   fetchNetworks,
   createNetwork,
@@ -225,12 +225,17 @@ export function NetworksView() {
         </div>
       )}
 
-      {/* Header with Green Add Network Button */}
-      <div className="panel-card p-5">
+      {/* Title Bar with Filled Color 3D Effects Gradient */}
+      <div className="titlebar-3d-gradient rounded-2xl p-5 shadow-lg">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-base font-bold text-fg">Manage Network</h1>
-            <p className="text-xs text-fg-muted mt-0.5">
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold tracking-tight text-white drop-shadow-xs">Manage Networks</h1>
+              <span className="px-2 py-0.5 rounded-md bg-white/20 border border-white/25 text-[10px] font-bold text-white uppercase tracking-wider">
+                Advertisers
+              </span>
+            </div>
+            <p className="text-xs text-white/80 mt-1 font-medium">
               Advertisers and affiliate networks providing campaign offers and postback tracking
             </p>
           </div>
@@ -238,7 +243,7 @@ export function NetworksView() {
           <button
             type="button"
             onClick={() => setShowAddForm(!showAddForm)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white text-xs font-semibold shadow-sm transition"
+            className="btn-3d-success flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-xs font-bold shadow-md shadow-emerald-500/30 active:scale-95 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>{showAddForm ? 'Close Form' : 'Add Network'}</span>
@@ -331,6 +336,77 @@ export function NetworksView() {
             </div>
           </form>
         )}
+      </div>
+
+      {/* 4 Color Tiles With Gradients */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {/* Tile 1: Total Networks - Indigo Gradient */}
+        <div className="tile-gradient-indigo p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Total Networks</span>
+            <div className="w-8 h-8 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center shadow-sm">
+              <NetworkIcon className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">{networks.length}</span>
+            <span className="text-[11px] font-semibold text-fg-muted">Advertisers</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Integrated networks</p>
+        </div>
+
+        {/* Tile 2: Active Networks - Emerald Gradient */}
+        <div className="tile-gradient-emerald p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Active Partners</span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shadow-sm">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-emerald-500 tracking-tight">
+              {networks.filter((n) => n.status === 'ACTIVE').length}
+            </span>
+            <span className="text-[11px] font-bold text-emerald-500 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full shadow-xs">
+              Live
+            </span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Serving campaign offers</p>
+        </div>
+
+        {/* Tile 3: Deduplication Allowed - Sky Gradient */}
+        <div className="tile-gradient-sky p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Multi-Conversion</span>
+            <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-500 border border-sky-500/30 flex items-center justify-center shadow-sm">
+              <CopyCheck className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">
+              {networks.filter((n) => n.allowDuplicateConversions).length}
+            </span>
+            <span className="text-[11px] font-semibold text-fg-muted">Networks</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Allow duplicate conversions</p>
+        </div>
+
+        {/* Tile 4: Inactive/Staged - Amber Gradient */}
+        <div className="tile-gradient-amber p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Paused / Staging</span>
+            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-500 border border-amber-500/30 flex items-center justify-center shadow-sm">
+              <AlertCircle className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-amber-500 tracking-tight">
+              {networks.filter((n) => n.status !== 'ACTIVE').length}
+            </span>
+            <span className="text-[11px] font-semibold text-fg-muted">Paused</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Inactive advertiser connections</p>
+        </div>
       </div>
 
       {/* Networks List DataTable */}

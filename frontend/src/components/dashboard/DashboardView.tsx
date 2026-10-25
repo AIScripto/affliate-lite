@@ -59,11 +59,16 @@ export function DashboardView() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header & Date Range Filter */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      {/* Page Header & Date Range Filter with Filled 3D Gradient Title Bar */}
+      <div className="titlebar-3d-gradient rounded-2xl p-5 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-fg">Dashboard</h1>
-          <p className="text-xs text-fg-muted mt-0.5">
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold tracking-tight text-white drop-shadow-xs">Dashboard</h1>
+            <span className="px-2 py-0.5 rounded-md bg-white/20 border border-white/25 text-[10px] font-bold text-white uppercase tracking-wider">
+              Analytics Hub
+            </span>
+          </div>
+          <p className="text-xs text-white/80 mt-1 font-medium">
             Real-time CPA Affiliate performance, conversions, and traffic analytics
           </p>
         </div>
@@ -73,15 +78,15 @@ export function DashboardView() {
           <button
             type="button"
             onClick={() => setShowDatePicker(!showDatePicker)}
-            className="flex items-center gap-2.5 px-3.5 py-2 rounded-lg bg-surface border border-border-subtle hover:border-primary text-xs font-medium text-fg shadow-sm transition"
+            className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/25 text-xs font-semibold text-white shadow-sm backdrop-blur-sm active:scale-95 transition cursor-pointer"
           >
-            <Calendar className="w-3.5 h-3.5 text-primary" />
+            <Calendar className="w-3.5 h-3.5 text-white" />
             <span>{dateRange}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-fg-muted" />
+            <ChevronDown className="w-3.5 h-3.5 text-white/70" />
           </button>
 
           {showDatePicker && (
-            <div className="absolute right-0 mt-2 w-56 rounded-lg bg-surface border border-border-subtle shadow-xl z-30 p-2 text-xs divide-y divide-border-subtle">
+            <div className="absolute right-0 mt-2 w-56 rounded-xl bg-surface border border-border-subtle shadow-xl z-30 p-2 text-xs divide-y divide-border-subtle">
               <div className="space-y-1 pb-2">
                 {[
                   'Today',
@@ -99,7 +104,7 @@ export function DashboardView() {
                       setShowDatePicker(false);
                       loadData();
                     }}
-                    className="w-full text-left px-3 py-1.5 rounded hover:bg-surface-elevated text-fg transition"
+                    className="w-full text-left px-3 py-1.5 rounded-lg hover:bg-surface-elevated text-fg transition cursor-pointer"
                   >
                     {range}
                   </button>
@@ -110,26 +115,26 @@ export function DashboardView() {
         </div>
       </div>
 
-      {/* 4-Card KPI Row */}
+      {/* 4-Card KPI Row with 3D Color Gradient Tiles */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        {/* Card 1: Clicks */}
-        <div className="panel-card p-5">
+        {/* Card 1: Clicks - Emerald Gradient Tile */}
+        <div className="tile-gradient-emerald p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-black dark:text-white">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">
               Clicks
             </span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shadow-sm">
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
           {isLoading ? (
             <div className="h-8 bg-surface-elevated animate-pulse rounded mt-2 w-24" />
           ) : (
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold tabular-nums text-black dark:text-white">
+            <div className="mt-2.5 flex items-baseline gap-2">
+              <span className="text-3xl font-black tabular-nums text-fg tracking-tight">
                 {summary?.clicks ?? 68}
               </span>
-              <span className="text-[11px] font-semibold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-bold text-emerald-500 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full shadow-xs">
                 {summary?.clicksGrowth ?? '+136% Today'}
               </span>
             </div>
@@ -137,24 +142,24 @@ export function DashboardView() {
           <p className="text-[11px] text-fg-muted mt-2 font-medium">Active routing clicks across all campaigns</p>
         </div>
 
-        {/* Card 2: Conversions */}
-        <div className="panel-card p-5">
+        {/* Card 2: Conversions - Indigo Gradient Tile */}
+        <div className="tile-gradient-indigo p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-black dark:text-white">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">
               Conversions
             </span>
-            <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center shadow-sm">
               <Filter className="w-4 h-4" />
             </div>
           </div>
           {isLoading ? (
             <div className="h-8 bg-surface-elevated animate-pulse rounded mt-2 w-20" />
           ) : (
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold tabular-nums text-black dark:text-white">
+            <div className="mt-2.5 flex items-baseline gap-2">
+              <span className="text-3xl font-black tabular-nums text-fg tracking-tight">
                 {summary?.conversions ?? 5}
               </span>
-              <span className="text-[11px] font-semibold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-bold text-primary bg-primary/15 border border-primary/30 px-2 py-0.5 rounded-full shadow-xs">
                 {summary?.conversionsGrowth ?? '+200% Today'}
               </span>
             </div>
@@ -162,21 +167,21 @@ export function DashboardView() {
           <p className="text-[11px] text-fg-muted mt-2 font-medium">Attributed conversions from postback engine</p>
         </div>
 
-        {/* Card 3: Payout */}
-        <div className="panel-card p-5">
+        {/* Card 3: Payout - Sky Gradient Tile */}
+        <div className="tile-gradient-sky p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-black dark:text-white">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">
               Payout
             </span>
-            <div className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-500 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-sky-500/20 text-sky-500 border border-sky-500/30 flex items-center justify-center shadow-sm">
               <Users className="w-4 h-4" />
             </div>
           </div>
           {isLoading ? (
             <div className="h-8 bg-surface-elevated animate-pulse rounded mt-2 w-32" />
           ) : (
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold tabular-nums text-black dark:text-white">
+            <div className="mt-2.5 flex items-baseline gap-2">
+              <span className="text-3xl font-black tabular-nums text-fg tracking-tight">
                 {currencySymbol} {Number(summary?.payout ?? 750).toFixed(2)}
               </span>
               <span className="text-[11px] font-semibold text-fg-muted uppercase">
@@ -187,17 +192,17 @@ export function DashboardView() {
           <p className="text-[11px] text-fg-muted mt-2 font-medium">Total affiliate publisher earnings payable</p>
         </div>
 
-        {/* Card 4: EPC & Interactive Currency Selector */}
-        <div className="panel-card p-5">
+        {/* Card 4: EPC - Amber Gradient Tile */}
+        <div className="tile-gradient-amber p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-black dark:text-white">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">
               EPC
             </span>
             <div className="flex items-center gap-1.5">
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
-                className="bg-surface-elevated border border-border-subtle text-fg rounded px-2 py-0.5 text-xs font-semibold focus:outline-none focus:border-primary transition"
+                className="bg-surface-elevated border border-border-subtle text-fg rounded-lg px-2 py-0.5 text-xs font-semibold focus:outline-none focus:border-primary transition shadow-xs cursor-pointer"
               >
                 <option value="USD">USD</option>
                 <option value="EUR">EUR</option>
@@ -205,21 +210,21 @@ export function DashboardView() {
                 <option value="PKR">PKR</option>
                 <option value="AED">AED</option>
               </select>
-              <div className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
-                <Coins className="w-3.5 h-3.5" />
+              <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-500 border border-amber-500/30 flex items-center justify-center shadow-sm">
+                <Coins className="w-4 h-4" />
               </div>
             </div>
           </div>
           {isLoading ? (
             <div className="h-8 bg-surface-elevated animate-pulse rounded mt-2 w-28" />
           ) : (
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-bold tabular-nums text-fg">
+            <div className="mt-2.5 flex items-baseline gap-2">
+              <span className="text-3xl font-black tabular-nums text-fg tracking-tight">
                 {currencySymbol} {Number(summary?.epc ?? 11.03).toFixed(2)}
               </span>
             </div>
           )}
-          <p className="text-[11px] text-fg-muted mt-2">
+          <p className="text-[11px] text-fg-muted mt-2 font-medium">
             Earnings by Currency:{' '}
             <strong className="text-fg font-semibold">
               {currencySymbol} {Number(summary?.payout ?? 750).toFixed(2)}

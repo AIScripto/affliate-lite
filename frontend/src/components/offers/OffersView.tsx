@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Plus, Copy, Check, ExternalLink } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Plus, Copy, Check, ExternalLink, Tag, Activity, MousePointer, CheckCircle2 } from 'lucide-react';
 import {
   fetchOffers,
   fetchNetworks,
@@ -282,6 +282,11 @@ export function OffersView() {
     );
   }
 
+  const totalOffers = offers.length;
+  const activeOffers = useMemo(() => offers.filter((o) => o.status === 'ACTIVE').length, [offers]);
+  const totalClicks = useMemo(() => offers.reduce((acc, o) => acc + (o.clicksCount || 0), 0), [offers]);
+  const totalConversions = useMemo(() => offers.reduce((acc, o) => acc + (o.conversionsCount || 0), 0), [offers]);
+
   return (
     <div className="space-y-6">
       {/* Toast Alert */}
@@ -292,27 +297,97 @@ export function OffersView() {
         </div>
       )}
 
-      {/* Header with Green Add Offer Button */}
-      <div className="panel-card p-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-base font-bold text-fg">Manage Offer</h1>
-            <p className="text-xs text-fg-muted mt-0.5">
-              Enterprise campaign manager with full-body tracking controls, targeting, and revenue spread
-            </p>
+      {/* Title Bar with Filled Color 3D Effects Gradient */}
+      <div className="titlebar-3d-gradient rounded-2xl p-5 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold tracking-tight text-white drop-shadow-xs">Manage Offers</h1>
+            <span className="px-2 py-0.5 rounded-md bg-white/20 border border-white/25 text-[10px] font-bold text-white uppercase tracking-wider">
+              Campaign Manager
+            </span>
           </div>
+          <p className="text-xs text-white/80 mt-1 font-medium">
+            Enterprise campaign manager with full-body tracking controls, targeting, and revenue spread
+          </p>
+        </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedOffer(null);
-              setBuilderOpen(true);
-            }}
-            className="btn-3d-success flex items-center gap-2 px-4 py-2 rounded-xl text-white text-xs font-semibold shadow-md shadow-emerald-500/20 active:scale-95 transition-all cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Offer</span>
-          </button>
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedOffer(null);
+            setBuilderOpen(true);
+          }}
+          className="btn-3d-success flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-xs font-bold shadow-md shadow-emerald-500/30 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Add Offer</span>
+        </button>
+      </div>
+
+      {/* 4 Color Tiles With Gradients */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {/* Tile 1: Total Offers - Indigo Gradient */}
+        <div className="tile-gradient-indigo p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Total Offers</span>
+            <div className="w-8 h-8 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center shadow-sm">
+              <Tag className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">{totalOffers}</span>
+            <span className="text-[11px] font-semibold text-fg-muted">Campaigns</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Registered in portfolio</p>
+        </div>
+
+        {/* Tile 2: Active Offers - Emerald Gradient */}
+        <div className="tile-gradient-emerald p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Active Routing</span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shadow-sm">
+              <Activity className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-emerald-500 tracking-tight">{activeOffers}</span>
+            <span className="text-[11px] font-bold text-emerald-500 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full shadow-xs">
+              Live
+            </span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Traffic eligible campaigns</p>
+        </div>
+
+        {/* Tile 3: Total Clicks - Sky Gradient */}
+        <div className="tile-gradient-sky p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Total Clicks</span>
+            <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-500 border border-sky-500/30 flex items-center justify-center shadow-sm">
+              <MousePointer className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">{totalClicks}</span>
+            <span className="text-[11px] font-semibold text-fg-muted">Sessions</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Direct routing sessions</p>
+        </div>
+
+        {/* Tile 4: Attributed Conversions - Purple Gradient */}
+        <div className="tile-gradient-purple p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Conversions</span>
+            <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center justify-center shadow-sm">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">{totalConversions}</span>
+            <span className="text-[11px] font-bold text-purple-400 bg-purple-500/15 border border-purple-500/30 px-2 py-0.5 rounded-full shadow-xs">
+              Attributed
+            </span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Verified postback actions</p>
         </div>
       </div>
 

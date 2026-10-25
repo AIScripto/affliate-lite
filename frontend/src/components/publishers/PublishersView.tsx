@@ -8,6 +8,9 @@ import {
   Layers,
   Search,
   Tag,
+  Users,
+  ShieldCheck,
+  Award,
 } from 'lucide-react';
 import {
   fetchPublishers,
@@ -397,6 +400,10 @@ export function PublishersView() {
     },
   ];
 
+  const totalPubs = publishers.length;
+  const activePubs = useMemo(() => publishers.filter((p) => p.status === 'ACTIVE').length, [publishers]);
+  const directPubs = useMemo(() => publishers.filter((p) => p.publisherType === 'Publisher' || !p.publisherType).length, [publishers]);
+
   return (
     <div className="space-y-6">
       {/* Toast Alert */}
@@ -407,12 +414,17 @@ export function PublishersView() {
         </div>
       )}
 
-      {/* Top Banner & Add Publisher Action */}
-      <div className="panel-card p-5">
+      {/* Title Bar with Filled Color 3D Effects Gradient */}
+      <div className="titlebar-3d-gradient rounded-2xl p-5 shadow-lg">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-base font-bold text-fg">Manage Publisher</h1>
-            <p className="text-xs text-fg-muted mt-0.5">
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold tracking-tight text-white drop-shadow-xs">Manage Publishers</h1>
+              <span className="px-2 py-0.5 rounded-md bg-white/20 border border-white/25 text-[10px] font-bold text-white uppercase tracking-wider">
+                Affiliate Directory
+              </span>
+            </div>
+            <p className="text-xs text-white/80 mt-1 font-medium">
               Configure affiliates, publisher tiers, assigned campaigns, and S2S postback URLs
             </p>
           </div>
@@ -420,7 +432,7 @@ export function PublishersView() {
           <button
             type="button"
             onClick={() => setShowAddForm(!showAddForm)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white text-xs font-semibold shadow-sm transition self-start sm:self-auto"
+            className="btn-3d-success flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-xs font-bold shadow-md shadow-emerald-500/30 active:scale-95 transition-all self-start sm:self-auto cursor-pointer"
           >
             <UserPlus className="w-4 h-4" />
             <span>{showAddForm ? 'Close Form' : 'Add Publisher'}</span>
@@ -688,6 +700,71 @@ export function PublishersView() {
             </div>
           </form>
         )}
+      </div>
+
+      {/* 4 Color Tiles With Gradients */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {/* Tile 1: Total Publishers - Indigo Gradient */}
+        <div className="tile-gradient-indigo p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Total Publishers</span>
+            <div className="w-8 h-8 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center shadow-sm">
+              <Users className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">{totalPubs}</span>
+            <span className="text-[11px] font-semibold text-fg-muted">Partners</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Affiliates in network</p>
+        </div>
+
+        {/* Tile 2: Active Accounts - Emerald Gradient */}
+        <div className="tile-gradient-emerald p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Active Accounts</span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shadow-sm">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-emerald-500 tracking-tight">{activePubs}</span>
+            <span className="text-[11px] font-bold text-emerald-500 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full shadow-xs">
+              Verified
+            </span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Eligible to route traffic</p>
+        </div>
+
+        {/* Tile 3: Direct Tier - Sky Gradient */}
+        <div className="tile-gradient-sky p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Direct Tier</span>
+            <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-500 border border-sky-500/30 flex items-center justify-center shadow-sm">
+              <Award className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">{directPubs}</span>
+            <span className="text-[11px] font-semibold text-fg-muted">Publishers</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Primary traffic sources</p>
+        </div>
+
+        {/* Tile 4: Available Offers - Amber Gradient */}
+        <div className="tile-gradient-amber p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Available Offers</span>
+            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-500 border border-amber-500/30 flex items-center justify-center shadow-sm">
+              <Tag className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">{availableOffers.length}</span>
+            <span className="text-[11px] font-semibold text-fg-muted">Campaigns</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Ready for assignment</p>
+        </div>
       </div>
 
       {/* Publishers List DataTable */}

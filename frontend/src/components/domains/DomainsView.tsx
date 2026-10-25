@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Globe, Plus } from 'lucide-react';
+import { Globe, Plus, CheckCircle2, ShieldCheck, Server } from 'lucide-react';
 import {
   fetchDomains,
   createDomain,
@@ -156,12 +156,17 @@ export function DomainsView() {
         </div>
       )}
 
-      {/* Header with Green Add Domain Button */}
-      <div className="panel-card p-5">
+      {/* Title Bar with Filled Color 3D Effects Gradient */}
+      <div className="titlebar-3d-gradient rounded-2xl p-5 shadow-lg">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-base font-bold text-fg">Manage Domain</h1>
-            <p className="text-xs text-fg-muted mt-0.5">
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold tracking-tight text-white drop-shadow-xs">Manage Domains</h1>
+              <span className="px-2 py-0.5 rounded-md bg-white/20 border border-white/25 text-[10px] font-bold text-white uppercase tracking-wider">
+                Routing Endpoints
+              </span>
+            </div>
+            <p className="text-xs text-white/80 mt-1 font-medium">
               Dedicated tracking and postback domains configured for redirect routing
             </p>
           </div>
@@ -169,7 +174,7 @@ export function DomainsView() {
           <button
             type="button"
             onClick={() => setShowAddForm(!showAddForm)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white text-xs font-semibold shadow-sm transition"
+            className="btn-3d-success flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-xs font-bold shadow-md shadow-emerald-500/30 active:scale-95 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>{showAddForm ? 'Close Form' : 'Add Domain'}</span>
@@ -222,6 +227,77 @@ export function DomainsView() {
             </div>
           </form>
         )}
+      </div>
+
+      {/* 4 Color Tiles With Gradients */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {/* Tile 1: Total Domains - Indigo Gradient */}
+        <div className="tile-gradient-indigo p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Total Domains</span>
+            <div className="w-8 h-8 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center shadow-sm">
+              <Globe className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">{domains.length}</span>
+            <span className="text-[11px] font-semibold text-fg-muted">Domains</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Tracking infrastructure</p>
+        </div>
+
+        {/* Tile 2: Active Routing - Emerald Gradient */}
+        <div className="tile-gradient-emerald p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Active Routing</span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shadow-sm">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-emerald-500 tracking-tight">
+              {domains.filter((d) => d.status === 'ACTIVE').length}
+            </span>
+            <span className="text-[11px] font-bold text-emerald-500 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full shadow-xs">
+              Live
+            </span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Serving click redirects</p>
+        </div>
+
+        {/* Tile 3: SSL Verified - Sky Gradient */}
+        <div className="tile-gradient-sky p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">SSL Secured</span>
+            <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-500 border border-sky-500/30 flex items-center justify-center shadow-sm">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">
+              {domains.filter((d) => d.status === 'ACTIVE').length}
+            </span>
+            <span className="text-[11px] font-semibold text-fg-muted">HTTPS Ready</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Encrypted traffic certs</p>
+        </div>
+
+        {/* Tile 4: Custom Endpoints - Purple Gradient */}
+        <div className="tile-gradient-purple p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Custom Endpoints</span>
+            <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center justify-center shadow-sm">
+              <Server className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-purple-400 tracking-tight">
+              {domains.length}
+            </span>
+            <span className="text-[11px] font-semibold text-fg-muted">Postback & Click</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Allocated routing hosts</p>
+        </div>
       </div>
 
       {/* Domain List DataTable */}

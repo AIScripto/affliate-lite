@@ -968,38 +968,38 @@ export function OfferBuilder({
         </div>
       )}
 
-      {/* Top Header Bar with Breadcrumb and Actions */}
-      <div className="panel-card p-5 border border-border-subtle bg-surface shadow-sm">
+      {/* Top Header Bar with Breadcrumb and Actions with Filled 3D Gradient Title Bar */}
+      <div className="titlebar-3d-gradient rounded-2xl p-5 shadow-lg">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={onBack}
-              className="p-2 rounded-lg border border-border-subtle hover:bg-surface-elevated text-fg-muted hover:text-fg transition flex items-center gap-1.5 text-xs font-medium"
+              className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/25 text-white transition flex items-center gap-1.5 text-xs font-semibold cursor-pointer active:scale-95"
               title="Return to Offers Table"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Offers</span>
             </button>
-            <div className="h-6 w-px bg-border-subtle hidden sm:block" />
+            <div className="h-6 w-px bg-white/20 hidden sm:block" />
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-black dark:text-white">
+                <h1 className="text-lg font-bold text-white drop-shadow-xs">
                   {offer ? `Edit Offer: ${offer.name} (#${offer.id})` : 'New Offer Setup'}
                 </h1>
                 <span
-                  className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                     status === 'ACTIVE'
-                      ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30'
                       : status === 'PAUSED'
-                      ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
-                      : 'bg-red-500/10 text-red-500 border border-red-500/20'
+                      ? 'bg-amber-500/20 text-amber-300 border border-amber-400/30'
+                      : 'bg-rose-500/20 text-rose-300 border border-rose-400/30'
                   }`}
                 >
                   {status}
                 </span>
               </div>
-              <p className="text-xs text-fg-muted mt-0.5">
+              <p className="text-xs text-white/80 mt-0.5 font-medium">
                 Configure campaign routing, tracking parameters, targeting rules, affiliate access, and revenue payouts
               </p>
             </div>
@@ -1009,9 +1009,9 @@ export function OfferBuilder({
             <button
               type="button"
               onClick={() => setShowHowItWorksModal(true)}
-              className="px-3 py-1.5 rounded-lg border border-border-subtle hover:bg-surface-elevated text-xs font-semibold text-fg-muted hover:text-fg flex items-center gap-1.5 transition"
+              className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/25 text-xs font-semibold text-white flex items-center gap-1.5 transition cursor-pointer active:scale-95"
             >
-              <BookOpen className="w-4 h-4 text-primary" />
+              <BookOpen className="w-4 h-4 text-white" />
               <span>How it works</span>
             </button>
             {offer?.id && (
@@ -1019,9 +1019,9 @@ export function OfferBuilder({
                 type="button"
                 onClick={handleDuplicate}
                 disabled={isSubmitting}
-                className="px-3 py-1.5 rounded-lg border border-border-subtle hover:bg-surface-elevated text-xs font-semibold text-fg flex items-center gap-1.5 transition disabled:opacity-50"
+                className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/25 text-xs font-semibold text-white flex items-center gap-1.5 transition cursor-pointer active:scale-95 disabled:opacity-50"
               >
-                <Layers className="w-4 h-4 text-sky-500" />
+                <Layers className="w-4 h-4 text-sky-300" />
                 <span>Duplicate offer</span>
               </button>
             )}

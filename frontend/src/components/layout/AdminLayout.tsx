@@ -265,21 +265,21 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
-        {/* Top Navbar */}
-        <header className="h-16 bg-surface/95 backdrop-blur-md border-b border-border-subtle px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20 shadow-xs">
+        {/* Top Navbar / Title Bar with Filled Color 3D Effects Gradient */}
+        <header className="h-16 titlebar-3d-gradient px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 rounded-lg bg-surface-elevated border border-border-subtle text-fg hover:text-primary transition"
+              className="lg:hidden p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-white transition cursor-pointer"
               title="Toggle Menu"
             >
               <Menu className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-fg-muted">Platform</span>
-              <span className="text-fg-muted/60">/</span>
-              <span className="text-fg font-bold tracking-tight">{getBreadcrumb()}</span>
+              <span className="text-white/70 font-medium">Platform</span>
+              <span className="text-white/40">/</span>
+              <span className="text-white font-bold tracking-tight text-sm drop-shadow-xs">{getBreadcrumb()}</span>
             </div>
           </div>
 
@@ -287,17 +287,17 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
             <button
               type="button"
               onClick={toggleTheme}
-              className="btn-3d-subtle flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle text-xs font-medium text-fg hover:border-primary/50 transition cursor-pointer"
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/25 text-xs font-semibold text-white shadow-sm backdrop-blur-sm active:scale-95 transition cursor-pointer"
               title="Switch Theme"
             >
               {theme === 'dark' ? (
                 <>
-                  <Sun className="w-3.5 h-3.5 text-warning" />
+                  <Sun className="w-3.5 h-3.5 text-amber-300" />
                   <span>Switch Theme</span>
                 </>
               ) : (
                 <>
-                  <Moon className="w-3.5 h-3.5 text-primary" />
+                  <Moon className="w-3.5 h-3.5 text-indigo-100" />
                   <span>Switch Theme</span>
                 </>
               )}

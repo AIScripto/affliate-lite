@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calendar, ChevronDown } from 'lucide-react';
+import { Calendar, ChevronDown, Activity, MousePointer, DollarSign, TrendingUp } from 'lucide-react';
 import { fetchPublishersReport } from '../../services/api';
 import { PublisherReportResponse } from '../../types';
 
@@ -44,13 +44,23 @@ export function PublishersReportView() {
   const endIndex = Math.min(startIndex + pageSize, totalEntries);
   const paginatedData = filteredData.slice(startIndex, endIndex);
 
+  const summaryClicks = report?.summary?.totalClicks ?? (report?.data || []).reduce((acc, item) => acc + (item.clicks || 0), 0);
+  const summaryApproved = report?.summary?.totalApproved ?? (report?.data || []).reduce((acc, item) => acc + (item.conversionsApproved || 0), 0);
+  const summaryPayout = report?.summary?.totalPayout ?? (report?.data || []).reduce((acc, item) => acc + (item.payout || 0), 0);
+  const summaryEpc = report?.summary?.weightedEpc ?? (summaryClicks > 0 ? (Number(summaryPayout) / summaryClicks).toFixed(2) : '0.00');
+
   return (
     <div className="space-y-6">
-      {/* Header & Date Range */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      {/* Title Bar with Filled Color 3D Effects Gradient */}
+      <div className="titlebar-3d-gradient rounded-2xl p-5 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-fg">Publishers Report</h1>
-          <p className="text-xs text-fg-muted mt-0.5">
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold tracking-tight text-white drop-shadow-xs">Publishers Report</h1>
+            <span className="px-2 py-0.5 rounded-md bg-white/20 border border-white/25 text-[10px] font-bold text-white uppercase tracking-wider">
+              Affiliate Analytics
+            </span>
+          </div>
+          <p className="text-xs text-white/80 mt-1 font-medium">
             Detailed affiliate breakdown by publisher, campaign offer, conversions, and EPC
           </p>
         </div>
@@ -59,15 +69,15 @@ export function PublishersReportView() {
           <button
             type="button"
             onClick={() => setShowDatePicker(!showDatePicker)}
-            className="flex items-center gap-2.5 px-3.5 py-2 rounded-lg bg-surface border border-border-subtle hover:border-primary text-xs font-medium text-fg shadow-sm transition"
+            className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 border border-white/25 text-xs font-semibold text-white shadow-sm backdrop-blur-sm transition cursor-pointer"
           >
-            <Calendar className="w-3.5 h-3.5 text-primary" />
+            <Calendar className="w-3.5 h-3.5 text-white/90" />
             <span>{dateRange}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-fg-muted" />
+            <ChevronDown className="w-3.5 h-3.5 text-white/70" />
           </button>
 
           {showDatePicker && (
-            <div className="absolute right-0 mt-2 w-64 rounded-lg bg-surface border border-border-subtle shadow-xl z-30 p-2 text-xs divide-y divide-border-subtle">
+            <div className="absolute right-0 mt-2 w-64 rounded-xl bg-surface border border-border-subtle shadow-2xl z-30 p-2 text-xs divide-y divide-border-subtle">
               <div className="space-y-1 pb-2">
                 {[
                   'Today',
@@ -84,7 +94,7 @@ export function PublishersReportView() {
                       setShowDatePicker(false);
                       loadData();
                     }}
-                    className="w-full text-left px-3 py-1.5 rounded hover:bg-surface-elevated text-fg transition"
+                    className="w-full text-left px-3 py-1.5 rounded hover:bg-surface-elevated text-fg transition cursor-pointer"
                   >
                     {range}
                   </button>
@@ -92,6 +102,71 @@ export function PublishersReportView() {
               </div>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* 4 Color Tiles With Gradients */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {/* Tile 1: Approved Conversions - Emerald Gradient */}
+        <div className="tile-gradient-emerald p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Approved</span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shadow-sm">
+              <Activity className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-emerald-500 tracking-tight">{summaryApproved}</span>
+            <span className="text-[11px] font-bold text-emerald-500 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full shadow-xs">
+              Attributed
+            </span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Valid conversions postbacks</p>
+        </div>
+
+        {/* Tile 2: Total Clicks - Indigo Gradient */}
+        <div className="tile-gradient-indigo p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Total Clicks</span>
+            <div className="w-8 h-8 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center shadow-sm">
+              <MousePointer className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">{summaryClicks}</span>
+            <span className="text-[11px] font-semibold text-fg-muted">Redirects</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Affiliate traffic routed</p>
+        </div>
+
+        {/* Tile 3: Total Payout - Sky Gradient */}
+        <div className="tile-gradient-sky p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Total Payout</span>
+            <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-500 border border-sky-500/30 flex items-center justify-center shadow-sm">
+              <DollarSign className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-sky-500 tracking-tight">${Number(summaryPayout).toFixed(2)}</span>
+            <span className="text-[11px] font-semibold text-fg-muted">USD</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Earned affiliate commissions</p>
+        </div>
+
+        {/* Tile 4: Average EPC - Amber Gradient */}
+        <div className="tile-gradient-amber p-4.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg">Avg EPC</span>
+            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-500 border border-amber-500/30 flex items-center justify-center shadow-sm">
+              <TrendingUp className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-3xl font-black tabular-nums text-amber-500 tracking-tight">${Number(summaryEpc).toFixed(2)}</span>
+            <span className="text-[11px] font-semibold text-fg-muted">Per Click</span>
+          </div>
+          <p className="text-[11px] text-fg-muted mt-1 font-medium">Average revenue per click</p>
         </div>
       </div>
 
