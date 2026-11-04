@@ -257,6 +257,19 @@ export interface ReportsOverviewResponse {
     overallCr: number;
     averageEpc: number;
   };
+  timeline?: Array<{
+    label: string;
+    clicks: number;
+    conversions: number;
+    revenue: number;
+    payout: number;
+  }>;
+  trends?: {
+    clicks: number[];
+    conversions: number[];
+    revenue: number[];
+    payout: number[];
+  };
   topOffers: Array<{
     id: number;
     name: string;

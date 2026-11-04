@@ -55,8 +55,8 @@ html.dark,
   --color-danger: #EF4444;
   --color-fg: #F8FAFC;
   --color-fg-heading: #FFFFFF;
-  --color-fg-muted: #94A3B8;
-  --color-fg-subtle: #64748B;
+  --color-fg-muted: #CBD5E1;
+  --color-fg-subtle: #94A3B8;
   --titlebar-gradient: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #0F172A 100%);
   --sidebar-bg: #121620;
   --sidebar-border: #252C3E;
@@ -298,8 +298,8 @@ html.theme-midnight {
   --color-primary-light: #082F49;
   --color-fg: #F8FAFC;
   --color-fg-heading: #FFFFFF;
-  --color-fg-muted: #94A3B8;
-  --color-fg-subtle: #64748B;
+  --color-fg-muted: #CBD5E1;
+  --color-fg-subtle: #94A3B8;
   --titlebar-gradient: linear-gradient(135deg, #000000 0%, #09090B 50%, #0F172A 100%);
   --sidebar-bg: linear-gradient(180deg, #000000 0%, #09090B 60%, #000000 100%);
   --sidebar-border: rgba(39, 39, 42, 0.8);

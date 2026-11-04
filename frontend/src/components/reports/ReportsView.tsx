@@ -20,8 +20,7 @@ import {
   AlertCircle,
   FileSpreadsheet,
   FileText,
-  Activity,
-  ArrowUpRight
+  Activity
 } from 'lucide-react';
 import {
   fetchReportsOverview,
@@ -48,6 +47,61 @@ import {
 import { printReport, exportToExcel, ReportDocument } from '../../utils/exportUtils';
 
 export type ReportTabKey = 'overview' | 'offers' | 'networks' | 'publishers' | 'conversions' | 'traffic';
+
+/**
+ * Computes a smoothed SVG path from real chronological trend points using cubic Bezier interpolation.
+ * Eliminates all static or hardcoded graph paths.
+ */
+function generateSmoothSvg(points: number[], width = 200, height = 40, padding = 4) {
+  if (!points || points.length === 0) {
+    return {
+      fillPath: `M 0,${height} L ${width},${height} Z`,
+      strokePath: `M 0,${height - padding} L ${width},${height - padding}`,
+      lastX: width,
+      lastY: height - padding,
+    };
+  }
+
+  const minVal = Math.min(...points);
+  const maxVal = Math.max(...points);
+  const range = maxVal - minVal || 1;
+
+  const coords = points.map((val, idx) => {
+    const x = (idx / (points.length - 1 || 1)) * width;
+    const norm = (val - minVal) / range;
+    const y = height - padding - norm * (height - 2 * padding);
+    return { x, y };
+  });
+
+  if (coords.length === 1) {
+    coords.push({ x: width, y: coords[0].y });
+  }
+
+  let strokePath = `M ${coords[0].x.toFixed(1)},${coords[0].y.toFixed(1)}`;
+  for (let i = 0; i < coords.length - 1; i++) {
+    const p0 = coords[Math.max(i - 1, 0)];
+    const p1 = coords[i];
+    const p2 = coords[i + 1];
+    const p3 = coords[Math.min(i + 2, coords.length - 1)];
+
+    const cp1x = p1.x + (p2.x - p0.x) / 6;
+    const cp1y = p1.y + (p2.y - p0.y) / 6;
+    const cp2x = p2.x - (p3.x - p1.x) / 6;
+    const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+    strokePath += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+  }
+
+  const last = coords[coords.length - 1];
+  const fillPath = `${strokePath} L ${width},${height} L 0,${height} Z`;
+
+  return {
+    fillPath,
+    strokePath,
+    lastX: last.x,
+    lastY: last.y,
+  };
+}
 
 interface ReportsViewProps {
   initialTab?: ReportTabKey;
@@ -619,18 +673,6 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
 
   const currentTabLabel = tabsConfig.find((t) => t.key === activeTab)?.label || 'Overview';
 
-  // Realistic mock data points for the 24-hr traffic chart based on real clicks
-  const totalClicksCount = overviewData?.summary.totalClicks || 69;
-  const totalConvCount = overviewData?.summary.totalConversions || 6;
-  const chartSlices = [
-    { time: '00:00', clicks: Math.round(totalClicksCount * 0.05), conv: 0 },
-    { time: '04:00', clicks: Math.round(totalClicksCount * 0.08), conv: 0 },
-    { time: '08:00', clicks: Math.round(totalClicksCount * 0.18), conv: Math.min(1, totalConvCount) },
-    { time: '12:00', clicks: Math.round(totalClicksCount * 0.32), conv: Math.min(2, totalConvCount) },
-    { time: '16:00', clicks: Math.round(totalClicksCount * 0.24), conv: Math.min(2, totalConvCount) },
-    { time: '20:00', clicks: Math.round(totalClicksCount * 0.13), conv: Math.min(1, totalConvCount) },
-  ];
-
   return (
     <div className="space-y-3.5">
       {/* 1. Header with Title & Compact Breadcrumb */}
@@ -718,8 +760,8 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
         </div>
       )}
 
-      {/* 2. Compact Horizontal Module Tabs Bar */}
-      <div className="flex items-center gap-1 border-b border-border-strong overflow-x-auto pb-1">
+      {/* 2. Compact Horizontal Module Tabs Bar with Tactile 3D Styling */}
+      <div className="flex items-center gap-1.5 border-b border-border-strong overflow-x-auto pb-1.5">
         {tabsConfig.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.key;
@@ -732,13 +774,13 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                 setCurrentPage(1);
                 setSearch('');
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer rounded-lg border ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold whitespace-nowrap transition-all duration-150 cursor-pointer rounded-lg ${
                 isActive
-                  ? 'bg-primary/10 border-primary text-primary font-bold shadow-2xs'
-                  : 'bg-surface border-border-strong text-fg-muted hover:text-fg hover:border-border-strong'
+                  ? 'btn-3d-primary text-white shadow-md'
+                  : 'btn-3d-subtle text-slate-200 dark:text-slate-200 hover:text-white'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-primary' : 'text-fg-subtle'}`} />
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
               <span>{tab.label}</span>
             </button>
           );
@@ -746,14 +788,14 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
 
         {/* Sub-Tab Pills (compact pill buttons for non-overview tabs) */}
         {activeTab !== 'overview' && (
-          <div className="flex items-center gap-1 ml-auto pl-2 border-l border-border-strong">
+          <div className="flex items-center gap-1.5 ml-auto pl-2 border-l border-border-strong">
             <button
               type="button"
               onClick={() => setSubTab('summary')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition cursor-pointer border ${
+              className={`px-3 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
                 subTab === 'summary'
-                  ? 'bg-surface-elevated text-primary border-primary shadow-2xs'
-                  : 'bg-surface text-fg-muted border-border-strong hover:text-fg'
+                  ? 'btn-3d-primary text-white shadow-xs'
+                  : 'btn-3d-subtle text-slate-200 dark:text-slate-200 hover:text-white'
               }`}
             >
               Summary
@@ -761,10 +803,10 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
             <button
               type="button"
               onClick={() => setSubTab('details')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition cursor-pointer border ${
+              className={`px-3 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
                 subTab === 'details'
-                  ? 'bg-surface-elevated text-primary border-primary shadow-2xs'
-                  : 'bg-surface text-fg-muted border-border-strong hover:text-fg'
+                  ? 'btn-3d-primary text-white shadow-xs'
+                  : 'btn-3d-subtle text-slate-200 dark:text-slate-200 hover:text-white'
               }`}
             >
               Detailed Ledger
@@ -773,476 +815,515 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
         )}
       </div>
 
-      {/* 3. OVERVIEW DASHBOARD VIEW (Matching picture media_1793798226975_5e7d2486.jpg) */}
-      {activeTab === 'overview' && (
-        <div className="space-y-3.5">
-          {/* Top Row: 4 Gradient Sparkline Metric Tiles */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {/* Tile 1: Active Traffic / Clicks */}
-            <div className="panel-card p-3 border border-border-strong relative overflow-hidden flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="p-1.5 rounded-lg bg-sky-500/10 text-sky-400">
-                      <MousePointer className="w-3.5 h-3.5" />
-                    </span>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-fg-muted">Active Clicks</span>
-                  </div>
-                  <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
-                    <ArrowUpRight className="w-3 h-3" />
-                    +136%
-                  </span>
-                </div>
-                <div className="mt-2 text-2xl font-black text-fg-heading tracking-tight tabular-nums">
-                  {overviewData?.summary.totalClicks.toLocaleString() || '69'}
-                </div>
-              </div>
+      {/* 3. OVERVIEW DASHBOARD VIEW - 100% Real Database Derived */}
+      {activeTab === 'overview' && (() => {
+        const sum = overviewData?.summary;
+        const totalClicks = sum?.totalClicks ?? 0;
+        const totalConvs = sum?.totalConversions ?? 0;
+        const approvedConvs = sum?.approvedConversions ?? 0;
+        const uncheckedConvs = sum?.uncheckedConversions ?? 0;
+        const totalRevenue = sum?.totalRevenue ?? 0;
+        const totalPayout = sum?.totalPayout ?? 0;
+        const netMargin = sum?.netMargin ?? 0;
+        const marginPercent = sum?.marginPercent ?? 0;
+        const overallCr = sum?.overallCr ?? 0;
+        const averageEpc = sum?.averageEpc ?? 0;
 
-              {/* Glowing SVG Wave Sparkline (Neon Blue) */}
-              <div className="mt-2 -mx-1">
-                <svg className="w-full h-10 overflow-visible" viewBox="0 0 200 40" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="clickGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M 0,35 Q 25,25 50,30 T 100,12 T 150,22 T 200,6 L 200,40 L 0,40 Z"
-                    fill="url(#clickGrad)"
-                  />
-                  <path
-                    d="M 0,35 Q 25,25 50,30 T 100,12 T 150,22 T 200,6"
-                    fill="none"
-                    stroke="#38bdf8"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="200" cy="6" r="3.5" fill="#38bdf8" className="animate-pulse" />
-                </svg>
-              </div>
+        // Dynamic Bezier Sparklines computed from real Prisma aggregation trends
+        const clickTrend = overviewData?.trends?.clicks && overviewData.trends.clicks.length > 0
+          ? overviewData.trends.clicks
+          : [0, totalClicks];
+        const clickSvg = generateSmoothSvg(clickTrend, 200, 40);
 
-              <div className="text-[10px] text-fg-subtle pt-1 border-t border-border-strong/60 flex items-center justify-between">
-                <span>Real-time redirects</span>
-                <span className="text-fg font-medium">100% Attribution</span>
-              </div>
-            </div>
+        const convTrend = overviewData?.trends?.conversions && overviewData.trends.conversions.length > 0
+          ? overviewData.trends.conversions
+          : [0, totalConvs];
+        const convSvg = generateSmoothSvg(convTrend, 200, 40);
 
-            {/* Tile 2: Conversions */}
-            <div className="panel-card p-3 border border-border-strong relative overflow-hidden flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
-                      <Target className="w-3.5 h-3.5" />
-                    </span>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-fg-muted">Conversions</span>
-                  </div>
-                  <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                    <ArrowUpRight className="w-3 h-3" />
-                    +18.7%
-                  </span>
-                </div>
-                <div className="mt-2 text-2xl font-black text-fg-heading tracking-tight tabular-nums">
-                  {overviewData?.summary.totalConversions.toLocaleString() || '6'}
-                </div>
-              </div>
+        const revTrend = overviewData?.trends?.revenue && overviewData.trends.revenue.length > 0
+          ? overviewData.trends.revenue
+          : [0, totalRevenue];
+        const revSvg = generateSmoothSvg(revTrend, 200, 40);
 
-              {/* Glowing SVG Wave Sparkline (Neon Emerald) */}
-              <div className="mt-2 -mx-1">
-                <svg className="w-full h-10 overflow-visible" viewBox="0 0 200 40" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="convGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M 0,32 Q 30,35 60,20 T 110,26 T 160,8 T 200,4 L 200,40 L 0,40 Z"
-                    fill="url(#convGrad)"
-                  />
-                  <path
-                    d="M 0,32 Q 30,35 60,20 T 110,26 T 160,8 T 200,4"
-                    fill="none"
-                    stroke="#10b981"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="200" cy="4" r="3.5" fill="#10b981" className="animate-pulse" />
-                </svg>
-              </div>
+        const payoutTrend = overviewData?.trends?.payout && overviewData.trends.payout.length > 0
+          ? overviewData.trends.payout
+          : [0, totalPayout];
+        const payoutSvg = generateSmoothSvg(payoutTrend, 200, 40);
 
-              <div className="text-[10px] text-fg-subtle pt-1 border-t border-border-strong/60 flex items-center justify-between">
-                <span>{overviewData?.summary.approvedConversions || 5} Approved</span>
-                <span className="text-amber-400 font-medium">{overviewData?.summary.uncheckedConversions || 1} Unchecked</span>
-              </div>
-            </div>
+        // Real Timeline Buckets from DB
+        const timelineBuckets = overviewData?.timeline && overviewData.timeline.length > 0
+          ? overviewData.timeline
+          : [
+              { label: '00:00', clicks: 0, conversions: 0, payout: 0, revenue: 0 },
+              { label: '04:00', clicks: 0, conversions: 0, payout: 0, revenue: 0 },
+              { label: '08:00', clicks: 0, conversions: 0, payout: 0, revenue: 0 },
+              { label: '12:00', clicks: 0, conversions: 0, payout: 0, revenue: 0 },
+              { label: '16:00', clicks: 0, conversions: 0, payout: 0, revenue: 0 },
+              { label: '20:00', clicks: 0, conversions: 0, payout: 0, revenue: 0 },
+            ];
 
-            {/* Tile 3: Gross Revenue */}
-            <div className="panel-card p-3 border border-border-strong relative overflow-hidden flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400">
-                      <DollarSign className="w-3.5 h-3.5" />
-                    </span>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-fg-muted">Gross Revenue</span>
-                  </div>
-                  <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
-                    <ArrowUpRight className="w-3 h-3" />
-                    33.3%
-                  </span>
-                </div>
-                <div className="mt-2 text-2xl font-black text-fg-heading tracking-tight tabular-nums">
-                  $ {(overviewData?.summary.totalRevenue || 1125).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </div>
-              </div>
+        const maxClicksInTimeline = Math.max(...timelineBuckets.map((b) => b.clicks), 1);
+        const yMax = Math.max(Math.ceil(maxClicksInTimeline / 10) * 10, 10);
+        const yTicks = [yMax, Math.round(yMax * 0.75), Math.round(yMax * 0.5), Math.round(yMax * 0.25), 0];
 
-              {/* Glowing SVG Wave Sparkline (Neon Indigo/Cyan) */}
-              <div className="mt-2 -mx-1">
-                <svg className="w-full h-10 overflow-visible" viewBox="0 0 200 40" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#818cf8" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#818cf8" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M 0,38 Q 40,28 70,30 T 120,15 T 160,18 T 200,8 L 200,40 L 0,40 Z"
-                    fill="url(#revGrad)"
-                  />
-                  <path
-                    d="M 0,38 Q 40,28 70,30 T 120,15 T 160,18 T 200,8"
-                    fill="none"
-                    stroke="#818cf8"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="200" cy="8" r="3.5" fill="#818cf8" className="animate-pulse" />
-                </svg>
-              </div>
-
-              <div className="text-[10px] text-fg-subtle pt-1 border-t border-border-strong/60 flex items-center justify-between">
-                <span>Net Margin</span>
-                <span className="text-emerald-400 font-bold">$ {(overviewData?.summary.netMargin || 375).toFixed(2)}</span>
-              </div>
-            </div>
-
-            {/* Tile 4: Affiliate Payout */}
-            <div className="panel-card p-3 border border-border-strong relative overflow-hidden flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400">
-                      <TrendingUp className="w-3.5 h-3.5" />
-                    </span>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-fg-muted">Total Payout</span>
-                  </div>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                    CR {(overviewData?.summary.overallCr || 8.7).toFixed(1)}%
-                  </span>
-                </div>
-                <div className="mt-2 text-2xl font-black text-fg-heading tracking-tight tabular-nums">
-                  $ {(overviewData?.summary.totalPayout || 750).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </div>
-              </div>
-
-              {/* Glowing SVG Wave Sparkline (Neon Amber) */}
-              <div className="mt-2 -mx-1">
-                <svg className="w-full h-10 overflow-visible" viewBox="0 0 200 40" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="payoutGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M 0,36 Q 30,30 65,34 T 120,18 T 165,12 T 200,10 L 200,40 L 0,40 Z"
-                    fill="url(#payoutGrad)"
-                  />
-                  <path
-                    d="M 0,36 Q 30,30 65,34 T 120,18 T 165,12 T 200,10"
-                    fill="none"
-                    stroke="#f59e0b"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="200" cy="10" r="3.5" fill="#f59e0b" className="animate-pulse" />
-                </svg>
-              </div>
-
-              <div className="text-[10px] text-fg-subtle pt-1 border-t border-border-strong/60 flex items-center justify-between">
-                <span>Average EPC</span>
-                <span className="text-fg font-bold">$ {(overviewData?.summary.averageEpc || 10.87).toFixed(2)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Middle Row: Two High-Impact Visualization Cards (Matching media_1793798226975_5e7d2486.jpg) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
-            {/* Left 7 cols: Traffic & Performance Gradient Bars Chart */}
-            <div className="lg:col-span-7 panel-card border border-border-strong p-3.5 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between border-b border-border-strong pb-2 mb-3">
-                  <div>
-                    <h2 className="text-xs font-bold uppercase tracking-wider text-fg-heading">Traffic & Performance</h2>
-                    <p className="text-[11px] text-fg-subtle">24-hour acquisition velocity vs verified postbacks</p>
-                  </div>
-                  <div className="flex items-center gap-3 text-[11px]">
-                    <span className="flex items-center gap-1.5 font-medium text-fg">
-                      <span className="w-2.5 h-2.5 rounded-full bg-sky-400" />
-                      Requests / Clicks
-                    </span>
-                    <span className="flex items-center gap-1.5 font-medium text-fg">
-                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-                      Conversions
+        return (
+          <div className="space-y-3.5">
+            {/* Top Row: 4 Gradient Sparkline Metric Tiles */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {/* Tile 1: Active Traffic / Clicks */}
+              <div className="panel-card p-3.5 border border-border-strong relative overflow-hidden flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="p-1.5 rounded-lg bg-sky-500/10 text-sky-400">
+                        <MousePointer className="w-3.5 h-3.5" />
+                      </span>
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-slate-200 dark:text-slate-200">
+                        Active Clicks
+                      </span>
+                    </div>
+                    <span className="flex items-center gap-0.5 px-2 py-0.5 rounded text-[11px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
+                      CR {overallCr.toFixed(1)}%
                     </span>
                   </div>
+                  <div className="mt-2 text-2xl font-black text-white tracking-tight tabular-nums">
+                    {totalClicks.toLocaleString()}
+                  </div>
                 </div>
 
-                {/* Gradient Bar Chart with Guidelines */}
-                <div className="relative pt-2">
-                  <div className="flex justify-between text-[10px] text-fg-subtle border-b border-border-strong/50 pb-1">
-                    <span>100</span>
-                    <span>75</span>
-                    <span>50</span>
-                    <span>25</span>
-                    <span>0</span>
-                  </div>
-
-                  {/* SVG Vertical Gradient Bars */}
-                  <svg className="w-full h-36 mt-1" viewBox="0 0 600 130" preserveAspectRatio="none">
+                {/* Glowing SVG Wave Sparkline (Neon Blue) */}
+                <div className="mt-2 -mx-1">
+                  <svg className="w-full h-10 overflow-visible" viewBox="0 0 200 40" preserveAspectRatio="none">
                     <defs>
-                      <linearGradient id="barBlue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#38bdf8" />
-                        <stop offset="100%" stopColor="#1e3a8a" />
-                      </linearGradient>
-                      <linearGradient id="barRed" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#f43f5e" />
-                        <stop offset="100%" stopColor="#881337" />
+                      <linearGradient id="clickGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.45" />
+                        <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
                       </linearGradient>
                     </defs>
-
-                    {/* Subtle horizontal grid lines */}
-                    <line x1="0" y1="30" x2="600" y2="30" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="3 3" />
-                    <line x1="0" y1="65" x2="600" y2="65" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="3 3" />
-                    <line x1="0" y1="100" x2="600" y2="100" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="3 3" />
-
-                    {/* Timeline Multi-bar Clusters (Matching image) */}
-                    {[
-                      { x: 25, h1: 35, h2: 8 },
-                      { x: 65, h1: 45, h2: 12 },
-                      { x: 105, h1: 30, h2: 0 },
-                      { x: 145, h1: 60, h2: 15 },
-                      { x: 185, h1: 75, h2: 20 },
-                      { x: 225, h1: 50, h2: 10 },
-                      { x: 265, h1: 90, h2: 28 },
-                      { x: 305, h1: 110, h2: 32 },
-                      { x: 345, h1: 85, h2: 22 },
-                      { x: 385, h1: 95, h2: 25 },
-                      { x: 425, h1: 70, h2: 18 },
-                      { x: 465, h1: 80, h2: 20 },
-                      { x: 505, h1: 105, h2: 35 },
-                      { x: 545, h1: 65, h2: 15 },
-                    ].map((b, i) => (
-                      <g key={i}>
-                        {/* Blue clicks bar */}
-                        <rect
-                          x={b.x}
-                          y={120 - b.h1}
-                          width="14"
-                          height={b.h1}
-                          rx="3"
-                          fill="url(#barBlue)"
-                          className="hover:opacity-85 transition"
-                        />
-                        {/* Red/Rose conversions accent */}
-                        {b.h2 > 0 && (
-                          <rect
-                            x={b.x}
-                            y={120 - b.h2}
-                            width="14"
-                            height={b.h2}
-                            rx="2"
-                            fill="url(#barRed)"
-                            className="hover:opacity-85 transition"
-                          />
-                        )}
-                      </g>
-                    ))}
+                    <path d={clickSvg.fillPath} fill="url(#clickGrad)" />
+                    <path
+                      d={clickSvg.strokePath}
+                      fill="none"
+                      stroke="#38bdf8"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
+                    <circle cx={clickSvg.lastX} cy={clickSvg.lastY} r="3.5" fill="#38bdf8" className="animate-pulse" />
                   </svg>
+                </div>
 
-                  {/* Timeline labels matching picture */}
-                  <div className="flex justify-between text-[10px] text-fg-subtle pt-1 border-t border-border-strong/70 font-mono">
-                    {chartSlices.map((s) => (
-                      <span key={s.time}>{s.time}</span>
-                    ))}
+                <div className="text-xs text-slate-200 dark:text-slate-200 pt-1.5 border-t border-border-strong flex items-center justify-between font-semibold">
+                  <span>Real-time redirects</span>
+                  <span className="text-emerald-400 font-bold">100% Attribution</span>
+                </div>
+              </div>
+
+              {/* Tile 2: Conversions */}
+              <div className="panel-card p-3.5 border border-border-strong relative overflow-hidden flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
+                        <Target className="w-3.5 h-3.5" />
+                      </span>
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-slate-200 dark:text-slate-200">
+                        Conversions
+                      </span>
+                    </div>
+                    <span className="flex items-center gap-0.5 px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      {approvedConvs} Approved
+                    </span>
                   </div>
+                  <div className="mt-2 text-2xl font-black text-white tracking-tight tabular-nums">
+                    {totalConvs.toLocaleString()}
+                  </div>
+                </div>
+
+                {/* Glowing SVG Wave Sparkline (Neon Emerald) */}
+                <div className="mt-2 -mx-1">
+                  <svg className="w-full h-10 overflow-visible" viewBox="0 0 200 40" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="convGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10b981" stopOpacity="0.45" />
+                        <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <path d={convSvg.fillPath} fill="url(#convGrad)" />
+                    <path
+                      d={convSvg.strokePath}
+                      fill="none"
+                      stroke="#10b981"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
+                    <circle cx={convSvg.lastX} cy={convSvg.lastY} r="3.5" fill="#10b981" className="animate-pulse" />
+                  </svg>
+                </div>
+
+                <div className="text-xs text-slate-200 dark:text-slate-200 pt-1.5 border-t border-border-strong flex items-center justify-between font-semibold">
+                  <span className="text-emerald-400 font-bold">{approvedConvs} Approved</span>
+                  <span className="text-amber-400 font-bold">{uncheckedConvs} Unchecked</span>
+                </div>
+              </div>
+
+              {/* Tile 3: Gross Revenue */}
+              <div className="panel-card p-3.5 border border-border-strong relative overflow-hidden flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400">
+                        <DollarSign className="w-3.5 h-3.5" />
+                      </span>
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-slate-200 dark:text-slate-200">
+                        Gross Revenue
+                      </span>
+                    </div>
+                    <span className="flex items-center gap-0.5 px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
+                      Margin {marginPercent.toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="mt-2 text-2xl font-black text-white tracking-tight tabular-nums">
+                    $ {totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                </div>
+
+                {/* Glowing SVG Wave Sparkline (Neon Indigo/Cyan) */}
+                <div className="mt-2 -mx-1">
+                  <svg className="w-full h-10 overflow-visible" viewBox="0 0 200 40" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#818cf8" stopOpacity="0.45" />
+                        <stop offset="100%" stopColor="#818cf8" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <path d={revSvg.fillPath} fill="url(#revGrad)" />
+                    <path
+                      d={revSvg.strokePath}
+                      fill="none"
+                      stroke="#818cf8"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
+                    <circle cx={revSvg.lastX} cy={revSvg.lastY} r="3.5" fill="#818cf8" className="animate-pulse" />
+                  </svg>
+                </div>
+
+                <div className="text-xs text-slate-200 dark:text-slate-200 pt-1.5 border-t border-border-strong flex items-center justify-between font-semibold">
+                  <span>Net Margin</span>
+                  <span className="text-emerald-400 font-bold">$ {netMargin.toFixed(2)}</span>
+                </div>
+              </div>
+
+              {/* Tile 4: Affiliate Payout */}
+              <div className="panel-card p-3.5 border border-border-strong relative overflow-hidden flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400">
+                        <TrendingUp className="w-3.5 h-3.5" />
+                      </span>
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-slate-200 dark:text-slate-200">
+                        Total Payout
+                      </span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                      CR {overallCr.toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="mt-2 text-2xl font-black text-white tracking-tight tabular-nums">
+                    $ {totalPayout.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                </div>
+
+                {/* Glowing SVG Wave Sparkline (Neon Amber) */}
+                <div className="mt-2 -mx-1">
+                  <svg className="w-full h-10 overflow-visible" viewBox="0 0 200 40" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="payoutGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.45" />
+                        <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <path d={payoutSvg.fillPath} fill="url(#payoutGrad)" />
+                    <path
+                      d={payoutSvg.strokePath}
+                      fill="none"
+                      stroke="#f59e0b"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
+                    <circle cx={payoutSvg.lastX} cy={payoutSvg.lastY} r="3.5" fill="#f59e0b" className="animate-pulse" />
+                  </svg>
+                </div>
+
+                <div className="text-xs text-slate-200 dark:text-slate-200 pt-1.5 border-t border-border-strong flex items-center justify-between font-semibold">
+                  <span>Average EPC</span>
+                  <span className="text-amber-400 font-bold">$ {averageEpc.toFixed(2)}</span>
                 </div>
               </div>
             </div>
 
-            {/* Right 5 cols: Recent Activity / Live Stream (Matching Recent Deployments in media_1793798226975_5e7d2486.jpg) */}
-            <div className="lg:col-span-5 panel-card border border-border-strong p-3.5 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between border-b border-border-strong pb-2 mb-2">
-                  <div className="flex items-center gap-1.5">
-                    <Activity className="w-3.5 h-3.5 text-primary" />
-                    <h2 className="text-xs font-bold uppercase tracking-wider text-fg-heading">Recent Conversions</h2>
+            {/* Middle Row: Two High-Impact Visualization Cards */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
+              {/* Left 7 cols: Traffic & Performance Gradient Bars Chart (Real Chronological Buckets) */}
+              <div className="lg:col-span-7 panel-card border border-border-strong p-3.5 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between border-b border-border-strong pb-2 mb-3">
+                    <div>
+                      <h2 className="text-xs font-bold uppercase tracking-wider text-fg-heading">Traffic & Performance</h2>
+                      <p className="text-xs text-slate-300 dark:text-slate-300">Real database acquisition velocity vs postbacks</p>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs">
+                      <span className="flex items-center gap-1.5 font-semibold text-fg">
+                        <span className="w-2.5 h-2.5 rounded-full bg-sky-400" />
+                        Requests / Clicks
+                      </span>
+                      <span className="flex items-center gap-1.5 font-semibold text-fg">
+                        <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                        Conversions
+                      </span>
+                    </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('conversions')}
-                    className="text-[11px] text-primary hover:underline font-semibold cursor-pointer"
-                  >
-                    View all →
-                  </button>
-                </div>
 
-                {/* Activity List matching RapidBuild image style */}
-                <div className="space-y-1.5 mt-2">
-                  {(overviewData?.recentConversions || []).slice(0, 5).map((c) => (
-                    <div
-                      key={c.id}
-                      className="flex items-center justify-between p-2 rounded-lg bg-surface-elevated/70 border border-border-strong/70 hover:border-primary/50 transition"
+                  {/* Gradient Bar Chart with Dynamic Guidelines & Real Heights */}
+                  <div className="relative pt-2">
+                    <div className="flex justify-between text-xs text-slate-300 dark:text-slate-300 border-b border-border-strong pb-1 font-semibold">
+                      {yTicks.map((val, idx) => (
+                        <span key={idx}>{val}</span>
+                      ))}
+                    </div>
+
+                    {/* SVG Vertical Gradient Bars - Calculated dynamically from DB */}
+                    <svg className="w-full h-36 mt-1" viewBox="0 0 600 130" preserveAspectRatio="none">
+                      <defs>
+                        <linearGradient id="barBlue" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#38bdf8" />
+                          <stop offset="100%" stopColor="#1e3a8a" />
+                        </linearGradient>
+                        <linearGradient id="barRed" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#f43f5e" />
+                          <stop offset="100%" stopColor="#881337" />
+                        </linearGradient>
+                      </defs>
+
+                      {/* Subtle horizontal grid lines */}
+                      <line x1="0" y1="20" x2="600" y2="20" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="3 3" />
+                      <line x1="0" y1="44" x2="600" y2="44" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="3 3" />
+                      <line x1="0" y1="68" x2="600" y2="68" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="3 3" />
+                      <line x1="0" y1="92" x2="600" y2="92" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="3 3" />
+                      <line x1="0" y1="115" x2="600" y2="115" stroke="currentColor" strokeOpacity="0.15" />
+
+                      {/* Dynamic Bars derived 100% from PostgreSQL */}
+                      {timelineBuckets.map((b, i) => {
+                        const n = timelineBuckets.length;
+                        const colWidth = 600 / n;
+                        const barW = Math.min(Math.max(colWidth * 0.45, 18), 36);
+                        const x = i * colWidth + (colWidth - barW) / 2;
+                        const clickH = b.clicks > 0 ? Math.max(Math.round((b.clicks / yMax) * 95), 6) : 2;
+                        const convH = b.conversions > 0 ? Math.max(Math.round((b.conversions / yMax) * 95), 4) : 0;
+
+                        return (
+                          <g key={i}>
+                            <title>{`${b.label}: ${b.clicks} Clicks, ${b.conversions} Conversions ($${b.payout.toFixed(2)} Payout)`}</title>
+                            {/* Blue clicks bar */}
+                            <rect
+                              x={x}
+                              y={115 - clickH}
+                              width={barW}
+                              height={clickH}
+                              rx="3"
+                              fill="url(#barBlue)"
+                              className="hover:opacity-85 transition cursor-pointer"
+                            />
+                            {/* Red/Rose conversions accent */}
+                            {convH > 0 && (
+                              <rect
+                                x={x}
+                                y={115 - convH}
+                                width={barW}
+                                height={convH}
+                                rx="2"
+                                fill="url(#barRed)"
+                                className="hover:opacity-85 transition cursor-pointer"
+                              />
+                            )}
+                          </g>
+                        );
+                      })}
+                    </svg>
+
+                    {/* Timeline dynamic labels */}
+                    <div className="flex justify-between text-xs text-slate-300 dark:text-slate-300 pt-1.5 border-t border-border-strong font-mono font-semibold">
+                      {timelineBuckets.map((s, idx) => (
+                        <span key={idx} className="text-center">{s.label}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right 5 cols: Recent Conversions List */}
+              <div className="lg:col-span-5 panel-card border border-border-strong p-3.5 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between border-b border-border-strong pb-2 mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <Activity className="w-3.5 h-3.5 text-primary" />
+                      <h2 className="text-xs font-bold uppercase tracking-wider text-fg-heading">Recent Conversions</h2>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('conversions')}
+                      className="text-xs text-primary hover:underline font-bold cursor-pointer"
                     >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span
-                          className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider shrink-0 ${
-                            c.status === 'APPROVED'
-                              ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                              : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
-                          }`}
-                        >
-                          {c.status === 'APPROVED' ? '✓ Approved' : '⏳ Pending'}
-                        </span>
-                        <div className="truncate">
-                          <p className="text-xs font-semibold text-fg-heading truncate">{c.offerName}</p>
-                          <p className="text-[10px] text-fg-subtle truncate">
-                            {c.publisherName} · ${c.payout.toFixed(2)}
-                          </p>
+                      View all →
+                    </button>
+                  </div>
+
+                  {/* Activity List matching RapidBuild image style */}
+                  <div className="space-y-1.5 mt-2">
+                    {(overviewData?.recentConversions || []).slice(0, 5).map((c) => (
+                      <div
+                        key={c.id}
+                        className="flex items-center justify-between p-2 rounded-lg bg-surface-elevated border border-border-strong hover:border-primary transition"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span
+                            className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider shrink-0 ${
+                              c.status === 'APPROVED'
+                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                                : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
+                            }`}
+                          >
+                            {c.status === 'APPROVED' ? '✓ Approved' : '⏳ Pending'}
+                          </span>
+                          <div className="truncate">
+                            <p className="text-xs font-bold text-slate-100 dark:text-slate-100 truncate">{c.offerName}</p>
+                            <p className="text-xs text-slate-300 dark:text-slate-300 truncate">
+                              {c.publisherName} · ${c.payout.toFixed(2)}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs text-slate-300 dark:text-slate-300 whitespace-nowrap font-mono font-medium">
+                            {new Date(c.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                         </div>
                       </div>
+                    ))}
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-[10px] text-fg-subtle whitespace-nowrap">
-                          {new Date(c.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    {(!overviewData?.recentConversions || overviewData.recentConversions.length === 0) && (
+                      <div className="py-8 text-center text-slate-400 italic text-xs">
+                        No conversions logged in database yet.
                       </div>
-                    </div>
-                  ))}
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
 
-                  {(!overviewData?.recentConversions || overviewData.recentConversions.length === 0) && (
-                    <div className="py-8 text-center text-fg-subtle italic text-xs">
-                      No conversions logged in database yet.
-                    </div>
-                  )}
+            {/* Bottom Row: Executive Summary Performance Tables */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+              {/* Top Offers Summary */}
+              <div className="panel-card border border-border-strong overflow-hidden">
+                <div className="bg-surface-elevated px-3 py-2 border-b border-border-strong flex items-center justify-between">
+                  <span className="text-xs font-bold text-fg-heading uppercase tracking-wider">Top Performing Offers</span>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('offers')}
+                    className="text-xs text-primary hover:underline font-bold cursor-pointer"
+                  >
+                    View All Offers →
+                  </button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="bg-surface-elevated border-b-2 border-border-strong text-slate-200 dark:text-slate-200 text-xs font-extrabold uppercase tracking-wider">
+                        <th className="py-2 px-3 text-left">Offer</th>
+                        <th className="py-2 px-3 text-left">Network</th>
+                        <th className="py-2 px-3 text-right">Clicks</th>
+                        <th className="py-2 px-3 text-right">Conv</th>
+                        <th className="py-2 px-3 text-right">CR %</th>
+                        <th className="py-2 px-3 text-right">Payout</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border-subtle/70">
+                      {(overviewData?.topOffers || []).slice(0, 5).map((o) => (
+                        <tr key={o.id} className="hover:bg-surface-elevated/60 transition">
+                          <td className="py-2 px-3 font-bold text-slate-100 dark:text-slate-100 truncate max-w-[130px]">{o.name}</td>
+                          <td className="py-2 px-3 text-slate-300 dark:text-slate-300 truncate max-w-[100px]">{o.networkName}</td>
+                          <td className="py-2 px-3 text-right text-slate-100 dark:text-slate-100 font-medium tabular-nums">{o.clicks}</td>
+                          <td className="py-2 px-3 text-right font-extrabold text-slate-100 dark:text-slate-100 tabular-nums">{o.conversions}</td>
+                          <td className="py-2 px-3 text-right text-slate-200 dark:text-slate-200 font-semibold tabular-nums">{o.cr.toFixed(1)}%</td>
+                          <td className="py-2 px-3 text-right font-bold text-emerald-400 tabular-nums">
+                            ${o.payout.toFixed(2)}
+                          </td>
+                        </tr>
+                      ))}
+                      {(!overviewData?.topOffers || overviewData.topOffers.length === 0) && (
+                        <tr>
+                          <td colSpan={6} className="py-4 text-center text-slate-400 italic">
+                            No offers recorded yet.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Top Networks & Publishers */}
+              <div className="panel-card border border-border-strong overflow-hidden">
+                <div className="bg-surface-elevated px-3 py-2 border-b border-border-strong flex items-center justify-between">
+                  <span className="text-xs font-bold text-fg-heading uppercase tracking-wider">Top Networks & Volume</span>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('networks')}
+                    className="text-xs text-primary hover:underline font-bold cursor-pointer"
+                  >
+                    View All Networks →
+                  </button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="bg-surface-elevated border-b-2 border-border-strong text-slate-200 dark:text-slate-200 text-xs font-extrabold uppercase tracking-wider">
+                        <th className="py-2 px-3 text-left">Network</th>
+                        <th className="py-2 px-3 text-right">Conv</th>
+                        <th className="py-2 px-3 text-right">Revenue</th>
+                        <th className="py-2 px-3 text-right">Payout</th>
+                        <th className="py-2 px-3 text-right">Net Margin</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border-subtle/70">
+                      {(overviewData?.topNetworks || []).slice(0, 5).map((n) => (
+                        <tr key={n.id} className="hover:bg-surface-elevated/60 transition">
+                          <td className="py-2 px-3 font-bold text-slate-100 dark:text-slate-100 truncate max-w-[130px]">{n.name}</td>
+                          <td className="py-2 px-3 text-right font-extrabold text-slate-100 dark:text-slate-100 tabular-nums">{n.conversions}</td>
+                          <td className="py-2 px-3 text-right text-slate-100 dark:text-slate-100 font-medium tabular-nums">${n.revenue.toFixed(2)}</td>
+                          <td className="py-2 px-3 text-right font-semibold text-slate-100 dark:text-slate-100 tabular-nums">${n.payout.toFixed(2)}</td>
+                          <td className="py-2 px-3 text-right font-bold text-emerald-400 tabular-nums">
+                            ${(n.revenue - n.payout).toFixed(2)}
+                          </td>
+                        </tr>
+                      ))}
+                      {(!overviewData?.topNetworks || overviewData.topNetworks.length === 0) && (
+                        <tr>
+                          <td colSpan={5} className="py-4 text-center text-slate-400 italic">
+                            No networks recorded yet.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Bottom Row: Executive Summary Performance Tables */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
-            {/* Top Offers Summary */}
-            <div className="panel-card border border-border-strong overflow-hidden">
-              <div className="bg-surface-elevated px-3 py-2 border-b border-border-strong flex items-center justify-between">
-                <span className="text-xs font-bold text-fg-heading uppercase tracking-wider">Top Performing Offers</span>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('offers')}
-                  className="text-[11px] text-primary hover:underline font-semibold cursor-pointer"
-                >
-                  View All Offers →
-                </button>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="bg-canvas/50 border-b border-border-strong text-fg-muted text-[11px] font-bold">
-                      <th className="py-1.5 px-3 text-left">Offer</th>
-                      <th className="py-1.5 px-3 text-left">Network</th>
-                      <th className="py-1.5 px-3 text-right">Clicks</th>
-                      <th className="py-1.5 px-3 text-right">Conv</th>
-                      <th className="py-1.5 px-3 text-right">CR %</th>
-                      <th className="py-1.5 px-3 text-right">Payout</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border-subtle/70">
-                    {(overviewData?.topOffers || []).slice(0, 5).map((o) => (
-                      <tr key={o.id} className="hover:bg-surface-elevated/60 transition">
-                        <td className="py-1.5 px-3 font-semibold text-fg-heading truncate max-w-[130px]">{o.name}</td>
-                        <td className="py-1.5 px-3 text-fg-muted truncate max-w-[100px]">{o.networkName}</td>
-                        <td className="py-1.5 px-3 text-right text-fg tabular-nums">{o.clicks}</td>
-                        <td className="py-1.5 px-3 text-right font-bold text-fg tabular-nums">{o.conversions}</td>
-                        <td className="py-1.5 px-3 text-right text-fg tabular-nums">{o.cr.toFixed(1)}%</td>
-                        <td className="py-1.5 px-3 text-right font-bold text-emerald-400 tabular-nums">
-                          ${o.payout.toFixed(2)}
-                        </td>
-                      </tr>
-                    ))}
-                    {(!overviewData?.topOffers || overviewData.topOffers.length === 0) && (
-                      <tr>
-                        <td colSpan={6} className="py-4 text-center text-fg-subtle italic">
-                          No offers recorded yet.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Top Networks & Publishers */}
-            <div className="panel-card border border-border-strong overflow-hidden">
-              <div className="bg-surface-elevated px-3 py-2 border-b border-border-strong flex items-center justify-between">
-                <span className="text-xs font-bold text-fg-heading uppercase tracking-wider">Top Networks & Volume</span>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('networks')}
-                  className="text-[11px] text-primary hover:underline font-semibold cursor-pointer"
-                >
-                  View All Networks →
-                </button>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="bg-canvas/50 border-b border-border-strong text-fg-muted text-[11px] font-bold">
-                      <th className="py-1.5 px-3 text-left">Network</th>
-                      <th className="py-1.5 px-3 text-right">Conv</th>
-                      <th className="py-1.5 px-3 text-right">Revenue</th>
-                      <th className="py-1.5 px-3 text-right">Payout</th>
-                      <th className="py-1.5 px-3 text-right">Net Margin</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border-subtle/70">
-                    {(overviewData?.topNetworks || []).slice(0, 5).map((n) => (
-                      <tr key={n.id} className="hover:bg-surface-elevated/60 transition">
-                        <td className="py-1.5 px-3 font-semibold text-fg-heading truncate max-w-[130px]">{n.name}</td>
-                        <td className="py-1.5 px-3 text-right font-bold text-fg tabular-nums">{n.conversions}</td>
-                        <td className="py-1.5 px-3 text-right text-fg tabular-nums">${n.revenue.toFixed(2)}</td>
-                        <td className="py-1.5 px-3 text-right font-semibold text-fg tabular-nums">${n.payout.toFixed(2)}</td>
-                        <td className="py-1.5 px-3 text-right font-bold text-emerald-400 tabular-nums">
-                          ${(n.revenue - n.payout).toFixed(2)}
-                        </td>
-                      </tr>
-                    ))}
-                    {(!overviewData?.topNetworks || overviewData.topNetworks.length === 0) && (
-                      <tr>
-                        <td colSpan={5} className="py-4 text-center text-fg-subtle italic">
-                          No networks recorded yet.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* 4. INDIVIDUAL REPORT VIEW (Offers, Networks, Publishers, Conversions, Traffic) */}
       {activeTab !== 'overview' && (

@@ -17,6 +17,129 @@ function parseDateFilter(from?: string, to?: string) {
   return Object.keys(filter).length > 0 ? filter : undefined;
 }
 
+function computeRealTimeline(
+  clicks: Array<{ createdAt: Date }>,
+  conversions: Array<{ createdAt: Date; payout: any; revenue: any }>
+) {
+  const timestamps = [
+    ...clicks.map((c) => c.createdAt.getTime()),
+    ...conversions.map((c) => c.createdAt.getTime()),
+  ];
+
+  let isMultiDay = false;
+  if (timestamps.length > 1) {
+    const minTime = Math.min(...timestamps);
+    const maxTime = Math.max(...timestamps);
+    isMultiDay = maxTime - minTime > 36 * 3600 * 1000;
+  }
+
+  const buckets: Array<{
+    label: string;
+    clicks: number;
+    conversions: number;
+    payout: number;
+    revenue: number;
+  }> = [];
+
+  if (!isMultiDay) {
+    const hourRanges = [
+      { start: 0, end: 4, label: '00:00' },
+      { start: 4, end: 8, label: '04:00' },
+      { start: 8, end: 12, label: '08:00' },
+      { start: 12, end: 16, label: '12:00' },
+      { start: 16, end: 20, label: '16:00' },
+      { start: 20, end: 24, label: '20:00' },
+    ];
+
+    for (const range of hourRanges) {
+      const bClicks = clicks.filter((c) => {
+        const h = c.createdAt.getHours();
+        return h >= range.start && h < range.end;
+      }).length;
+
+      const bConvs = conversions.filter((c) => {
+        const h = c.createdAt.getHours();
+        return h >= range.start && h < range.end;
+      });
+
+      const bPayout = bConvs.reduce((s, c) => s + Number(c.payout || 0), 0);
+      const bRevenue = bConvs.reduce((s, c) => s + Number(c.revenue || 0), 0);
+
+      buckets.push({
+        label: range.label,
+        clicks: bClicks,
+        conversions: bConvs.length,
+        payout: Number(bPayout.toFixed(2)),
+        revenue: Number(bRevenue.toFixed(2)),
+      });
+    }
+  } else {
+    const minTime = Math.min(...timestamps);
+    const maxTime = Math.max(...timestamps);
+    const step = (maxTime - minTime) / 6 || 1;
+
+    for (let i = 0; i < 6; i++) {
+      const bStart = minTime + i * step;
+      const bEnd = minTime + (i + 1) * step;
+      const dateObj = new Date(bStart);
+      const label = `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+
+      const bClicks = clicks.filter((c) => {
+        const t = c.createdAt.getTime();
+        return t >= bStart && (i === 5 ? t <= bEnd : t < bEnd);
+      }).length;
+
+      const bConvs = conversions.filter((c) => {
+        const t = c.createdAt.getTime();
+        return t >= bStart && (i === 5 ? t <= bEnd : t < bEnd);
+      });
+
+      const bPayout = bConvs.reduce((s, c) => s + Number(c.payout || 0), 0);
+      const bRevenue = bConvs.reduce((s, c) => s + Number(c.revenue || 0), 0);
+
+      buckets.push({
+        label,
+        clicks: bClicks,
+        conversions: bConvs.length,
+        payout: Number(bPayout.toFixed(2)),
+        revenue: Number(bRevenue.toFixed(2)),
+      });
+    }
+  }
+
+  let runClicks = 0;
+  let runConvs = 0;
+  let runRev = 0;
+  let runPayout = 0;
+
+  const clicksTrend: number[] = [];
+  const conversionsTrend: number[] = [];
+  const revenueTrend: number[] = [];
+  const payoutTrend: number[] = [];
+
+  for (const b of buckets) {
+    runClicks += b.clicks;
+    runConvs += b.conversions;
+    runRev += b.revenue;
+    runPayout += b.payout;
+
+    clicksTrend.push(runClicks);
+    conversionsTrend.push(runConvs);
+    revenueTrend.push(Number(runRev.toFixed(2)));
+    payoutTrend.push(Number(runPayout.toFixed(2)));
+  }
+
+  return {
+    timeline: buckets,
+    trends: {
+      clicks: clicksTrend,
+      conversions: conversionsTrend,
+      revenue: revenueTrend,
+      payout: payoutTrend,
+    },
+  };
+}
+
 /**
  * Overview Report: Consolidated performance dashboard across all reports directly from Database
  */
@@ -52,6 +175,8 @@ export async function getReportsOverview(req: Request, res: Response): Promise<v
     topNetworksGroup,
     topPublishersGroup,
     recentConversions,
+    clicksTimeline,
+    convsTimeline,
   ] = await Promise.all([
     prisma.click.count({ where: clickWhere }),
     prisma.conversion.count({ where: convWhere }),
@@ -95,6 +220,16 @@ export async function getReportsOverview(req: Request, res: Response): Promise<v
         network: { select: { id: true, name: true } },
         publisher: { select: { id: true, name: true } },
       },
+    }),
+    prisma.click.findMany({
+      where: clickWhere,
+      select: { createdAt: true },
+      orderBy: { createdAt: 'asc' },
+    }),
+    prisma.conversion.findMany({
+      where: convWhere,
+      select: { createdAt: true, status: true, payout: true, revenue: true },
+      orderBy: { createdAt: 'asc' },
     }),
   ]);
 
@@ -180,6 +315,8 @@ export async function getReportsOverview(req: Request, res: Response): Promise<v
     payout: Number(g._sum.payout || 0),
   }));
 
+  const { timeline, trends } = computeRealTimeline(clicksTimeline, convsTimeline);
+
   res.json({
     summary: {
       totalClicks,
@@ -194,6 +331,8 @@ export async function getReportsOverview(req: Request, res: Response): Promise<v
       overallCr,
       averageEpc,
     },
+    timeline,
+    trends,
     topOffers,
     topNetworks,
     topPublishers,
