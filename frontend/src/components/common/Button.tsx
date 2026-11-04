@@ -36,7 +36,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantClasses = {
     primary:
-      'bg-gradient-to-b from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white border-t border-indigo-400/30 shadow-indigo-500/25 shadow-md hover:shadow-indigo-500/40 focus:ring-indigo-500',
+      'bg-primary hover:bg-primary-hover text-white border-t border-white/20 shadow-primary/25 shadow-md hover:shadow-primary/40 focus:ring-primary',
     secondary:
       'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700/80 focus:ring-slate-400',
     success:

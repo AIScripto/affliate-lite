@@ -84,7 +84,7 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
       >
         {/* Brand Header */}
         <div className="h-16 px-5 border-b border-border-subtle flex items-center gap-3 bg-surface">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-primary to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/25 border-t border-white/25">
+          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-md shadow-primary/25 border-t border-white/25">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>

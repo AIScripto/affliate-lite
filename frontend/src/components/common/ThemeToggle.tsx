@@ -19,10 +19,10 @@ export const ThemeToggle: React.FC = () => {
 
       {/* 3D Thumb Pill */}
       <span
-        className={`absolute top-0.5 bottom-0.5 w-6 rounded-full transition-all duration-300 ease-out flex items-center justify-center bg-gradient-to-tr shadow-md ${
+        className={`absolute top-0.5 bottom-0.5 w-6 rounded-full transition-all duration-300 ease-out flex items-center justify-center shadow-md ${
           isDark 
-            ? 'left-0.5 from-indigo-500 to-indigo-600 text-white shadow-indigo-500/40' 
-            : 'left-[calc(100%-1.625rem)] from-amber-400 to-amber-500 text-amber-950 shadow-amber-500/40'
+            ? 'left-0.5 bg-primary text-white shadow-primary/40' 
+            : 'left-[calc(100%-1.625rem)] from-amber-400 to-amber-500 bg-gradient-to-tr text-amber-950 shadow-amber-500/40'
         }`}
       >
         {isDark ? (

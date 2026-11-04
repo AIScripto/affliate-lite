@@ -58,12 +58,30 @@ fi
 echo ""
 
 # Step 4: Verify Definition of Done (DOD) Documents
-echo -e "${YELLOW}Step 4/4: Verifying Definition of Done (DOD) compliance files...${NC}"
+echo -e "${YELLOW}Step 4/5: Verifying Definition of Done (DOD) compliance files...${NC}"
 if [ -f "$ROOT_DIR/DOD.md" ] && [ -f "$ROOT_DIR/AGENTS.md" ]; then
     echo -e "${GREEN}✓ Definition of Done (DOD.md) and Workspace Rules (AGENTS.md) are present.${NC}"
 else
     echo -e "${RED}❌ ERROR: Missing required DOD.md or AGENTS.md documentation.${NC}"
     exit 1
+fi
+echo ""
+
+# Step 5: Impeccable UI/UX Design Quality & Anti-pattern Verification
+echo -e "${YELLOW}Step 5/5: Running Impeccable UI/UX quality check on frontend components...${NC}"
+if [ -f "$ROOT_DIR/.agents/skills/impeccable/scripts/detect.mjs" ]; then
+    UI_FILES=$(find "$ROOT_DIR/frontend/src" -name "*.tsx" -o -name "*.jsx" 2>/dev/null || true)
+    if [ -n "$UI_FILES" ]; then
+        if node "$ROOT_DIR/.agents/skills/impeccable/scripts/detect.mjs" --json $UI_FILES > /tmp/impeccable-check.json 2>&1; then
+            echo -e "${GREEN}✓ Impeccable UI/UX check passed cleanly (0 anti-patterns detected).${NC}"
+        else
+            echo -e "${RED}❌ ERROR: Impeccable detected UI/UX design anti-patterns:${NC}"
+            cat /tmp/impeccable-check.json
+            exit 1
+        fi
+    fi
+else
+    echo -e "${GREEN}✓ Impeccable detector skipped (not installed).${NC}"
 fi
 echo ""
 

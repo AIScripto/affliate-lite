@@ -291,7 +291,7 @@ export function DomainsView() {
             </div>
           </div>
           <div className="mt-2.5 flex items-baseline gap-2">
-            <span className="text-3xl font-black tabular-nums text-purple-400 tracking-tight">
+            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">
               {domains.length}
             </span>
             <span className="text-[11px] font-semibold text-fg-muted">Postback & Click</span>

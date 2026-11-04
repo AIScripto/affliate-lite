@@ -89,3 +89,4 @@ $ curl -s "http://161.97.110.121:3086/click?offer_id=1&json=1"
   - Findings: `audit/results/2026-11-04_affiliate_full/findings.json`
   - HTML Report: `audit/results/2026-11-04_affiliate_full/report.html`
   - CSV Export: `audit/results/2026-11-04_affiliate_full/findings.csv`
+
