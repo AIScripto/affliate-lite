@@ -90,10 +90,8 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
   };
 
   const navItemClass = (isActive: boolean) =>
-    `group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 cursor-pointer ${
-      isActive
-        ? 'bg-gradient-to-r from-primary via-indigo-600 to-indigo-700 text-white font-semibold shadow-md shadow-primary/25 border-t border-white/20 active:translate-y-0.5'
-        : 'text-fg-muted hover:text-fg hover:bg-surface-elevated/70 active:translate-y-0.5'
+    `group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 cursor-pointer sidebar-nav-btn ${
+      isActive ? 'is-active' : ''
     }`;
 
   return (
@@ -109,39 +107,60 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
         }`}
       >
         {/* Brand Header */}
-        <div className="h-16 px-5 border-b border-border-subtle flex items-center gap-3 bg-surface/50">
+        <div
+          style={{ borderColor: 'var(--sidebar-border)' }}
+          className="h-16 px-5 border-b flex items-center gap-3"
+        >
           <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-md shadow-primary/25 border-t border-white/25">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <div className="font-bold text-base tracking-tight text-fg">Oval Media</div>
-            <div className="text-[10px] text-primary font-semibold tracking-wider uppercase flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50 animate-pulse" />
+            <div className="font-bold text-base tracking-tight sidebar-heading">Oval Media</div>
+            <div className="text-[10px] sidebar-text font-semibold tracking-wider uppercase flex items-center gap-1.5 opacity-90">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50 animate-pulse" />
               Affiliate Tracking
             </div>
           </div>
         </div>
 
         {/* User Profile Block in Sidebar */}
-        <div className="px-4 py-3.5 border-b border-border-subtle/80 flex items-center gap-3 bg-surface-elevated/30">
+        <div
+          style={{
+            borderColor: 'var(--sidebar-border)',
+            background: 'var(--sidebar-hover)',
+          }}
+          className="px-4 py-3.5 border-b flex items-center gap-3"
+        >
           <div className="relative">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/30 flex items-center justify-center text-amber-500 font-bold shadow-sm">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold shadow-sm">
               <UserIcon className="w-4 h-4" />
             </div>
-            <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-surface" />
+            <span
+              style={{ borderColor: 'var(--sidebar-bg)' }}
+              className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2"
+            />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-semibold text-fg flex items-center justify-between truncate">
+            <div className="text-xs font-semibold sidebar-heading flex items-center justify-between truncate">
               <span className="truncate">Administrator</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-primary/10 text-primary border border-primary/20 font-medium">Pro</span>
+              <span
+                style={{
+                  background: 'var(--sidebar-hover)',
+                  color: 'var(--sidebar-text)',
+                  borderColor: 'var(--sidebar-border)',
+                }}
+                className="text-[10px] px-1.5 py-0.2 rounded border font-medium"
+              >
+                Pro
+              </span>
             </div>
-            <div className="text-[11px] text-fg-muted truncate">zeeshan@gmail.com</div>
+            <div className="text-[11px] sidebar-muted truncate">zeeshan@gmail.com</div>
           </div>
         </div>
 
         {/* Navigation Menu */}
         <div className="flex-1 overflow-y-auto px-3.5 py-3 space-y-1">
-          <div className="px-2 pt-1 pb-1.5 text-[10px] font-bold text-fg-muted/70 uppercase tracking-wider">
+          <div className="px-2 pt-1 pb-1.5 text-[10px] font-bold sidebar-muted uppercase tracking-wider">
             Navigation
           </div>
 
@@ -202,9 +221,18 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
             <span
               className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
                 currentNav === 'notifications'
-                  ? 'bg-white/20 text-white border border-white/30'
-                  : 'bg-primary/15 text-primary border border-primary/25'
+                  ? 'bg-white/25 text-white border border-white/30'
+                  : 'border'
               }`}
+              style={
+                currentNav !== 'notifications'
+                  ? {
+                      background: 'var(--sidebar-hover)',
+                      color: 'var(--sidebar-text)',
+                      borderColor: 'var(--sidebar-border)',
+                    }
+                  : undefined
+              }
             >
               3
             </span>
@@ -215,10 +243,8 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
             <button
               type="button"
               onClick={() => setReportsExpanded(!reportsExpanded)}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 cursor-pointer ${
-                currentNav.startsWith('report-')
-                  ? 'bg-surface-elevated text-fg font-semibold shadow-sm'
-                  : 'text-fg-muted hover:text-fg hover:bg-surface-elevated/70'
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 cursor-pointer sidebar-nav-btn ${
+                currentNav.startsWith('report-') ? 'is-active' : ''
               }`}
             >
               <div className="flex items-center gap-3">
@@ -226,21 +252,22 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
                 <span>Report</span>
               </div>
               {reportsExpanded ? (
-                <ChevronDown className="w-3.5 h-3.5 text-fg-muted" />
+                <ChevronDown className="w-3.5 h-3.5 opacity-80" />
               ) : (
-                <ChevronRight className="w-3.5 h-3.5 text-fg-muted" />
+                <ChevronRight className="w-3.5 h-3.5 opacity-80" />
               )}
             </button>
 
             {reportsExpanded && (
-              <div className="ml-5 pl-3 mt-1 space-y-1 border-l border-border-subtle/80">
+              <div
+                style={{ borderColor: 'var(--sidebar-border)' }}
+                className="ml-5 pl-3 mt-1 space-y-1 border-l"
+              >
                 <button
                   type="button"
                   onClick={() => onNavigate('report-networks')}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-                    currentNav === 'report-networks'
-                      ? 'bg-primary/10 text-primary font-semibold'
-                      : 'text-fg-muted hover:text-fg hover:bg-surface-elevated/50'
+                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
+                    currentNav === 'report-networks' ? 'is-active' : ''
                   }`}
                 >
                   Networks
@@ -248,10 +275,8 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
                 <button
                   type="button"
                   onClick={() => onNavigate('report-offers')}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-                    currentNav === 'report-offers'
-                      ? 'bg-primary/10 text-primary font-semibold'
-                      : 'text-fg-muted hover:text-fg hover:bg-surface-elevated/50'
+                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
+                    currentNav === 'report-offers' ? 'is-active' : ''
                   }`}
                 >
                   Offers
@@ -259,10 +284,8 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
                 <button
                   type="button"
                   onClick={() => onNavigate('report-publishers')}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-                    currentNav === 'report-publishers'
-                      ? 'bg-primary/10 text-primary font-semibold'
-                      : 'text-fg-muted hover:text-fg hover:bg-surface-elevated/50'
+                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
+                    currentNav === 'report-publishers' ? 'is-active' : ''
                   }`}
                 >
                   Publishers
@@ -273,7 +296,13 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
         </div>
 
         {/* Sidebar Footer: Log Out */}
-        <div className="p-3.5 border-t border-border-subtle/80 bg-surface/50">
+        <div
+          style={{
+            borderColor: 'var(--sidebar-border)',
+            background: 'var(--sidebar-hover)',
+          }}
+          className="p-3.5 border-t"
+        >
           <button
             type="button"
             onClick={() => {
@@ -281,7 +310,7 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
                 onNavigate('dashboard');
               }
             }}
-            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-fg-muted hover:text-rose-500 hover:bg-rose-500/10 active:translate-y-0.5 transition-all duration-150"
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium sidebar-muted hover:text-rose-400 hover:bg-rose-500/15 active:translate-y-0.5 transition-all duration-150"
           >
             <LogOut className="w-4 h-4" />
             <span>Log Out</span>

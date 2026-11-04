@@ -28,8 +28,11 @@ html.light,
   --sidebar-bg: #FFFFFF;
   --sidebar-border: #E2E8F0;
   --sidebar-text: #475569;
-  --sidebar-active-bg: rgba(79, 70, 229, 0.1);
-  --sidebar-active-text: #4F46E5;
+  --sidebar-text-muted: #64748B;
+  --sidebar-text-heading: #0F172A;
+  --sidebar-hover: rgba(0, 0, 0, 0.05);
+  --sidebar-active-bg: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+  --sidebar-active-text: #FFFFFF;
   --topbar-bg: rgba(255, 255, 255, 0.95);
   --topbar-border: #E2E8F0;
 }
@@ -57,8 +60,11 @@ html.dark,
   --titlebar-gradient: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #0F172A 100%);
   --sidebar-bg: #121620;
   --sidebar-border: #252C3E;
-  --sidebar-text: #94A3B8;
-  --sidebar-active-bg: rgba(99, 102, 241, 0.2);
+  --sidebar-text: #CBD5E1;
+  --sidebar-text-muted: #94A3B8;
+  --sidebar-text-heading: #FFFFFF;
+  --sidebar-hover: rgba(255, 255, 255, 0.06);
+  --sidebar-active-bg: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
   --sidebar-active-text: #FFFFFF;
   --topbar-bg: rgba(18, 22, 32, 0.95);
   --topbar-border: #252C3E;
@@ -81,8 +87,11 @@ html.theme-indigo {
   --titlebar-gradient: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #312E81 100%);
   --sidebar-bg: linear-gradient(180deg, #0F172A 0%, #1E1B4B 60%, #0F172A 100%);
   --sidebar-border: rgba(99, 102, 241, 0.25);
-  --sidebar-text: #A5B4FC;
-  --sidebar-active-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(139, 92, 246, 0.3));
+  --sidebar-text: #C7D2FE;
+  --sidebar-text-muted: #A5B4FC;
+  --sidebar-text-heading: #FFFFFF;
+  --sidebar-hover: rgba(99, 102, 241, 0.2);
+  --sidebar-active-bg: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
   --sidebar-active-text: #FFFFFF;
   --topbar-bg: rgba(255, 255, 255, 0.95);
   --topbar-border: #E0E7FF;
@@ -105,8 +114,11 @@ html.theme-emerald {
   --titlebar-gradient: linear-gradient(135deg, #022C22 0%, #064E3B 50%, #047857 100%);
   --sidebar-bg: linear-gradient(180deg, #022C22 0%, #064E3B 60%, #022C22 100%);
   --sidebar-border: rgba(16, 185, 129, 0.25);
-  --sidebar-text: #6EE7B7;
-  --sidebar-active-bg: linear-gradient(135deg, rgba(16, 185, 129, 0.45), rgba(20, 184, 166, 0.25));
+  --sidebar-text: #A7F3D0;
+  --sidebar-text-muted: #6EE7B7;
+  --sidebar-text-heading: #FFFFFF;
+  --sidebar-hover: rgba(16, 185, 129, 0.2);
+  --sidebar-active-bg: linear-gradient(135deg, #10B981 0%, #059669 100%);
   --sidebar-active-text: #FFFFFF;
   --topbar-bg: rgba(255, 255, 255, 0.95);
   --topbar-border: #DCFCE7;
@@ -129,8 +141,11 @@ html.theme-ocean {
   --titlebar-gradient: linear-gradient(135deg, #0C1A2E 0%, #0F4C81 50%, #0369A1 100%);
   --sidebar-bg: linear-gradient(180deg, #0C1A2E 0%, #0F4C81 55%, #0C1A2E 100%);
   --sidebar-border: rgba(14, 165, 233, 0.25);
-  --sidebar-text: #7DD3FC;
-  --sidebar-active-bg: linear-gradient(135deg, rgba(14, 165, 233, 0.45), rgba(6, 182, 212, 0.25));
+  --sidebar-text: #BAE6FD;
+  --sidebar-text-muted: #7DD3FC;
+  --sidebar-text-heading: #FFFFFF;
+  --sidebar-hover: rgba(14, 165, 233, 0.2);
+  --sidebar-active-bg: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
   --sidebar-active-text: #FFFFFF;
   --topbar-bg: rgba(255, 255, 255, 0.95);
   --topbar-border: #E0F2FE;
@@ -153,8 +168,11 @@ html.theme-rose {
   --titlebar-gradient: linear-gradient(135deg, #1A0A0F 0%, #4C0519 50%, #881337 100%);
   --sidebar-bg: linear-gradient(180deg, #1A0A0F 0%, #4C0519 60%, #1A0A0F 100%);
   --sidebar-border: rgba(244, 63, 94, 0.25);
-  --sidebar-text: #FDA4AF;
-  --sidebar-active-bg: linear-gradient(135deg, rgba(244, 63, 94, 0.45), rgba(251, 113, 133, 0.25));
+  --sidebar-text: #FECDD3;
+  --sidebar-text-muted: #FDA4AF;
+  --sidebar-text-heading: #FFFFFF;
+  --sidebar-hover: rgba(244, 63, 94, 0.2);
+  --sidebar-active-bg: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%);
   --sidebar-active-text: #FFFFFF;
   --topbar-bg: rgba(255, 255, 255, 0.95);
   --topbar-border: #FFE4E6;
@@ -177,8 +195,11 @@ html.theme-amber {
   --titlebar-gradient: linear-gradient(135deg, #1C1007 0%, #451A03 50%, #78350F 100%);
   --sidebar-bg: linear-gradient(180deg, #1C1007 0%, #451A03 60%, #1C1007 100%);
   --sidebar-border: rgba(245, 158, 11, 0.25);
-  --sidebar-text: #FCD34D;
-  --sidebar-active-bg: linear-gradient(135deg, rgba(245, 158, 11, 0.45), rgba(251, 191, 36, 0.25));
+  --sidebar-text: #FDE68A;
+  --sidebar-text-muted: #FCD34D;
+  --sidebar-text-heading: #FFFFFF;
+  --sidebar-hover: rgba(245, 158, 11, 0.2);
+  --sidebar-active-bg: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
   --sidebar-active-text: #FFFFFF;
   --topbar-bg: rgba(255, 255, 255, 0.95);
   --topbar-border: #FEF3C7;
@@ -201,8 +222,11 @@ html.theme-slate {
   --titlebar-gradient: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
   --sidebar-bg: linear-gradient(180deg, #0F172A 0%, #1E293B 60%, #0F172A 100%);
   --sidebar-border: rgba(100, 116, 139, 0.25);
-  --sidebar-text: #CBD5E1;
-  --sidebar-active-bg: linear-gradient(135deg, rgba(100, 116, 139, 0.45), rgba(71, 85, 105, 0.25));
+  --sidebar-text: #E2E8F0;
+  --sidebar-text-muted: #CBD5E1;
+  --sidebar-text-heading: #FFFFFF;
+  --sidebar-hover: rgba(100, 116, 139, 0.2);
+  --sidebar-active-bg: linear-gradient(135deg, #64748B 0%, #475569 100%);
   --sidebar-active-text: #FFFFFF;
   --topbar-bg: rgba(255, 255, 255, 0.95);
   --topbar-border: #E2E8F0;
@@ -225,8 +249,11 @@ html.theme-violet {
   --titlebar-gradient: linear-gradient(135deg, #1E112A 0%, #2E1065 50%, #4C1D95 100%);
   --sidebar-bg: linear-gradient(180deg, #1E112A 0%, #2E1065 60%, #1E112A 100%);
   --sidebar-border: rgba(139, 92, 246, 0.25);
-  --sidebar-text: #D8B4FE;
-  --sidebar-active-bg: linear-gradient(135deg, rgba(139, 92, 246, 0.45), rgba(167, 139, 250, 0.25));
+  --sidebar-text: #E9D5FF;
+  --sidebar-text-muted: #D8B4FE;
+  --sidebar-text-heading: #FFFFFF;
+  --sidebar-hover: rgba(139, 92, 246, 0.2);
+  --sidebar-active-bg: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
   --sidebar-active-text: #FFFFFF;
   --topbar-bg: rgba(255, 255, 255, 0.95);
   --topbar-border: #F3E8FF;
@@ -249,8 +276,11 @@ html.theme-teal {
   --titlebar-gradient: linear-gradient(135deg, #042F2E 0%, #115E59 50%, #134E4A 100%);
   --sidebar-bg: linear-gradient(180deg, #042F2E 0%, #115E59 60%, #042F2E 100%);
   --sidebar-border: rgba(20, 184, 166, 0.25);
-  --sidebar-text: #5EEAD4;
-  --sidebar-active-bg: linear-gradient(135deg, rgba(20, 184, 166, 0.45), rgba(45, 212, 191, 0.25));
+  --sidebar-text: #99F6E4;
+  --sidebar-text-muted: #5EEAD4;
+  --sidebar-text-heading: #FFFFFF;
+  --sidebar-hover: rgba(20, 184, 166, 0.2);
+  --sidebar-active-bg: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
   --sidebar-active-text: #FFFFFF;
   --topbar-bg: rgba(255, 255, 255, 0.95);
   --topbar-border: #CCFBF1;
@@ -273,9 +303,12 @@ html.theme-midnight {
   --titlebar-gradient: linear-gradient(135deg, #000000 0%, #09090B 50%, #0F172A 100%);
   --sidebar-bg: linear-gradient(180deg, #000000 0%, #09090B 60%, #000000 100%);
   --sidebar-border: rgba(39, 39, 42, 0.8);
-  --sidebar-text: #94A3B8;
-  --sidebar-active-bg: linear-gradient(135deg, rgba(56, 189, 248, 0.35), rgba(14, 165, 233, 0.18));
-  --sidebar-active-text: #38BDF8;
+  --sidebar-text: #CBD5E1;
+  --sidebar-text-muted: #94A3B8;
+  --sidebar-text-heading: #FFFFFF;
+  --sidebar-hover: rgba(56, 189, 248, 0.15);
+  --sidebar-active-bg: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
+  --sidebar-active-text: #020617;
   --topbar-bg: rgba(9, 9, 11, 0.95);
   --topbar-border: rgba(39, 39, 42, 0.8);
 }
@@ -312,4 +345,41 @@ html.vivid .btn-3d-primary {
     0 8px 24px -4px rgba(0, 0, 0, 0.35),
     0 4px 10px -2px rgba(0, 0, 0, 0.2);
   color: #FFFFFF;
+}
+
+/* ── Scoped Sidebar Styling - 100% Contrast & Legibility across ALL Themes ── */
+.app-sidebar {
+  background: var(--sidebar-bg);
+  border-color: var(--sidebar-border);
+}
+
+.sidebar-heading {
+  color: var(--sidebar-text-heading) !important;
+}
+
+.sidebar-text {
+  color: var(--sidebar-text) !important;
+}
+
+.sidebar-muted {
+  color: var(--sidebar-text-muted) !important;
+}
+
+.sidebar-nav-btn {
+  color: var(--sidebar-text) !important;
+  background: transparent;
+  transition: all 0.15s ease;
+}
+
+.sidebar-nav-btn:hover {
+  color: var(--sidebar-active-text) !important;
+  background: var(--sidebar-hover) !important;
+}
+
+.sidebar-nav-btn.is-active {
+  color: var(--sidebar-active-text) !important;
+  background: var(--sidebar-active-bg) !important;
+  font-weight: 600;
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.35);
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
 }

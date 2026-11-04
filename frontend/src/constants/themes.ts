@@ -127,3 +127,4 @@ export const THEME_MAP: Record<Theme, ThemeOption> = THEMES_LIST.reduce(
 );
 
 export const DEFAULT_THEME: Theme = 'dark';
+
