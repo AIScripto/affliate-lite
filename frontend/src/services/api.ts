@@ -141,13 +141,20 @@ export async function fetchDashboardSummary(
   if (raw.kpis) {
     return {
       clicks: raw.kpis.clicks?.total ?? 0,
-      clicksGrowth: raw.kpis.clicks?.trendPercent ? `+${raw.kpis.clicks.trendPercent}% Today` : '+136% Today',
+      clicksGrowth: raw.kpis.clicks?.trendPercent ? `+${raw.kpis.clicks.trendPercent}% Today` : 'Live',
       conversions: raw.kpis.conversions?.total ?? 0,
-      conversionsGrowth: raw.kpis.conversions?.trendPercent ? `+${raw.kpis.conversions.trendPercent}% Today` : '+200% Today',
+      conversionsGrowth: raw.kpis.conversions?.trendPercent ? `+${raw.kpis.conversions.trendPercent}% Today` : 'Live',
+      approvedConversions: raw.kpis.conversions?.approved ?? 0,
+      uncheckedConversions: raw.kpis.conversions?.unchecked ?? 0,
       payout: raw.kpis.payout?.total ?? 0,
       revenue: raw.kpis.revenue?.total ?? 0,
+      netMargin: raw.kpis.netMargin?.total ?? 0,
+      marginPercent: raw.kpis.netMargin?.percent ?? 0,
+      overallCr: raw.kpis.overallCr ?? (raw.kpis.clicks?.total > 0 ? (raw.kpis.conversions?.total / raw.kpis.clicks.total) * 100 : 0),
       epc: raw.kpis.epc?.total ?? 0,
       currency: raw.kpis.payout?.currency ?? 'USD',
+      timeline: raw.timeline || [],
+      trends: raw.trends,
       trafficStats: (raw.trafficLast30Days || []).map((t: any) => ({
         date: t.date,
         conversions: t.conversions ?? 0,

@@ -17,7 +17,7 @@ function parseDateFilter(from?: string, to?: string) {
   return Object.keys(filter).length > 0 ? filter : undefined;
 }
 
-function computeRealTimeline(
+export function computeRealTimeline(
   clicks: Array<{ createdAt: Date }>,
   conversions: Array<{ createdAt: Date; payout: any; revenue: any }>
 ) {

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../db/prisma';
+import { computeRealTimeline } from './reportsController';
 
 export async function getDashboardSummary(req: Request, res: Response): Promise<void> {
   const isPublisher = req.user?.role === 'PUBLISHER';
@@ -20,7 +21,17 @@ export async function getDashboardSummary(req: Request, res: Response): Promise<
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
   // Aggregate total clicks and today clicks
-  const [totalClicks, todayClicks] = await Promise.all([
+  const [
+    totalClicks,
+    todayClicks,
+    totalConversions,
+    todayConversions,
+    approvedConversions,
+    uncheckedConversions,
+    conversionSums,
+    allClicks,
+    allConversions,
+  ] = await Promise.all([
     prisma.click.count({ where: clickWhere }),
     prisma.click.count({
       where: {
@@ -28,15 +39,23 @@ export async function getDashboardSummary(req: Request, res: Response): Promise<
         createdAt: { gte: startOfToday },
       },
     }),
-  ]);
-
-  // Aggregate conversions
-  const [totalConversions, todayConversions, conversionSums] = await Promise.all([
     prisma.conversion.count({ where: conversionWhere }),
     prisma.conversion.count({
       where: {
         ...conversionWhere,
         createdAt: { gte: startOfToday },
+      },
+    }),
+    prisma.conversion.count({
+      where: {
+        ...conversionWhere,
+        status: 'APPROVED',
+      },
+    }),
+    prisma.conversion.count({
+      where: {
+        ...conversionWhere,
+        status: 'UNCHECKED',
       },
     }),
     prisma.conversion.aggregate({
@@ -46,13 +65,28 @@ export async function getDashboardSummary(req: Request, res: Response): Promise<
         revenue: true,
       },
     }),
+    prisma.click.findMany({
+      where: clickWhere,
+      select: { createdAt: true },
+      orderBy: { createdAt: 'asc' },
+    }),
+    prisma.conversion.findMany({
+      where: conversionWhere,
+      select: { createdAt: true, status: true, payout: true, revenue: true },
+      orderBy: { createdAt: 'asc' },
+    }),
   ]);
 
   const totalPayout = Number(conversionSums._sum.payout || 0);
   const totalRevenue = Number(conversionSums._sum.revenue || 0);
+  const netMargin = Number((totalRevenue - totalPayout).toFixed(2));
+  const marginPercent = totalRevenue > 0 ? Number(((netMargin / totalRevenue) * 100).toFixed(1)) : 0;
+  const overallCr = totalClicks > 0 ? Number(((totalConversions / totalClicks) * 100).toFixed(2)) : 0;
 
   // EPC Formula: Payout / Clicks
   const epc = totalClicks > 0 ? Number((totalPayout / totalClicks).toFixed(2)) : 0.0;
+
+  const { timeline, trends } = computeRealTimeline(allClicks, allConversions);
 
   // Calculate yesterday's boundary for authentic day-over-day trends
   const yesterdayStart = new Date(startOfToday);
@@ -194,12 +228,22 @@ export async function getDashboardSummary(req: Request, res: Response): Promise<
   res.json({
     kpis: {
       clicks: { total: totalClicks, today: todayClicks, trendPercent: clickTrend },
-      conversions: { total: totalConversions, today: todayConversions, trendPercent: convTrend },
+      conversions: {
+        total: totalConversions,
+        today: todayConversions,
+        approved: approvedConversions,
+        unchecked: uncheckedConversions,
+        trendPercent: convTrend,
+      },
       payout: { total: totalPayout, currency },
       revenue: { total: totalRevenue, currency },
+      netMargin: { total: netMargin, percent: marginPercent },
       epc: { total: epc, currency },
+      overallCr,
       earningsByCurrency: { amount: totalPayout, currency },
     },
+    timeline,
+    trends,
     trafficLast30Days,
     topOffers,
     topPublishers,

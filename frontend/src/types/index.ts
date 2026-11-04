@@ -119,10 +119,28 @@ export interface DashboardSummary {
   clicksGrowth: string;
   conversions: number;
   conversionsGrowth: string;
+  approvedConversions?: number;
+  uncheckedConversions?: number;
   payout: number;
   revenue?: number;
+  netMargin?: number;
+  marginPercent?: number;
+  overallCr?: number;
   epc: number;
   currency: string;
+  timeline?: Array<{
+    label: string;
+    clicks: number;
+    conversions: number;
+    revenue: number;
+    payout: number;
+  }>;
+  trends?: {
+    clicks: number[];
+    conversions: number[];
+    revenue: number[];
+    payout: number[];
+  };
   trafficStats: Array<{
     date: string;
     conversions: number;
