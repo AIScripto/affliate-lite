@@ -28,13 +28,21 @@ Every feature, configuration module, and update must meet this **Definition of D
 
 ---
 
-### 3. Visual Quality & Multi-Theme Design
+### 3. Visual Quality & Impeccable Multi-Theme Design
 - [ ] **Multi-Theme Support**:
   - Full support for both **Dark Mode** and **Light Mode**.
-  - High contrast and crisp readability in both themes (no low-contrast grey-on-white or dark-on-black).
+  - High contrast and crisp readability in both themes (no low-contrast grey-on-white or dark-on-black; meet WCAG AA standards).
 - [ ] **3D Gradient Look & Feel**:
   - Panels feature subtle 3D depth, specular top highlights (`inset 0 1px 0 0 rgba(...)`), and smooth shadows.
-  - Buttons have raised tactile gradients with hover lifts and pressed-down feedback.
+  - Buttons have raised tactile depth with subtle top bevels, hover lifts, and pressed-down feedback (`active:scale-[0.98]`).
+- [ ] **Impeccable Design Token System**:
+  - Adhere to the normative design tokens defined in [DESIGN.md](file:///Users/tk-lpt-1088/projects/react/affliate/DESIGN.md).
+  - Ban generic AI color palettes (such as purple/cyan gradient glow tell).
+  - Use semantic Tailwind tokens (`bg-canvas`, `bg-surface`, `bg-primary`, `text-fg`, `text-fg-heading`) rather than raw hex codes.
+  - Zero design defects when scanned by the Impeccable detector (`node .agents/skills/impeccable/scripts/detect.mjs`).
+- [ ] **React Hook Safety**:
+  - Never declare or execute React hooks (`useMemo`, `useEffect`, `useState`, etc.) conditionally or after an early return statement.
+  - Maintain a single unified return block with inline conditional rendering to prevent runtime hook-mismatch crashes.
 
 ---
 
