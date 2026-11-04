@@ -11,4 +11,8 @@ export * from './Table';
 export * from './DataTable';
 export * from './ActionButtons';
 export * from './StatCard';
+export * from './MetricTile';
+export * from './TitleBar';
+export * from './Toast';
+export * from './StatusBadge';
 export * from './ThemeToggle';

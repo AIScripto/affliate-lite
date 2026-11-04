@@ -12,6 +12,10 @@ import { Offer, Network, Domain, OfferStatus } from '../../types';
 import { DataTable, Column } from '../common/DataTable';
 import { ActionButtons } from '../common/ActionButtons';
 import { Modal } from '../common/Modal';
+import { TitleBar } from '../common/TitleBar';
+import { MetricTile } from '../common/MetricTile';
+import { Toast } from '../common/Toast';
+import { StatusBadge } from '../common/StatusBadge';
 import { OfferBuilder } from './OfferBuilder';
 
 export function OffersView() {
@@ -153,19 +157,7 @@ export function OffersView() {
       key: 'visibility',
       header: 'Visibility',
       align: 'center',
-      render: (item) => (
-        <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-semibold border ${
-            item.visibility === 'PUBLIC'
-              ? 'bg-blue-500/10 text-blue-500 border-blue-500/20'
-              : item.visibility === 'PRIVATE'
-              ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
-              : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
-          }`}
-        >
-          {item.visibility === 'REQUIRES_APPROVAL' ? 'Approval Req.' : item.visibility}
-        </span>
-      ),
+      render: (item) => <StatusBadge status={item.visibility} size="sm" />,
     },
     {
       key: 'clicksCount',
@@ -215,22 +207,7 @@ export function OffersView() {
       key: 'status',
       header: 'Status',
       align: 'center',
-      render: (item) => (
-        <span
-          className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold border shadow-xs ${
-            item.status === 'ACTIVE'
-              ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/25'
-              : item.status === 'PAUSED'
-              ? 'bg-amber-500/10 text-amber-500 border-amber-500/25'
-              : 'bg-rose-500/10 text-rose-500 border-rose-500/25'
-          }`}
-        >
-          {item.status === 'ACTIVE' && (
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse shadow-sm shadow-emerald-500/50" />
-          )}
-          {item.status}
-        </span>
-      ),
+      render: (item) => <StatusBadge status={item.status} />,
     },
     {
       key: 'actions',
@@ -260,12 +237,7 @@ export function OffersView() {
   return (
     <div className="space-y-6">
       {/* Toast Alert */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white px-4 py-2.5 rounded-lg shadow-lg text-xs font-semibold flex items-center gap-2 animate-fadeIn transition-all">
-          <span>✓</span>
-          <span>{toastMessage}</span>
-        </div>
-      )}
+      <Toast message={toastMessage} />
 
       {builderOpen ? (
         <OfferBuilder
@@ -286,97 +258,59 @@ export function OffersView() {
       ) : (
         <>
           {/* Title Bar with Filled Color 3D Effects Gradient */}
-          <div className="titlebar-3d-gradient rounded-2xl p-5 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold tracking-tight text-white drop-shadow-xs">Manage Offers</h1>
-                <span className="px-2 py-0.5 rounded-md bg-white/20 border border-white/25 text-[10px] font-bold text-white uppercase tracking-wider">
-                  Campaign Manager
-                </span>
-              </div>
-              <p className="text-xs text-white/80 mt-1 font-medium">
-                Enterprise campaign manager with full-body tracking controls, targeting, and revenue spread
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                setSelectedOffer(null);
-                setBuilderOpen(true);
-              }}
-              className="btn-3d-success flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-xs font-bold shadow-md shadow-emerald-500/30 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Offer</span>
-            </button>
-          </div>
+          <TitleBar
+            title="Manage Offers"
+            badge="Campaign Manager"
+            subtitle="Enterprise campaign manager with full-body tracking controls, targeting, and revenue spread"
+            action={
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedOffer(null);
+                  setBuilderOpen(true);
+                }}
+                className="btn-3d-success flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-xs font-bold shadow-md shadow-emerald-500/30 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Offer</span>
+              </button>
+            }
+          />
 
           {/* 4 Color Tiles With Gradients */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            {/* Tile 1: Total Offers - Indigo Gradient */}
-            <div className="tile-gradient-indigo p-5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-fg">Total Offers</span>
-                <div className="w-8 h-8 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center shadow-sm">
-                  <Tag className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="mt-2.5 flex items-baseline gap-2">
-                <span className="text-3xl font-black tabular-nums text-fg tracking-tight">{totalOffers}</span>
-                <span className="text-[11px] font-semibold text-fg-muted">Campaigns</span>
-              </div>
-              <p className="text-[11px] text-fg-muted mt-1 font-medium">Registered in portfolio</p>
-            </div>
-
-            {/* Tile 2: Active Offers - Emerald Gradient */}
-            <div className="tile-gradient-emerald p-5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-fg">Active Routing</span>
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shadow-sm">
-                  <Activity className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="mt-2.5 flex items-baseline gap-2">
-                <span className="text-3xl font-black tabular-nums text-emerald-500 tracking-tight">{activeOffers}</span>
-                <span className="text-[11px] font-bold text-emerald-500 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full shadow-xs">
-                  Live
-                </span>
-              </div>
-              <p className="text-[11px] text-fg-muted mt-1 font-medium">Traffic eligible campaigns</p>
-            </div>
-
-            {/* Tile 3: Total Clicks - Sky Gradient */}
-            <div className="tile-gradient-sky p-5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-fg">Total Clicks</span>
-                <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-500 border border-sky-500/30 flex items-center justify-center shadow-sm">
-                  <MousePointer className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="mt-2.5 flex items-baseline gap-2">
-                <span className="text-3xl font-black tabular-nums text-fg tracking-tight">{totalClicks}</span>
-                <span className="text-[11px] font-semibold text-fg-muted">Sessions</span>
-              </div>
-              <p className="text-[11px] text-fg-muted mt-1 font-medium">Direct routing sessions</p>
-            </div>
-
-            {/* Tile 4: Attributed Conversions - Purple Gradient */}
-            <div className="tile-gradient-purple p-5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-fg">Conversions</span>
-                <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center justify-center shadow-sm">
-                  <CheckCircle2 className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="mt-2.5 flex items-baseline gap-2">
-                <span className="text-3xl font-black tabular-nums text-fg tracking-tight">{totalConversions}</span>
-                <span className="text-[11px] font-bold text-purple-400 bg-purple-500/15 border border-purple-500/30 px-2 py-0.5 rounded-full shadow-xs">
-                  Attributed
-                </span>
-              </div>
-              <p className="text-[11px] text-fg-muted mt-1 font-medium">Verified postback actions</p>
-            </div>
+            <MetricTile
+              title="Total Offers"
+              value={totalOffers}
+              unit="Campaigns"
+              subtitle="Registered in portfolio"
+              icon={Tag}
+              color="indigo"
+            />
+            <MetricTile
+              title="Active Routing"
+              value={activeOffers}
+              subtitle="Traffic eligible campaigns"
+              icon={Activity}
+              color="emerald"
+              badge={{ text: 'Live', pulse: true }}
+            />
+            <MetricTile
+              title="Total Clicks"
+              value={totalClicks}
+              unit="Sessions"
+              subtitle="Direct routing sessions"
+              icon={MousePointer}
+              color="sky"
+            />
+            <MetricTile
+              title="Conversions"
+              value={totalConversions}
+              subtitle="Verified postback actions"
+              icon={CheckCircle2}
+              color="purple"
+              badge={{ text: 'Attributed' }}
+            />
           </div>
 
           {/* Offers DataTable */}

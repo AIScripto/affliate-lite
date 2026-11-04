@@ -11,6 +11,10 @@ import { Network, NetworkStatus } from '../../types';
 import { DataTable, Column } from '../common/DataTable';
 import { ActionButtons } from '../common/ActionButtons';
 import { Modal } from '../common/Modal';
+import { TitleBar } from '../common/TitleBar';
+import { MetricTile } from '../common/MetricTile';
+import { Toast } from '../common/Toast';
+import { StatusBadge } from '../common/StatusBadge';
 
 export function NetworksView() {
   const [networks, setNetworks] = useState<Network[]>([]);
@@ -173,17 +177,7 @@ export function NetworksView() {
       key: 'status',
       header: 'Status',
       align: 'center',
-      render: (item) => (
-        <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
-            item.status === 'ACTIVE'
-              ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
-              : 'bg-red-500/10 text-red-500 border border-red-500/20'
-          }`}
-        >
-          {item.status}
-        </span>
-      ),
+      render: (item) => <StatusBadge status={item.status} />,
     },
     {
       key: 'createdAt',
@@ -218,28 +212,14 @@ export function NetworksView() {
   return (
     <div className="space-y-6">
       {/* Toast Alert */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white px-4 py-2.5 rounded-lg shadow-lg text-xs font-semibold flex items-center gap-2 animate-fadeIn transition-all">
-          <span>✓</span>
-          <span>{toastMessage}</span>
-        </div>
-      )}
+      <Toast message={toastMessage} />
 
       {/* Title Bar with Filled Color 3D Effects Gradient */}
-      <div className="titlebar-3d-gradient rounded-2xl p-5 shadow-lg">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold tracking-tight text-white drop-shadow-xs">Manage Networks</h1>
-              <span className="px-2 py-0.5 rounded-md bg-white/20 border border-white/25 text-[10px] font-bold text-white uppercase tracking-wider">
-                Advertisers
-              </span>
-            </div>
-            <p className="text-xs text-white/80 mt-1 font-medium">
-              Advertisers and affiliate networks providing campaign offers and postback tracking
-            </p>
-          </div>
-
+      <TitleBar
+        title="Manage Networks"
+        badge="Advertisers"
+        subtitle="Advertisers and affiliate networks providing campaign offers and postback tracking"
+        action={
           <button
             type="button"
             onClick={() => setShowAddForm(!showAddForm)}
@@ -248,165 +228,130 @@ export function NetworksView() {
             <Plus className="w-4 h-4" />
             <span>{showAddForm ? 'Close Form' : 'Add Network'}</span>
           </button>
-        </div>
+        }
+      />
 
-        {/* Collapsible Add Network Form (With Contact Details replacing Software dropdown [03:07]) */}
-        {showAddForm && (
-          <form
-            onSubmit={handleCreateNetwork}
-            className="mt-5 pt-5 border-t border-border-subtle bg-surface-elevated/40 p-4 rounded-lg"
-          >
-            <h2 className="text-xs font-bold uppercase tracking-wider text-primary mb-3">
-              Add New Network / Advertiser
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Name */}
-              <div>
-                <label className="block text-xs font-bold text-black dark:text-white mb-1">
-                  Name <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter Name (e.g. Everflow, Mobeeka)"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (nameError) setNameError(null);
-                  }}
-                  className={`w-full bg-surface border ${
-                    nameError ? 'border-danger' : 'border-border-subtle'
-                  } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary transition`}
-                />
-                {nameError && (
-                  <p className="text-[11px] text-danger mt-1">{nameError}</p>
-                )}
-              </div>
-
-              {/* Free-text Contact Details replacing legacy software dropdown */}
-              <div>
-                <label className="block text-xs font-bold text-black dark:text-white mb-1">
-                  Contact Details
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter Telegram, Email, or Skype (Optional)"
-                  value={contactDetails}
-                  onChange={(e) => setContactDetails(e.target.value)}
-                  className="w-full bg-surface border border-border-subtle text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary transition"
-                />
-              </div>
-            </div>
-
-            {/* Allow Duplicate Conversions toggle */}
-            <div className="mt-4 flex items-center gap-3">
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={allowDuplicateConversions}
-                  onChange={(e) => setAllowDuplicateConversions(e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-10 h-5 bg-surface border border-border-subtle peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+      {/* Collapsible Add Network Form */}
+      {showAddForm && (
+        <form
+          onSubmit={handleCreateNetwork}
+          className="titlebar-3d-gradient p-5 rounded-2xl shadow-lg border border-border-subtle"
+        >
+          <h2 className="text-xs font-bold uppercase tracking-wider text-primary mb-3">
+            Add New Network / Advertiser
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Name */}
+            <div>
+              <label className="block text-xs font-bold text-black dark:text-white mb-1">
+                Name <span className="text-danger">*</span>
               </label>
-              <div>
-                <span className="text-xs font-semibold text-fg">
-                  Allow Duplicate Conversions
-                </span>
-                <p className="text-[11px] text-fg-muted">
-                  When unchecked, duplicate order_id postbacks are rejected to prevent financial leak
-                </p>
-              </div>
+              <input
+                type="text"
+                placeholder="Enter Name (e.g. Everflow, Mobeeka)"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (nameError) setNameError(null);
+                }}
+                className={`w-full bg-surface border ${
+                  nameError ? 'border-danger' : 'border-border-subtle'
+                } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary transition`}
+              />
+              {nameError && (
+                <p className="text-[11px] text-danger mt-1">{nameError}</p>
+              )}
             </div>
 
-            <div className="mt-5 flex gap-2">
-              <button
-                type="button"
-                onClick={() => setShowAddForm(false)}
-                className="px-4 py-2 rounded-lg border border-border-subtle bg-surface hover:bg-surface-elevated text-xs font-medium text-fg transition"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="px-5 py-2 rounded-lg bg-primary hover:bg-primary-hover active:scale-95 text-white text-xs font-semibold shadow-sm transition disabled:opacity-50"
-              >
-                {isSubmitting ? 'Adding...' : 'Add'}
-              </button>
+            {/* Free-text Contact Details */}
+            <div>
+              <label className="block text-xs font-bold text-black dark:text-white mb-1">
+                Contact Details
+              </label>
+              <input
+                type="text"
+                placeholder="Enter Telegram, Email, or Skype (Optional)"
+                value={contactDetails}
+                onChange={(e) => setContactDetails(e.target.value)}
+                className="w-full bg-surface border border-border-subtle text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary transition"
+              />
             </div>
-          </form>
-        )}
-      </div>
+          </div>
+
+          {/* Allow Duplicate Conversions toggle */}
+          <div className="mt-4 flex items-center gap-3">
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={allowDuplicateConversions}
+                onChange={(e) => setAllowDuplicateConversions(e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className="w-10 h-5 bg-surface border border-border-subtle peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+            </label>
+            <div>
+              <span className="text-xs font-semibold text-fg">
+                Allow Duplicate Conversions
+              </span>
+              <p className="text-[11px] text-fg-muted">
+                When unchecked, duplicate order_id postbacks are rejected to prevent financial leak
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 flex gap-2">
+            <button
+              type="button"
+              onClick={() => setShowAddForm(false)}
+              className="px-4 py-2 rounded-lg border border-border-subtle bg-surface hover:bg-surface-elevated text-xs font-medium text-fg transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-5 py-2 rounded-lg bg-primary hover:bg-primary-hover active:scale-95 text-white text-xs font-semibold shadow-sm transition disabled:opacity-50"
+            >
+              {isSubmitting ? 'Adding...' : 'Add'}
+            </button>
+          </div>
+        </form>
+      )}
 
       {/* 4 Color Tiles With Gradients */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        {/* Tile 1: Total Networks - Indigo Gradient */}
-        <div className="tile-gradient-indigo p-5">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-fg">Total Networks</span>
-            <div className="w-8 h-8 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center shadow-sm">
-              <NetworkIcon className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2.5 flex items-baseline gap-2">
-            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">{networks.length}</span>
-            <span className="text-[11px] font-semibold text-fg-muted">Advertisers</span>
-          </div>
-          <p className="text-[11px] text-fg-muted mt-1 font-medium">Integrated networks</p>
-        </div>
-
-        {/* Tile 2: Active Networks - Emerald Gradient */}
-        <div className="tile-gradient-emerald p-5">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-fg">Active Partners</span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shadow-sm">
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2.5 flex items-baseline gap-2">
-            <span className="text-3xl font-black tabular-nums text-emerald-500 tracking-tight">
-              {networks.filter((n) => n.status === 'ACTIVE').length}
-            </span>
-            <span className="text-[11px] font-bold text-emerald-500 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full shadow-xs">
-              Live
-            </span>
-          </div>
-          <p className="text-[11px] text-fg-muted mt-1 font-medium">Serving campaign offers</p>
-        </div>
-
-        {/* Tile 3: Deduplication Allowed - Sky Gradient */}
-        <div className="tile-gradient-sky p-5">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-fg">Multi-Conversion</span>
-            <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-500 border border-sky-500/30 flex items-center justify-center shadow-sm">
-              <CopyCheck className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2.5 flex items-baseline gap-2">
-            <span className="text-3xl font-black tabular-nums text-fg tracking-tight">
-              {networks.filter((n) => n.allowDuplicateConversions).length}
-            </span>
-            <span className="text-[11px] font-semibold text-fg-muted">Networks</span>
-          </div>
-          <p className="text-[11px] text-fg-muted mt-1 font-medium">Allow duplicate conversions</p>
-        </div>
-
-        {/* Tile 4: Inactive/Staged - Amber Gradient */}
-        <div className="tile-gradient-amber p-5">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-fg">Paused / Staging</span>
-            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-500 border border-amber-500/30 flex items-center justify-center shadow-sm">
-              <AlertCircle className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2.5 flex items-baseline gap-2">
-            <span className="text-3xl font-black tabular-nums text-amber-500 tracking-tight">
-              {networks.filter((n) => n.status !== 'ACTIVE').length}
-            </span>
-            <span className="text-[11px] font-semibold text-fg-muted">Paused</span>
-          </div>
-          <p className="text-[11px] text-fg-muted mt-1 font-medium">Inactive advertiser connections</p>
-        </div>
+        <MetricTile
+          title="Total Networks"
+          value={networks.length}
+          unit="Advertisers"
+          subtitle="Integrated networks"
+          icon={NetworkIcon}
+          color="indigo"
+        />
+        <MetricTile
+          title="Active Partners"
+          value={networks.filter((n) => n.status === 'ACTIVE').length}
+          subtitle="Serving campaign offers"
+          icon={CheckCircle2}
+          color="emerald"
+          badge={{ text: 'Live', pulse: true }}
+        />
+        <MetricTile
+          title="Multi-Conversion"
+          value={networks.filter((n) => n.allowDuplicateConversions).length}
+          unit="Networks"
+          subtitle="Allow duplicate conversions"
+          icon={CopyCheck}
+          color="sky"
+        />
+        <MetricTile
+          title="Paused / Staging"
+          value={networks.filter((n) => n.status !== 'ACTIVE').length}
+          unit="Paused"
+          subtitle="Inactive advertiser connections"
+          icon={AlertCircle}
+          color="amber"
+        />
       </div>
 
       {/* Networks List DataTable */}
