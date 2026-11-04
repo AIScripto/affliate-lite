@@ -103,3 +103,4 @@ describe('Reports Module & Export Utilities Test Suite', () => {
     assert.ok(html.includes('&lt;img src=x onerror=alert(1)&gt;'));
   });
 });
+

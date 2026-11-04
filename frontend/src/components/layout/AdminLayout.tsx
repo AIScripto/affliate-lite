@@ -9,7 +9,6 @@ import {
   LogOut,
   Menu,
   ChevronDown,
-  ChevronRight,
   ShieldCheck,
   User as UserIcon,
   BookmarkPlus,
@@ -25,13 +24,7 @@ export type NavItem =
   | 'networks'
   | 'offers'
   | 'notifications'
-  | 'reports'
-  | 'report-overview'
-  | 'report-offers'
-  | 'report-networks'
-  | 'report-publishers'
-  | 'report-conversions'
-  | 'report-traffic';
+  | 'reports';
 
 interface AdminLayoutProps {
   currentNav: NavItem;
@@ -44,15 +37,6 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
-  const [reportsExpanded, setReportsExpanded] = useState(
-    currentNav === 'reports' || currentNav.startsWith('report-')
-  );
-
-  useEffect(() => {
-    if (currentNav === 'reports' || currentNav.startsWith('report-')) {
-      setReportsExpanded(true);
-    }
-  }, [currentNav]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -89,18 +73,7 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
       case 'notifications':
         return 'Notifications';
       case 'reports':
-      case 'report-overview':
-        return 'Reports / Overview';
-      case 'report-offers':
-        return 'Reports / Offers';
-      case 'report-networks':
-        return 'Reports / Networks';
-      case 'report-publishers':
-        return 'Reports / Publishers';
-      case 'report-conversions':
-        return 'Reports / Conversions';
-      case 'report-traffic':
-        return 'Reports / Traffic';
+        return 'Reports';
       default:
         return 'Dashboard';
     }
@@ -255,102 +228,14 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
             </span>
           </button>
 
-          {/* Expandable Reports Item */}
-          <div>
-            <div
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 cursor-pointer sidebar-nav-btn ${
-                currentNav === 'reports' || currentNav.startsWith('report-') ? 'is-active' : ''
-              }`}
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  onNavigate('reports');
-                  setReportsExpanded(true);
-                }}
-                className="flex items-center gap-3 flex-1 text-left cursor-pointer"
-              >
-                <BarChart3 className="w-4 h-4" />
-                <span>Reports</span>
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setReportsExpanded(!reportsExpanded);
-                }}
-                className="p-1 hover:opacity-100 opacity-70 cursor-pointer"
-              >
-                {reportsExpanded ? (
-                  <ChevronDown className="w-3.5 h-3.5" />
-                ) : (
-                  <ChevronRight className="w-3.5 h-3.5" />
-                )}
-              </button>
-            </div>
-
-            {reportsExpanded && (
-              <div
-                style={{ borderColor: 'var(--sidebar-border)' }}
-                className="ml-5 pl-3 mt-1 space-y-1 border-l"
-              >
-                <button
-                  type="button"
-                  onClick={() => onNavigate('report-overview')}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
-                    currentNav === 'report-overview' || currentNav === 'reports' ? 'is-active' : ''
-                  }`}
-                >
-                  Overview
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('report-offers')}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
-                    currentNav === 'report-offers' ? 'is-active' : ''
-                  }`}
-                >
-                  Offers
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('report-networks')}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
-                    currentNav === 'report-networks' ? 'is-active' : ''
-                  }`}
-                >
-                  Networks
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('report-publishers')}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
-                    currentNav === 'report-publishers' ? 'is-active' : ''
-                  }`}
-                >
-                  Publishers
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('report-conversions')}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
-                    currentNav === 'report-conversions' ? 'is-active' : ''
-                  }`}
-                >
-                  Conversions
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('report-traffic')}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
-                    currentNav === 'report-traffic' ? 'is-active' : ''
-                  }`}
-                >
-                  Traffic & Clicks
-                </button>
-              </div>
-            )}
-          </div>
+          <button
+            type="button"
+            onClick={() => onNavigate('reports')}
+            className={navItemClass(currentNav === 'reports')}
+          >
+            <BarChart3 className="w-4 h-4" />
+            <span>Reports</span>
+          </button>
         </div>
 
         {/* Sidebar Footer: Log Out */}

@@ -314,3 +314,4 @@ export function exportToExcel(report: ReportDocument): void {
   link.remove();
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+

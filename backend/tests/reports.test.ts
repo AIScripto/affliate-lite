@@ -64,3 +64,4 @@ describe('Reports Calculation & Aggregation Suite', () => {
     expect(marginPercent).toBe(0);
   });
 });
+

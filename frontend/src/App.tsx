@@ -27,18 +27,7 @@ export function App() {
       case 'notifications':
         return <NotificationsView />;
       case 'reports':
-      case 'report-overview':
         return <ReportsView initialTab="overview" />;
-      case 'report-offers':
-        return <ReportsView initialTab="offers" />;
-      case 'report-networks':
-        return <ReportsView initialTab="networks" />;
-      case 'report-publishers':
-        return <ReportsView initialTab="publishers" />;
-      case 'report-conversions':
-        return <ReportsView initialTab="conversions" />;
-      case 'report-traffic':
-        return <ReportsView initialTab="traffic" />;
       default:
         return <DashboardView />;
     }
