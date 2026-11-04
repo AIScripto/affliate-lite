@@ -25,9 +25,13 @@ export type NavItem =
   | 'networks'
   | 'offers'
   | 'notifications'
-  | 'report-networks'
+  | 'reports'
+  | 'report-overview'
   | 'report-offers'
-  | 'report-publishers';
+  | 'report-networks'
+  | 'report-publishers'
+  | 'report-conversions'
+  | 'report-traffic';
 
 interface AdminLayoutProps {
   currentNav: NavItem;
@@ -41,8 +45,14 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
   const [menuOpen, setMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const [reportsExpanded, setReportsExpanded] = useState(
-    currentNav.startsWith('report-')
+    currentNav === 'reports' || currentNav.startsWith('report-')
   );
+
+  useEffect(() => {
+    if (currentNav === 'reports' || currentNav.startsWith('report-')) {
+      setReportsExpanded(true);
+    }
+  }, [currentNav]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -78,12 +88,19 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
         return 'Offers';
       case 'notifications':
         return 'Notifications';
-      case 'report-networks':
-        return 'Networks Report';
+      case 'reports':
+      case 'report-overview':
+        return 'Reports / Overview';
       case 'report-offers':
-        return 'Offers Report';
+        return 'Reports / Offers';
+      case 'report-networks':
+        return 'Reports / Networks';
       case 'report-publishers':
-        return 'Publishers Report';
+        return 'Reports / Publishers';
+      case 'report-conversions':
+        return 'Reports / Conversions';
+      case 'report-traffic':
+        return 'Reports / Traffic';
       default:
         return 'Dashboard';
     }
@@ -240,23 +257,37 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
 
           {/* Expandable Reports Item */}
           <div>
-            <button
-              type="button"
-              onClick={() => setReportsExpanded(!reportsExpanded)}
+            <div
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 cursor-pointer sidebar-nav-btn ${
-                currentNav.startsWith('report-') ? 'is-active' : ''
+                currentNav === 'reports' || currentNav.startsWith('report-') ? 'is-active' : ''
               }`}
             >
-              <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigate('reports');
+                  setReportsExpanded(true);
+                }}
+                className="flex items-center gap-3 flex-1 text-left cursor-pointer"
+              >
                 <BarChart3 className="w-4 h-4" />
-                <span>Report</span>
-              </div>
-              {reportsExpanded ? (
-                <ChevronDown className="w-3.5 h-3.5 opacity-80" />
-              ) : (
-                <ChevronRight className="w-3.5 h-3.5 opacity-80" />
-              )}
-            </button>
+                <span>Reports</span>
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setReportsExpanded(!reportsExpanded);
+                }}
+                className="p-1 hover:opacity-100 opacity-70 cursor-pointer"
+              >
+                {reportsExpanded ? (
+                  <ChevronDown className="w-3.5 h-3.5" />
+                ) : (
+                  <ChevronRight className="w-3.5 h-3.5" />
+                )}
+              </button>
+            </div>
 
             {reportsExpanded && (
               <div
@@ -265,12 +296,12 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
               >
                 <button
                   type="button"
-                  onClick={() => onNavigate('report-networks')}
+                  onClick={() => onNavigate('report-overview')}
                   className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
-                    currentNav === 'report-networks' ? 'is-active' : ''
+                    currentNav === 'report-overview' || currentNav === 'reports' ? 'is-active' : ''
                   }`}
                 >
-                  Networks
+                  Overview
                 </button>
                 <button
                   type="button"
@@ -283,12 +314,39 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
                 </button>
                 <button
                   type="button"
+                  onClick={() => onNavigate('report-networks')}
+                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
+                    currentNav === 'report-networks' ? 'is-active' : ''
+                  }`}
+                >
+                  Networks
+                </button>
+                <button
+                  type="button"
                   onClick={() => onNavigate('report-publishers')}
                   className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
                     currentNav === 'report-publishers' ? 'is-active' : ''
                   }`}
                 >
                   Publishers
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('report-conversions')}
+                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
+                    currentNav === 'report-conversions' ? 'is-active' : ''
+                  }`}
+                >
+                  Conversions
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('report-traffic')}
+                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition sidebar-nav-btn ${
+                    currentNav === 'report-traffic' ? 'is-active' : ''
+                  }`}
+                >
+                  Traffic & Clicks
                 </button>
               </div>
             )}

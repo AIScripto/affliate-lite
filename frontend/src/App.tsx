@@ -6,9 +6,7 @@ import { PublishersView } from './components/publishers/PublishersView';
 import { DomainsView } from './components/domains/DomainsView';
 import { NetworksView } from './components/networks/NetworksView';
 import { OffersView } from './components/offers/OffersView';
-import { NetworksReportView } from './components/reports/NetworksReportView';
-import { OffersReportView } from './components/reports/OffersReportView';
-import { PublishersReportView } from './components/reports/PublishersReportView';
+import { ReportsView } from './components/reports/ReportsView';
 import { NotificationsView } from './components/notifications/NotificationsView';
 
 export function App() {
@@ -28,12 +26,19 @@ export function App() {
         return <OffersView />;
       case 'notifications':
         return <NotificationsView />;
-      case 'report-networks':
-        return <NetworksReportView />;
+      case 'reports':
+      case 'report-overview':
+        return <ReportsView initialTab="overview" />;
       case 'report-offers':
-        return <OffersReportView />;
+        return <ReportsView initialTab="offers" />;
+      case 'report-networks':
+        return <ReportsView initialTab="networks" />;
       case 'report-publishers':
-        return <PublishersReportView />;
+        return <ReportsView initialTab="publishers" />;
+      case 'report-conversions':
+        return <ReportsView initialTab="conversions" />;
+      case 'report-traffic':
+        return <ReportsView initialTab="traffic" />;
       default:
         return <DashboardView />;
     }

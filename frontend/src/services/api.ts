@@ -8,6 +8,9 @@ import {
   NetworkReportResponse,
   OfferReportResponse,
   PublisherReportResponse,
+  ReportsOverviewResponse,
+  ConversionReportResponse,
+  TrafficReportResponse,
   PublisherStatus,
   DomainStatus,
   NetworkStatus,
@@ -396,30 +399,119 @@ export async function revokeOfferAffiliate(
 }
 
 // ==================== REPORTS ====================
+
+export async function fetchReportsOverview(
+  dateFrom?: string,
+  dateTo?: string
+): Promise<ReportsOverviewResponse> {
+  const params = new URLSearchParams();
+  if (dateFrom) params.append('dateFrom', dateFrom);
+  if (dateTo) params.append('dateTo', dateTo);
+  const query = params.toString() ? `?${params.toString()}` : '';
+
+  const res = await apiFetch(`${API_BASE}/reports/overview${query}`);
+  return handleResponse<ReportsOverviewResponse>(res);
+}
+
+export async function fetchConversionsReport(filters?: {
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  networkId?: number;
+  publisherId?: number;
+  offerId?: number;
+  status?: string;
+  minAmount?: number;
+  maxAmount?: number;
+}): Promise<ConversionReportResponse> {
+  const params = new URLSearchParams();
+  if (filters?.search) params.append('search', filters.search);
+  if (filters?.dateFrom) params.append('dateFrom', filters.dateFrom);
+  if (filters?.dateTo) params.append('dateTo', filters.dateTo);
+  if (filters?.networkId) params.append('networkId', String(filters.networkId));
+  if (filters?.publisherId) params.append('publisherId', String(filters.publisherId));
+  if (filters?.offerId) params.append('offerId', String(filters.offerId));
+  if (filters?.status) params.append('status', filters.status);
+  if (filters?.minAmount !== undefined) params.append('minAmount', String(filters.minAmount));
+  if (filters?.maxAmount !== undefined) params.append('maxAmount', String(filters.maxAmount));
+  const query = params.toString() ? `?${params.toString()}` : '';
+
+  const res = await apiFetch(`${API_BASE}/reports/conversions${query}`);
+  const raw = await handleResponse<any>(res);
+  const data = Array.isArray(raw?.data) ? raw.data : Array.isArray(raw?.rows) ? raw.rows : [];
+
+  return {
+    data,
+    summary: {
+      totalRecords: raw?.summary?.totalRecords ?? data.length,
+      totalPayout: Number(raw?.summary?.totalPayout ?? 0),
+      totalRevenue: Number(raw?.summary?.totalRevenue ?? 0),
+    },
+    total: raw?.total ?? data.length,
+  };
+}
+
+export async function fetchTrafficReport(filters?: {
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  publisherId?: number;
+  offerId?: number;
+}): Promise<TrafficReportResponse> {
+  const params = new URLSearchParams();
+  if (filters?.search) params.append('search', filters.search);
+  if (filters?.dateFrom) params.append('dateFrom', filters.dateFrom);
+  if (filters?.dateTo) params.append('dateTo', filters.dateTo);
+  if (filters?.publisherId) params.append('publisherId', String(filters.publisherId));
+  if (filters?.offerId) params.append('offerId', String(filters.offerId));
+  const query = params.toString() ? `?${params.toString()}` : '';
+
+  const res = await apiFetch(`${API_BASE}/reports/traffic${query}`);
+  const raw = await handleResponse<any>(res);
+  const data = Array.isArray(raw?.data) ? raw.data : Array.isArray(raw?.rows) ? raw.rows : [];
+
+  return {
+    data,
+    total: raw?.total ?? data.length,
+  };
+}
+
 export async function fetchNetworksReport(
   startDate?: string,
-  endDate?: string
+  endDate?: string,
+  search?: string
 ): Promise<NetworkReportResponse> {
   const params = new URLSearchParams();
-  if (startDate) params.append('startDate', startDate);
-  if (endDate) params.append('endDate', endDate);
+  if (startDate) {
+    params.append('startDate', startDate);
+    params.append('dateFrom', startDate);
+  }
+  if (endDate) {
+    params.append('endDate', endDate);
+    params.append('dateTo', endDate);
+  }
+  if (search) params.append('search', search);
   const query = params.toString() ? `?${params.toString()}` : '';
 
   const res = await apiFetch(`${API_BASE}/reports/networks${query}`);
   const raw = await handleResponse<any>(res);
   const rawRows = Array.isArray(raw?.data) ? raw.data : Array.isArray(raw?.rows) ? raw.rows : [];
-  
+
   return {
     data: rawRows.map((r: any) => ({
       id: r.id,
+      documentNumber: r.documentNumber || `NET-${String(r.id).padStart(4, '0')}`,
       name: r.name || r.networkName || '-',
+      networkName: r.networkName || r.name || '-',
       offer: r.offer || r.offerName || '-',
+      offerName: r.offerName || r.offer || '-',
       clicks: r.clicks ?? 0,
       conversionsApproved: r.conversionsApproved ?? r.approvedConversions ?? 0,
       conversionsUnchecked: r.conversionsUnchecked ?? r.uncheckedConversions ?? 0,
       conversionsTotal: r.conversionsTotal ?? r.totalConversions ?? 0,
       payout: Number(r.payout ?? 0),
       revenue: Number(r.revenue ?? 0),
+      cr: r.cr !== undefined ? Number(r.cr) : undefined,
     })),
     summary: {
       totalClicks: raw?.summary?.totalClicks ?? 0,
@@ -434,11 +526,19 @@ export async function fetchNetworksReport(
 
 export async function fetchOffersReport(
   startDate?: string,
-  endDate?: string
+  endDate?: string,
+  search?: string
 ): Promise<OfferReportResponse> {
   const params = new URLSearchParams();
-  if (startDate) params.append('startDate', startDate);
-  if (endDate) params.append('endDate', endDate);
+  if (startDate) {
+    params.append('startDate', startDate);
+    params.append('dateFrom', startDate);
+  }
+  if (endDate) {
+    params.append('endDate', endDate);
+    params.append('dateTo', endDate);
+  }
+  if (search) params.append('search', search);
   const query = params.toString() ? `?${params.toString()}` : '';
 
   const res = await apiFetch(`${API_BASE}/reports/offers${query}`);
@@ -448,11 +548,16 @@ export async function fetchOffersReport(
   return {
     data: rawRows.map((r: any) => ({
       id: r.id,
+      documentNumber: r.documentNumber || `OFR-${String(r.id).padStart(4, '0')}`,
       name: r.name || r.offerName || '-',
-      conversions: r.conversions ?? 0,
+      offerName: r.offerName || r.name || '-',
+      networkName: r.networkName || '-',
+      conversions: r.conversions ?? r.totalConversions ?? 0,
       payout: Number(r.payout ?? 0),
+      revenue: Number(r.revenue ?? 0),
       clicks: r.clicks ?? 0,
       epc: Number(r.epc ?? 0),
+      cr: r.cr !== undefined ? Number(r.cr) : undefined,
     })),
     summary: {
       totalConversions: raw?.summary?.totalConversions ?? 0,
@@ -465,11 +570,19 @@ export async function fetchOffersReport(
 
 export async function fetchPublishersReport(
   startDate?: string,
-  endDate?: string
+  endDate?: string,
+  search?: string
 ): Promise<PublisherReportResponse> {
   const params = new URLSearchParams();
-  if (startDate) params.append('startDate', startDate);
-  if (endDate) params.append('endDate', endDate);
+  if (startDate) {
+    params.append('startDate', startDate);
+    params.append('dateFrom', startDate);
+  }
+  if (endDate) {
+    params.append('endDate', endDate);
+    params.append('dateTo', endDate);
+  }
+  if (search) params.append('search', search);
   const query = params.toString() ? `?${params.toString()}` : '';
 
   const res = await apiFetch(`${API_BASE}/reports/publishers${query}`);
@@ -479,14 +592,18 @@ export async function fetchPublishersReport(
   return {
     data: rawRows.map((r: any) => ({
       id: r.id,
+      documentNumber: r.documentNumber || `PUB-${String(r.id).padStart(4, '0')}`,
       name: r.name || r.publisherName || '-',
+      publisherName: r.publisherName || r.name || '-',
       offer: r.offer || r.offerName || '-',
+      offerName: r.offerName || r.offer || '-',
       clicks: r.clicks ?? 0,
       conversionsApproved: r.conversionsApproved ?? r.approvedConversions ?? 0,
       conversionsUnchecked: r.conversionsUnchecked ?? r.uncheckedConversions ?? 0,
       conversionsTotal: r.conversionsTotal ?? r.totalConversions ?? 0,
       epc: Number(r.epc ?? 0),
       payout: Number(r.payout ?? 0),
+      revenue: Number(r.revenue ?? 0),
     })),
     summary: {
       totalClicks: raw?.summary?.totalClicks ?? 0,

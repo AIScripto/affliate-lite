@@ -151,18 +151,28 @@ export interface AffiliatesDualList {
 
 export interface NetworkReportItem {
   id: number;
+  documentNumber?: string;
   name: string;
+  networkName?: string;
   offer: string;
+  offerName?: string;
   clicks: number;
   conversionsApproved: number;
   conversionsUnchecked: number;
   conversionsTotal: number;
+  approvedConversions?: number;
+  uncheckedConversions?: number;
+  totalConversions?: number;
   payout: number;
   revenue?: number;
+  cr?: number;
+  netAmount?: number;
+  gross?: number;
 }
 
 export interface NetworkReportResponse {
   data: NetworkReportItem[];
+  rows?: NetworkReportItem[];
   summary: {
     totalClicks: number;
     totalApproved: number;
@@ -175,43 +185,173 @@ export interface NetworkReportResponse {
 
 export interface OfferReportItem {
   id: number;
+  documentNumber?: string;
   name: string;
+  offerName?: string;
+  networkName?: string;
   conversions: number;
+  totalConversions?: number;
   payout: number;
+  revenue?: number;
   clicks: number;
   epc: number;
+  cr?: number;
 }
 
 export interface OfferReportResponse {
   data: OfferReportItem[];
+  rows?: OfferReportItem[];
   summary: {
     totalConversions: number;
     totalPayout: number;
     totalClicks: number;
     weightedEpc: number;
+    averageEpc?: number;
   };
 }
 
 export interface PublisherReportItem {
   id: number;
+  documentNumber?: string;
   name: string;
+  publisherName?: string;
   offer: string;
+  offerName?: string;
   clicks: number;
   conversionsApproved: number;
   conversionsUnchecked: number;
   conversionsTotal: number;
+  approvedConversions?: number;
+  uncheckedConversions?: number;
+  totalConversions?: number;
   epc: number;
   payout: number;
+  revenue?: number;
 }
 
 export interface PublisherReportResponse {
   data: PublisherReportItem[];
+  rows?: PublisherReportItem[];
   summary: {
     totalClicks: number;
     totalApproved: number;
     totalUnchecked: number;
     totalConversions: number;
     weightedEpc: number;
+    averageEpc?: number;
     totalPayout: number;
   };
+}
+
+export interface ReportsOverviewResponse {
+  summary: {
+    totalClicks: number;
+    totalConversions: number;
+    approvedConversions: number;
+    uncheckedConversions: number;
+    declinedConversions: number;
+    totalPayout: number;
+    totalRevenue: number;
+    netMargin: number;
+    marginPercent: number;
+    overallCr: number;
+    averageEpc: number;
+  };
+  topOffers: Array<{
+    id: number;
+    name: string;
+    networkName: string;
+    clicks: number;
+    conversions: number;
+    cr: number;
+    payout: number;
+    revenue: number;
+    epc: number;
+  }>;
+  topNetworks: Array<{
+    id: number;
+    name: string;
+    conversions: number;
+    payout: number;
+    revenue: number;
+  }>;
+  topPublishers: Array<{
+    id: number;
+    name: string;
+    conversions: number;
+    payout: number;
+  }>;
+  recentConversions: Array<{
+    id: number;
+    clickId: string;
+    externalTxId: string;
+    offerName: string;
+    networkName: string;
+    publisherName: string;
+    goalValue: string;
+    status: string;
+    currency: string;
+    payout: number;
+    revenue: number;
+    createdAt: string;
+  }>;
+}
+
+export interface ConversionReportItem {
+  id: number;
+  date: string;
+  documentNumber: string;
+  clickId: string;
+  externalTxId: string;
+  offerId: number;
+  offerName: string;
+  networkId: number;
+  networkName: string;
+  publisherId: number;
+  publisherName: string;
+  goalValue: string;
+  status: string;
+  currency: string;
+  ipAddress: string;
+  countryCode: string;
+  deviceType: string;
+  subId: string;
+  payout: number;
+  revenue: number;
+  gross: number;
+  netAmount: number;
+}
+
+export interface ConversionReportResponse {
+  data: ConversionReportItem[];
+  summary: {
+    totalRecords: number;
+    totalPayout: number;
+    totalRevenue: number;
+  };
+  total: number;
+}
+
+export interface TrafficReportItem {
+  id: string;
+  date: string;
+  documentNumber: string;
+  clickId: string;
+  offerId: number;
+  offerName: string;
+  publisherId: number;
+  publisherName: string;
+  ipAddress: string;
+  countryCode: string;
+  deviceType: string;
+  subId: string;
+  hasConversion: boolean;
+  conversionStatus: string;
+  payout: number;
+  revenue: number;
+}
+
+export interface TrafficReportResponse {
+  data: TrafficReportItem[];
+  total: number;
 }
