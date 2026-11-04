@@ -1,0 +1,5120 @@
+{
+  "SchemaVersion": 2,
+  "Trivy": {
+    "Version": "0.69.3"
+  },
+  "ReportID": "01a1157e-f0ba-78f4-8963-dee8a043906c",
+  "CreatedAt": "2026-10-07T13:33:23.130588+05:00",
+  "ArtifactID": "sha256:06dfa854d631b236aa1e695490c0381dfeac76c4548eeae8b4d28108df2b8538",
+  "ArtifactName": "/Users/tk-lpt-1088/development/react/erp/ERP/backend",
+  "ArtifactType": "repository",
+  "Metadata": {
+    "RepoURL": "git@bitbucket.org:tkxel/erp-be.git",
+    "Branch": "master",
+    "Commit": "227b6981d12208243435cc02ac756e63c9f4c675",
+    "CommitMsg": "Release v1.1.0\n\nFirst versioned release: everything up to this commit (scoring\nconsistency fixes, report navigation and screens, Gap Radar, security\nfixes, versioned deploys).\n\nCo-Authored-By: Claude Opus 5.5 \u003cnoreply@anthropic.com\u003e",
+    "Author": "tariqsulehri \u003ctariq_sulehri@hotmail.com\u003e",
+    "Committer": "tariqsulehri \u003ctariq_sulehri@hotmail.com\u003e"
+  },
+  "Results": [
+    {
+      "Target": "package-lock.json",
+      "Class": "lang-pkgs",
+      "Type": "npm",
+      "Packages": [
+        {
+          "ID": "@prisma/client@5.22.0",
+          "Name": "@prisma/client",
+          "Identifier": {
+            "PURL": "pkg:npm/%40prisma/client@5.22.0",
+            "UID": "60be62c94f18e940"
+          },
+          "Version": "5.22.0",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "prisma@5.22.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 1822,
+              "EndLine": 1839
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "bcryptjs@2.4.3",
+          "Name": "bcryptjs",
+          "Identifier": {
+            "PURL": "pkg:npm/bcryptjs@2.4.3",
+            "UID": "419ed8e029fb4dbd"
+          },
+          "Version": "2.4.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "Locations": [
+            {
+              "StartLine": 2734,
+              "EndLine": 2739
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "cors@2.8.6",
+          "Name": "cors",
+          "Identifier": {
+            "PURL": "pkg:npm/cors@2.8.6",
+            "UID": "1944194164725ef6"
+          },
+          "Version": "2.8.6",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "object-assign@4.1.1",
+            "vary@1.1.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 3181,
+              "EndLine": 3197
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "express@4.22.2",
+          "Name": "express",
+          "Identifier": {
+            "PURL": "pkg:npm/express@4.22.2",
+            "UID": "d8dff2b0d2b8f8ae"
+          },
+          "Version": "4.22.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "accepts@1.3.8",
+            "array-flatten@1.1.1",
+            "body-parser@1.20.6",
+            "content-disposition@0.5.4",
+            "content-type@1.0.5",
+            "cookie-signature@1.0.7",
+            "cookie@0.7.2",
+            "debug@2.6.9",
+            "depd@2.0.0",
+            "encodeurl@2.0.0",
+            "escape-html@1.0.3",
+            "etag@1.8.1",
+            "finalhandler@1.3.2",
+            "fresh@0.5.2",
+            "http-errors@2.0.1",
+            "merge-descriptors@1.0.3",
+            "methods@1.1.2",
+            "on-finished@2.4.1",
+            "parseurl@1.3.3",
+            "path-to-regexp@0.1.13",
+            "proxy-addr@2.0.7",
+            "qs@6.15.3",
+            "range-parser@1.2.1",
+            "safe-buffer@5.2.1",
+            "send@0.19.2",
+            "serve-static@1.16.3",
+            "setprototypeof@1.2.0",
+            "statuses@2.0.2",
+            "type-is@1.6.18",
+            "utils-merge@1.0.1",
+            "vary@1.1.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 3881,
+              "EndLine": 3926
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "express-rate-limit@7.5.1",
+          "Name": "express-rate-limit",
+          "Identifier": {
+            "PURL": "pkg:npm/express-rate-limit@7.5.1",
+            "UID": "4a1fc9532f98c574"
+          },
+          "Version": "7.5.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "express@4.22.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 3927,
+              "EndLine": 3941
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "helmet@7.2.0",
+          "Name": "helmet",
+          "Identifier": {
+            "PURL": "pkg:npm/helmet@7.2.0",
+            "UID": "417a3ccfc6827252"
+          },
+          "Version": "7.2.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "Locations": [
+            {
+              "StartLine": 4501,
+              "EndLine": 4509
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "jsonwebtoken@9.0.3",
+          "Name": "jsonwebtoken",
+          "Identifier": {
+            "PURL": "pkg:npm/jsonwebtoken@9.0.3",
+            "UID": "4211d08d3d7ca032"
+          },
+          "Version": "9.0.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "jws@4.0.1",
+            "lodash.includes@4.3.0",
+            "lodash.isboolean@3.0.3",
+            "lodash.isinteger@4.0.4",
+            "lodash.isnumber@3.0.3",
+            "lodash.isplainobject@4.0.6",
+            "lodash.isstring@4.0.1",
+            "lodash.once@4.1.1",
+            "ms@2.1.3",
+            "semver@7.8.5"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5551,
+              "EndLine": 5572
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "ms@2.1.3",
+          "Name": "ms",
+          "Identifier": {
+            "PURL": "pkg:npm/ms@2.1.3",
+            "UID": "5a57fe1c5c78efbf"
+          },
+          "Version": "2.1.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "Locations": [
+            {
+              "StartLine": 5899,
+              "EndLine": 5904
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "openapi-types@12.1.3",
+          "Name": "openapi-types",
+          "Identifier": {
+            "PURL": "pkg:npm/openapi-types@12.1.3",
+            "UID": "79f57e60dd26847e"
+          },
+          "Version": "12.1.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "Locations": [
+            {
+              "StartLine": 6035,
+              "EndLine": 6040
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "pino@8.21.0",
+          "Name": "pino",
+          "Identifier": {
+            "PURL": "pkg:npm/pino@8.21.0",
+            "UID": "7f97f489c5d626a0"
+          },
+          "Version": "8.21.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "atomic-sleep@1.0.0",
+            "fast-redact@3.5.0",
+            "on-exit-leak-free@2.1.2",
+            "pino-abstract-transport@1.2.0",
+            "pino-std-serializers@6.2.2",
+            "process-warning@3.0.0",
+            "quick-format-unescaped@4.0.4",
+            "real-require@0.2.0",
+            "safe-stable-stringify@2.5.0",
+            "sonic-boom@3.8.1",
+            "thread-stream@2.7.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6235,
+              "EndLine": 6256
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "pino-http@8.6.1",
+          "Name": "pino-http",
+          "Identifier": {
+            "PURL": "pkg:npm/pino-http@8.6.1",
+            "UID": "d6e4b7bdbd36a7a9"
+          },
+          "Version": "8.6.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "get-caller-file@2.0.5",
+            "pino-std-serializers@6.2.2",
+            "pino@8.21.0",
+            "process-warning@3.0.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6267,
+              "EndLine": 6278
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "pino-pretty@10.3.1",
+          "Name": "pino-pretty",
+          "Identifier": {
+            "PURL": "pkg:npm/pino-pretty@10.3.1",
+            "UID": "39744a7b00b1d6fe"
+          },
+          "Version": "10.3.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "colorette@2.0.20",
+            "dateformat@4.6.3",
+            "fast-copy@3.0.2",
+            "fast-safe-stringify@2.1.1",
+            "help-me@5.0.0",
+            "joycon@3.1.1",
+            "minimist@1.2.8",
+            "on-exit-leak-free@2.1.2",
+            "pino-abstract-transport@1.2.0",
+            "pump@3.0.4",
+            "readable-stream@4.7.0",
+            "secure-json-parse@2.7.0",
+            "sonic-boom@3.8.1",
+            "strip-json-comments@3.1.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6279,
+              "EndLine": 6303
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "swagger-jsdoc@6.3.0",
+          "Name": "swagger-jsdoc",
+          "Identifier": {
+            "PURL": "pkg:npm/swagger-jsdoc@6.3.0",
+            "UID": "90b63f284bbb34ca"
+          },
+          "Version": "6.3.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "@apidevtools/swagger-parser@12.1.0",
+            "commander@6.2.0",
+            "doctrine@3.0.0",
+            "glob@11.1.0",
+            "lodash.mergewith@4.6.2",
+            "yaml@2.0.0-1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 7229,
+              "EndLine": 7248
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "swagger-ui-express@5.0.1",
+          "Name": "swagger-ui-express",
+          "Identifier": {
+            "PURL": "pkg:npm/swagger-ui-express@5.0.1",
+            "UID": "9f2d60c282b3b8ae"
+          },
+          "Version": "5.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "express@4.22.2",
+            "swagger-ui-dist@5.32.13"
+          ],
+          "Locations": [
+            {
+              "StartLine": 7282,
+              "EndLine": 7296
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "zod@3.25.76",
+          "Name": "zod",
+          "Identifier": {
+            "PURL": "pkg:npm/zod@3.25.76",
+            "UID": "c2366405202312f2"
+          },
+          "Version": "3.25.76",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "Locations": [
+            {
+              "StartLine": 7910,
+              "EndLine": 7918
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@apidevtools/json-schema-ref-parser@14.0.1",
+          "Name": "@apidevtools/json-schema-ref-parser",
+          "Identifier": {
+            "PURL": "pkg:npm/%40apidevtools/json-schema-ref-parser@14.0.1",
+            "UID": "bc65788331814995"
+          },
+          "Version": "14.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@types/json-schema@7.0.15",
+            "js-yaml@4.3.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 51,
+              "EndLine": 66
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@apidevtools/openapi-schemas@2.1.0",
+          "Name": "@apidevtools/openapi-schemas",
+          "Identifier": {
+            "PURL": "pkg:npm/%40apidevtools/openapi-schemas@2.1.0",
+            "UID": "3f076c399360a3a2"
+          },
+          "Version": "2.1.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 67,
+              "EndLine": 75
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@apidevtools/swagger-methods@3.0.2",
+          "Name": "@apidevtools/swagger-methods",
+          "Identifier": {
+            "PURL": "pkg:npm/%40apidevtools/swagger-methods@3.0.2",
+            "UID": "6cd5606b9d934bbc"
+          },
+          "Version": "3.0.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 76,
+              "EndLine": 81
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@apidevtools/swagger-parser@12.1.0",
+          "Name": "@apidevtools/swagger-parser",
+          "Identifier": {
+            "PURL": "pkg:npm/%40apidevtools/swagger-parser@12.1.0",
+            "UID": "4b6b2f29dce4e646"
+          },
+          "Version": "12.1.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@apidevtools/json-schema-ref-parser@14.0.1",
+            "@apidevtools/openapi-schemas@2.1.0",
+            "@apidevtools/swagger-methods@3.0.2",
+            "ajv-draft-04@1.0.0",
+            "ajv@8.20.0",
+            "call-me-maybe@1.0.2",
+            "openapi-types@12.1.3"
+          ],
+          "Locations": [
+            {
+              "StartLine": 82,
+              "EndLine": 98
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@isaacs/cliui@9.0.0",
+          "Name": "@isaacs/cliui",
+          "Identifier": {
+            "PURL": "pkg:npm/%40isaacs/cliui@9.0.0",
+            "UID": "7376a0256093a1fe"
+          },
+          "Version": "9.0.0",
+          "Licenses": [
+            "BlueOak-1.0.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1293,
+              "EndLine": 1301
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@scarf/scarf@1.4.0",
+          "Name": "@scarf/scarf",
+          "Identifier": {
+            "PURL": "pkg:npm/%40scarf/scarf@1.4.0",
+            "UID": "f968c65c0b0e6bd4"
+          },
+          "Version": "1.4.0",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1890,
+              "EndLine": 1896
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@types/json-schema@7.0.15",
+          "Name": "@types/json-schema",
+          "Identifier": {
+            "PURL": "pkg:npm/%40types/json-schema@7.0.15",
+            "UID": "200d249637937208"
+          },
+          "Version": "7.0.15",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2116,
+              "EndLine": 2121
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "abort-controller@3.0.0",
+          "Name": "abort-controller",
+          "Identifier": {
+            "PURL": "pkg:npm/abort-controller@3.0.0",
+            "UID": "12a6b8ee24545a16"
+          },
+          "Version": "3.0.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "event-target-shim@5.0.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 2377,
+              "EndLine": 2388
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "accepts@1.3.8",
+          "Name": "accepts",
+          "Identifier": {
+            "PURL": "pkg:npm/accepts@1.3.8",
+            "UID": "7023462808018b03"
+          },
+          "Version": "1.3.8",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "mime-types@2.1.35",
+            "negotiator@0.6.3"
+          ],
+          "Locations": [
+            {
+              "StartLine": 2389,
+              "EndLine": 2401
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "ajv@8.20.0",
+          "Name": "ajv",
+          "Identifier": {
+            "PURL": "pkg:npm/ajv@8.20.0",
+            "UID": "3943127c2cef78b4"
+          },
+          "Version": "8.20.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "fast-deep-equal@3.1.3",
+            "fast-uri@3.1.5",
+            "json-schema-traverse@1.0.0",
+            "require-from-string@2.0.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 99,
+              "EndLine": 114
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "ajv-draft-04@1.0.0",
+          "Name": "ajv-draft-04",
+          "Identifier": {
+            "PURL": "pkg:npm/ajv-draft-04@1.0.0",
+            "UID": "5a034672f19bae4e"
+          },
+          "Version": "1.0.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "ajv@8.20.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 115,
+              "EndLine": 128
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "argparse@2.0.1",
+          "Name": "argparse",
+          "Identifier": {
+            "PURL": "pkg:npm/argparse@2.0.1",
+            "UID": "fc2e94ba7b4c90e8"
+          },
+          "Version": "2.0.1",
+          "Licenses": [
+            "Python-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2531,
+              "EndLine": 2536
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "array-flatten@1.1.1",
+          "Name": "array-flatten",
+          "Identifier": {
+            "PURL": "pkg:npm/array-flatten@1.1.1",
+            "UID": "a1a2bbb6f3eb4c68"
+          },
+          "Version": "1.1.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2537,
+              "EndLine": 2542
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "atomic-sleep@1.0.0",
+          "Name": "atomic-sleep",
+          "Identifier": {
+            "PURL": "pkg:npm/atomic-sleep@1.0.0",
+            "UID": "61e4840eacf3924"
+          },
+          "Version": "1.0.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2557,
+              "EndLine": 2565
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "balanced-match@4.0.4",
+          "Name": "balanced-match",
+          "Identifier": {
+            "PURL": "pkg:npm/balanced-match@4.0.4",
+            "UID": "18ce2da03e71dd07"
+          },
+          "Version": "4.0.4",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2692,
+              "EndLine": 2700
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "base64-js@1.5.1",
+          "Name": "base64-js",
+          "Identifier": {
+            "PURL": "pkg:npm/base64-js@1.5.1",
+            "UID": "e1d8ca9701258fc7"
+          },
+          "Version": "1.5.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2701,
+              "EndLine": 2720
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "body-parser@1.20.6",
+          "Name": "body-parser",
+          "Identifier": {
+            "PURL": "pkg:npm/body-parser@1.20.6",
+            "UID": "74e0e07b900b2a4b"
+          },
+          "Version": "1.20.6",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "bytes@3.1.2",
+            "content-type@1.0.5",
+            "debug@2.6.9",
+            "depd@2.0.0",
+            "destroy@1.2.0",
+            "http-errors@2.0.1",
+            "iconv-lite@0.4.24",
+            "on-finished@2.4.1",
+            "qs@6.15.3",
+            "raw-body@2.5.3",
+            "type-is@1.6.18",
+            "unpipe@1.0.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 2740,
+              "EndLine": 2763
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "brace-expansion@5.0.9",
+          "Name": "brace-expansion",
+          "Identifier": {
+            "PURL": "pkg:npm/brace-expansion@5.0.9",
+            "UID": "ae6ab0288298d85c"
+          },
+          "Version": "5.0.9",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "balanced-match@4.0.4"
+          ],
+          "Locations": [
+            {
+              "StartLine": 2779,
+              "EndLine": 2790
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "buffer@6.0.3",
+          "Name": "buffer",
+          "Identifier": {
+            "PURL": "pkg:npm/buffer@6.0.3",
+            "UID": "8998965bfc4d83ce"
+          },
+          "Version": "6.0.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "base64-js@1.5.1",
+            "ieee754@1.2.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 2861,
+              "EndLine": 2884
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "buffer-equal-constant-time@1.0.1",
+          "Name": "buffer-equal-constant-time",
+          "Identifier": {
+            "PURL": "pkg:npm/buffer-equal-constant-time@1.0.1",
+            "UID": "123f62b95f913f9d"
+          },
+          "Version": "1.0.1",
+          "Licenses": [
+            "BSD-3-Clause"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2885,
+              "EndLine": 2890
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "bytes@3.1.2",
+          "Name": "bytes",
+          "Identifier": {
+            "PURL": "pkg:npm/bytes@3.1.2",
+            "UID": "5caccd1836b72365"
+          },
+          "Version": "3.1.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2898,
+              "EndLine": 2906
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "call-bind-apply-helpers@1.0.2",
+          "Name": "call-bind-apply-helpers",
+          "Identifier": {
+            "PURL": "pkg:npm/call-bind-apply-helpers@1.0.2",
+            "UID": "e8b2edefa81e6e34"
+          },
+          "Version": "1.0.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "es-errors@1.3.0",
+            "function-bind@1.1.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 2907,
+              "EndLine": 2919
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "call-bound@1.0.4",
+          "Name": "call-bound",
+          "Identifier": {
+            "PURL": "pkg:npm/call-bound@1.0.4",
+            "UID": "2f0833a81a5038a0"
+          },
+          "Version": "1.0.4",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "call-bind-apply-helpers@1.0.2",
+            "get-intrinsic@1.3.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 2920,
+              "EndLine": 2935
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "call-me-maybe@1.0.2",
+          "Name": "call-me-maybe",
+          "Identifier": {
+            "PURL": "pkg:npm/call-me-maybe@1.0.2",
+            "UID": "2286339c8f440d43"
+          },
+          "Version": "1.0.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2936,
+              "EndLine": 2941
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "colorette@2.0.20",
+          "Name": "colorette",
+          "Identifier": {
+            "PURL": "pkg:npm/colorette@2.0.20",
+            "UID": "d626a828cf2ed81b"
+          },
+          "Version": "2.0.20",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3086,
+              "EndLine": 3091
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "commander@6.2.0",
+          "Name": "commander",
+          "Identifier": {
+            "PURL": "pkg:npm/commander@6.2.0",
+            "UID": "f626a2577616d414"
+          },
+          "Version": "6.2.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3105,
+              "EndLine": 3113
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "content-disposition@0.5.4",
+          "Name": "content-disposition",
+          "Identifier": {
+            "PURL": "pkg:npm/content-disposition@0.5.4",
+            "UID": "e197f6e9bef006d3"
+          },
+          "Version": "0.5.4",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "safe-buffer@5.2.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 3131,
+              "EndLine": 3142
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "content-type@1.0.5",
+          "Name": "content-type",
+          "Identifier": {
+            "PURL": "pkg:npm/content-type@1.0.5",
+            "UID": "c375a90e8ca33833"
+          },
+          "Version": "1.0.5",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3143,
+              "EndLine": 3151
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "cookie@0.7.2",
+          "Name": "cookie",
+          "Identifier": {
+            "PURL": "pkg:npm/cookie@0.7.2",
+            "UID": "428187c6d8e3114b"
+          },
+          "Version": "0.7.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3159,
+              "EndLine": 3167
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "cookie-signature@1.0.7",
+          "Name": "cookie-signature",
+          "Identifier": {
+            "PURL": "pkg:npm/cookie-signature@1.0.7",
+            "UID": "5214da02d339ec38"
+          },
+          "Version": "1.0.7",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3168,
+              "EndLine": 3173
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "cross-spawn@7.0.6",
+          "Name": "cross-spawn",
+          "Identifier": {
+            "PURL": "pkg:npm/cross-spawn@7.0.6",
+            "UID": "520035b55c020af1"
+          },
+          "Version": "7.0.6",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "path-key@3.1.1",
+            "shebang-command@2.0.0",
+            "which@2.0.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 3227,
+              "EndLine": 3240
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "dateformat@4.6.3",
+          "Name": "dateformat",
+          "Identifier": {
+            "PURL": "pkg:npm/dateformat@4.6.3",
+            "UID": "2db42c50ef186122"
+          },
+          "Version": "4.6.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3241,
+              "EndLine": 3249
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "debug@2.6.9",
+          "Name": "debug",
+          "Identifier": {
+            "PURL": "pkg:npm/debug@2.6.9",
+            "UID": "659abc371b848405"
+          },
+          "Version": "2.6.9",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "ms@2.0.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 2764,
+              "EndLine": 2772
+            },
+            {
+              "StartLine": 3942,
+              "EndLine": 3950
+            },
+            {
+              "StartLine": 4078,
+              "EndLine": 4086
+            },
+            {
+              "StartLine": 6838,
+              "EndLine": 6846
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "depd@2.0.0",
+          "Name": "depd",
+          "Identifier": {
+            "PURL": "pkg:npm/depd@2.0.0",
+            "UID": "4ca7041eeca1fa24"
+          },
+          "Version": "2.0.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3310,
+              "EndLine": 3318
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "destroy@1.2.0",
+          "Name": "destroy",
+          "Identifier": {
+            "PURL": "pkg:npm/destroy@1.2.0",
+            "UID": "28fb6d79de7c1127"
+          },
+          "Version": "1.2.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3319,
+              "EndLine": 3328
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "doctrine@3.0.0",
+          "Name": "doctrine",
+          "Identifier": {
+            "PURL": "pkg:npm/doctrine@3.0.0",
+            "UID": "ff340e26e01c8fad"
+          },
+          "Version": "3.0.0",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "esutils@2.0.3"
+          ],
+          "Locations": [
+            {
+              "StartLine": 3370,
+              "EndLine": 3381
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "dunder-proto@1.0.1",
+          "Name": "dunder-proto",
+          "Identifier": {
+            "PURL": "pkg:npm/dunder-proto@1.0.1",
+            "UID": "7aebf5fb67eabbcd"
+          },
+          "Version": "1.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "call-bind-apply-helpers@1.0.2",
+            "es-errors@1.3.0",
+            "gopd@1.2.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 3382,
+              "EndLine": 3395
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "ecdsa-sig-formatter@1.0.11",
+          "Name": "ecdsa-sig-formatter",
+          "Identifier": {
+            "PURL": "pkg:npm/ecdsa-sig-formatter@1.0.11",
+            "UID": "55f72c2a8a37f000"
+          },
+          "Version": "1.0.11",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "safe-buffer@5.2.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 3396,
+              "EndLine": 3404
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "ee-first@1.1.1",
+          "Name": "ee-first",
+          "Identifier": {
+            "PURL": "pkg:npm/ee-first@1.1.1",
+            "UID": "417bceb143cf427b"
+          },
+          "Version": "1.1.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3405,
+              "EndLine": 3410
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "encodeurl@2.0.0",
+          "Name": "encodeurl",
+          "Identifier": {
+            "PURL": "pkg:npm/encodeurl@2.0.0",
+            "UID": "8d4a8b3361e16bdc"
+          },
+          "Version": "2.0.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3438,
+              "EndLine": 3446
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "end-of-stream@1.4.5",
+          "Name": "end-of-stream",
+          "Identifier": {
+            "PURL": "pkg:npm/end-of-stream@1.4.5",
+            "UID": "e0207e1e123ea958"
+          },
+          "Version": "1.4.5",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "once@1.4.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 3447,
+              "EndLine": 3455
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "es-define-property@1.0.1",
+          "Name": "es-define-property",
+          "Identifier": {
+            "PURL": "pkg:npm/es-define-property@1.0.1",
+            "UID": "36517394602ccb06"
+          },
+          "Version": "1.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3466,
+              "EndLine": 3474
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "es-errors@1.3.0",
+          "Name": "es-errors",
+          "Identifier": {
+            "PURL": "pkg:npm/es-errors@1.3.0",
+            "UID": "64976ebfb23b8348"
+          },
+          "Version": "1.3.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3475,
+              "EndLine": 3483
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "es-object-atoms@1.1.2",
+          "Name": "es-object-atoms",
+          "Identifier": {
+            "PURL": "pkg:npm/es-object-atoms@1.1.2",
+            "UID": "5ba12bc46171c79a"
+          },
+          "Version": "1.1.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "es-errors@1.3.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 3484,
+              "EndLine": 3495
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "escape-html@1.0.3",
+          "Name": "escape-html",
+          "Identifier": {
+            "PURL": "pkg:npm/escape-html@1.0.3",
+            "UID": "d5bc2bd971f773e0"
+          },
+          "Version": "1.0.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3564,
+              "EndLine": 3569
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "esutils@2.0.3",
+          "Name": "esutils",
+          "Identifier": {
+            "PURL": "pkg:npm/esutils@2.0.3",
+            "UID": "276bdebf813f74fd"
+          },
+          "Version": "2.0.3",
+          "Licenses": [
+            "BSD-2-Clause"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3795,
+              "EndLine": 3803
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "etag@1.8.1",
+          "Name": "etag",
+          "Identifier": {
+            "PURL": "pkg:npm/etag@1.8.1",
+            "UID": "7572d77fd69bad25"
+          },
+          "Version": "1.8.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3804,
+              "EndLine": 3812
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "event-target-shim@5.0.1",
+          "Name": "event-target-shim",
+          "Identifier": {
+            "PURL": "pkg:npm/event-target-shim@5.0.1",
+            "UID": "882201f33183d7af"
+          },
+          "Version": "5.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3813,
+              "EndLine": 3821
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "events@3.3.0",
+          "Name": "events",
+          "Identifier": {
+            "PURL": "pkg:npm/events@3.3.0",
+            "UID": "f90fa21182cfecb3"
+          },
+          "Version": "3.3.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3822,
+              "EndLine": 3830
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "fast-copy@3.0.2",
+          "Name": "fast-copy",
+          "Identifier": {
+            "PURL": "pkg:npm/fast-copy@3.0.2",
+            "UID": "f1a519b73bfa162d"
+          },
+          "Version": "3.0.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3957,
+              "EndLine": 3962
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "fast-deep-equal@3.1.3",
+          "Name": "fast-deep-equal",
+          "Identifier": {
+            "PURL": "pkg:npm/fast-deep-equal@3.1.3",
+            "UID": "2911e743faab4dde"
+          },
+          "Version": "3.1.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3963,
+              "EndLine": 3968
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "fast-redact@3.5.0",
+          "Name": "fast-redact",
+          "Identifier": {
+            "PURL": "pkg:npm/fast-redact@3.5.0",
+            "UID": "2203e328508e8a41"
+          },
+          "Version": "3.5.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3983,
+              "EndLine": 3991
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "fast-safe-stringify@2.1.1",
+          "Name": "fast-safe-stringify",
+          "Identifier": {
+            "PURL": "pkg:npm/fast-safe-stringify@2.1.1",
+            "UID": "248035cff498a5c5"
+          },
+          "Version": "2.1.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3992,
+              "EndLine": 3997
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "fast-uri@3.1.5",
+          "Name": "fast-uri",
+          "Identifier": {
+            "PURL": "pkg:npm/fast-uri@3.1.5",
+            "UID": "b54b945bdf5a0fe9"
+          },
+          "Version": "3.1.5",
+          "Licenses": [
+            "BSD-3-Clause"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3998,
+              "EndLine": 4013
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "finalhandler@1.3.2",
+          "Name": "finalhandler",
+          "Identifier": {
+            "PURL": "pkg:npm/finalhandler@1.3.2",
+            "UID": "ef2967ec0f5a273c"
+          },
+          "Version": "1.3.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "debug@2.6.9",
+            "encodeurl@2.0.0",
+            "escape-html@1.0.3",
+            "on-finished@2.4.1",
+            "parseurl@1.3.3",
+            "statuses@2.0.2",
+            "unpipe@1.0.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 4060,
+              "EndLine": 4077
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "foreground-child@3.3.1",
+          "Name": "foreground-child",
+          "Identifier": {
+            "PURL": "pkg:npm/foreground-child@3.3.1",
+            "UID": "12bba29cda30d8eb"
+          },
+          "Version": "3.3.1",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "cross-spawn@7.0.6",
+            "signal-exit@4.1.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 4132,
+              "EndLine": 4147
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "forwarded@0.2.0",
+          "Name": "forwarded",
+          "Identifier": {
+            "PURL": "pkg:npm/forwarded@0.2.0",
+            "UID": "8d946410c0db94c3"
+          },
+          "Version": "0.2.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4193,
+              "EndLine": 4201
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "fresh@0.5.2",
+          "Name": "fresh",
+          "Identifier": {
+            "PURL": "pkg:npm/fresh@0.5.2",
+            "UID": "f1041770adc18577"
+          },
+          "Version": "0.5.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4202,
+              "EndLine": 4210
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "function-bind@1.1.2",
+          "Name": "function-bind",
+          "Identifier": {
+            "PURL": "pkg:npm/function-bind@1.1.2",
+            "UID": "45c27185d9cad113"
+          },
+          "Version": "1.1.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4233,
+              "EndLine": 4241
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "get-caller-file@2.0.5",
+          "Name": "get-caller-file",
+          "Identifier": {
+            "PURL": "pkg:npm/get-caller-file@2.0.5",
+            "UID": "da6d4a6329634c96"
+          },
+          "Version": "2.0.5",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4252,
+              "EndLine": 4260
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "get-intrinsic@1.3.0",
+          "Name": "get-intrinsic",
+          "Identifier": {
+            "PURL": "pkg:npm/get-intrinsic@1.3.0",
+            "UID": "15ba505ad934f9df"
+          },
+          "Version": "1.3.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "call-bind-apply-helpers@1.0.2",
+            "es-define-property@1.0.1",
+            "es-errors@1.3.0",
+            "es-object-atoms@1.1.2",
+            "function-bind@1.1.2",
+            "get-proto@1.0.1",
+            "gopd@1.2.0",
+            "has-symbols@1.1.0",
+            "hasown@2.0.4",
+            "math-intrinsics@1.1.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 4261,
+              "EndLine": 4284
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "get-proto@1.0.1",
+          "Name": "get-proto",
+          "Identifier": {
+            "PURL": "pkg:npm/get-proto@1.0.1",
+            "UID": "6fa5b9035b1407b4"
+          },
+          "Version": "1.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "dunder-proto@1.0.1",
+            "es-object-atoms@1.1.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 4295,
+              "EndLine": 4307
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "glob@11.1.0",
+          "Name": "glob",
+          "Identifier": {
+            "PURL": "pkg:npm/glob@11.1.0",
+            "UID": "86ffb8e01c648e92"
+          },
+          "Version": "11.1.0",
+          "Licenses": [
+            "BlueOak-1.0.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "foreground-child@3.3.1",
+            "jackspeak@4.2.3",
+            "minimatch@10.2.6",
+            "minipass@7.1.3",
+            "package-json-from-dist@1.0.1",
+            "path-scurry@2.0.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 7249,
+              "EndLine": 7272
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "gopd@1.2.0",
+          "Name": "gopd",
+          "Identifier": {
+            "PURL": "pkg:npm/gopd@1.2.0",
+            "UID": "f874b1cb01ee411f"
+          },
+          "Version": "1.2.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4403,
+              "EndLine": 4414
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "has-symbols@1.1.0",
+          "Name": "has-symbols",
+          "Identifier": {
+            "PURL": "pkg:npm/has-symbols@1.1.0",
+            "UID": "35c6c021e115c78d"
+          },
+          "Version": "1.1.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4461,
+              "EndLine": 4472
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "hasown@2.0.4",
+          "Name": "hasown",
+          "Identifier": {
+            "PURL": "pkg:npm/hasown@2.0.4",
+            "UID": "6a6aeab74ea910b"
+          },
+          "Version": "2.0.4",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "function-bind@1.1.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 4489,
+              "EndLine": 4500
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "help-me@5.0.0",
+          "Name": "help-me",
+          "Identifier": {
+            "PURL": "pkg:npm/help-me@5.0.0",
+            "UID": "435603b9a5d83130"
+          },
+          "Version": "5.0.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4510,
+              "EndLine": 4515
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "http-errors@2.0.1",
+          "Name": "http-errors",
+          "Identifier": {
+            "PURL": "pkg:npm/http-errors@2.0.1",
+            "UID": "c578b9f8e7a9cf8b"
+          },
+          "Version": "2.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "depd@2.0.0",
+            "inherits@2.0.4",
+            "setprototypeof@1.2.0",
+            "statuses@2.0.2",
+            "toidentifier@1.0.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 4523,
+              "EndLine": 4542
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "iconv-lite@0.4.24",
+          "Name": "iconv-lite",
+          "Identifier": {
+            "PURL": "pkg:npm/iconv-lite@0.4.24",
+            "UID": "92d98c7d10a37c77"
+          },
+          "Version": "0.4.24",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "safer-buffer@2.1.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 4569,
+              "EndLine": 4580
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "ieee754@1.2.1",
+          "Name": "ieee754",
+          "Identifier": {
+            "PURL": "pkg:npm/ieee754@1.2.1",
+            "UID": "9124d45b57218155"
+          },
+          "Version": "1.2.1",
+          "Licenses": [
+            "BSD-3-Clause"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4581,
+              "EndLine": 4600
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "inherits@2.0.4",
+          "Name": "inherits",
+          "Identifier": {
+            "PURL": "pkg:npm/inherits@2.0.4",
+            "UID": "6f851ed6d59f427e"
+          },
+          "Version": "2.0.4",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4670,
+              "EndLine": 4675
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "ipaddr.js@1.9.1",
+          "Name": "ipaddr.js",
+          "Identifier": {
+            "PURL": "pkg:npm/ipaddr.js@1.9.1",
+            "UID": "34588509b065a234"
+          },
+          "Version": "1.9.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4676,
+              "EndLine": 4684
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "isexe@2.0.0",
+          "Name": "isexe",
+          "Identifier": {
+            "PURL": "pkg:npm/isexe@2.0.0",
+            "UID": "5957dacdb2bd812"
+          },
+          "Version": "2.0.0",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4784,
+              "EndLine": 4789
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "jackspeak@4.2.3",
+          "Name": "jackspeak",
+          "Identifier": {
+            "PURL": "pkg:npm/jackspeak@4.2.3",
+            "UID": "5a5df57017babc1a"
+          },
+          "Version": "4.2.3",
+          "Licenses": [
+            "BlueOak-1.0.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@isaacs/cliui@9.0.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 4861,
+              "EndLine": 4875
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "joycon@3.1.1",
+          "Name": "joycon",
+          "Identifier": {
+            "PURL": "pkg:npm/joycon@3.1.1",
+            "UID": "89e0f42e5af708c1"
+          },
+          "Version": "3.1.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5459,
+              "EndLine": 5467
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "js-yaml@4.3.1",
+          "Name": "js-yaml",
+          "Identifier": {
+            "PURL": "pkg:npm/js-yaml@4.3.1",
+            "UID": "dbbf6638e6c00317"
+          },
+          "Version": "4.3.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "argparse@2.0.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5475,
+              "EndLine": 5496
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "json-schema-traverse@1.0.0",
+          "Name": "json-schema-traverse",
+          "Identifier": {
+            "PURL": "pkg:npm/json-schema-traverse@1.0.0",
+            "UID": "d6fce1aba0ee1a9d"
+          },
+          "Version": "1.0.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 129,
+              "EndLine": 134
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "jwa@2.0.1",
+          "Name": "jwa",
+          "Identifier": {
+            "PURL": "pkg:npm/jwa@2.0.1",
+            "UID": "bfec208114f4dd2b"
+          },
+          "Version": "2.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "buffer-equal-constant-time@1.0.1",
+            "ecdsa-sig-formatter@1.0.11",
+            "safe-buffer@5.2.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5573,
+              "EndLine": 5583
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "jws@4.0.1",
+          "Name": "jws",
+          "Identifier": {
+            "PURL": "pkg:npm/jws@4.0.1",
+            "UID": "849ed200065c8374"
+          },
+          "Version": "4.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "jwa@2.0.1",
+            "safe-buffer@5.2.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5584,
+              "EndLine": 5593
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "lodash.includes@4.3.0",
+          "Name": "lodash.includes",
+          "Identifier": {
+            "PURL": "pkg:npm/lodash.includes@4.3.0",
+            "UID": "f58e5c3a90856a8c"
+          },
+          "Version": "4.3.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5661,
+              "EndLine": 5666
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "lodash.isboolean@3.0.3",
+          "Name": "lodash.isboolean",
+          "Identifier": {
+            "PURL": "pkg:npm/lodash.isboolean@3.0.3",
+            "UID": "c0740c9e12166075"
+          },
+          "Version": "3.0.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5667,
+              "EndLine": 5672
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "lodash.isinteger@4.0.4",
+          "Name": "lodash.isinteger",
+          "Identifier": {
+            "PURL": "pkg:npm/lodash.isinteger@4.0.4",
+            "UID": "457f1d9f9c291573"
+          },
+          "Version": "4.0.4",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5673,
+              "EndLine": 5678
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "lodash.isnumber@3.0.3",
+          "Name": "lodash.isnumber",
+          "Identifier": {
+            "PURL": "pkg:npm/lodash.isnumber@3.0.3",
+            "UID": "a283985a92ac44fa"
+          },
+          "Version": "3.0.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5679,
+              "EndLine": 5684
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "lodash.isplainobject@4.0.6",
+          "Name": "lodash.isplainobject",
+          "Identifier": {
+            "PURL": "pkg:npm/lodash.isplainobject@4.0.6",
+            "UID": "2c65ad02b5eff39"
+          },
+          "Version": "4.0.6",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5685,
+              "EndLine": 5690
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "lodash.isstring@4.0.1",
+          "Name": "lodash.isstring",
+          "Identifier": {
+            "PURL": "pkg:npm/lodash.isstring@4.0.1",
+            "UID": "1805222883a66040"
+          },
+          "Version": "4.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5691,
+              "EndLine": 5696
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "lodash.mergewith@4.6.2",
+          "Name": "lodash.mergewith",
+          "Identifier": {
+            "PURL": "pkg:npm/lodash.mergewith@4.6.2",
+            "UID": "7cef9a42d9b1491d"
+          },
+          "Version": "4.6.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5711,
+              "EndLine": 5716
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "lodash.once@4.1.1",
+          "Name": "lodash.once",
+          "Identifier": {
+            "PURL": "pkg:npm/lodash.once@4.1.1",
+            "UID": "964bd24a3b35b31f"
+          },
+          "Version": "4.1.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5717,
+              "EndLine": 5722
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "lru-cache@11.5.2",
+          "Name": "lru-cache",
+          "Identifier": {
+            "PURL": "pkg:npm/lru-cache@11.5.2",
+            "UID": "c58fac3a0eb7d85d"
+          },
+          "Version": "11.5.2",
+          "Licenses": [
+            "BlueOak-1.0.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6200,
+              "EndLine": 6208
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "math-intrinsics@1.1.0",
+          "Name": "math-intrinsics",
+          "Identifier": {
+            "PURL": "pkg:npm/math-intrinsics@1.1.0",
+            "UID": "c20b322ed27ee82d"
+          },
+          "Version": "1.1.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5766,
+              "EndLine": 5774
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "media-typer@0.3.0",
+          "Name": "media-typer",
+          "Identifier": {
+            "PURL": "pkg:npm/media-typer@0.3.0",
+            "UID": "ee32f97fda34ff46"
+          },
+          "Version": "0.3.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5775,
+              "EndLine": 5783
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "merge-descriptors@1.0.3",
+          "Name": "merge-descriptors",
+          "Identifier": {
+            "PURL": "pkg:npm/merge-descriptors@1.0.3",
+            "UID": "330aee6a20e69fd9"
+          },
+          "Version": "1.0.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5784,
+              "EndLine": 5792
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "methods@1.1.2",
+          "Name": "methods",
+          "Identifier": {
+            "PURL": "pkg:npm/methods@1.1.2",
+            "UID": "34343ddf2483c2f0"
+          },
+          "Version": "1.1.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5800,
+              "EndLine": 5808
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "mime@1.6.0",
+          "Name": "mime",
+          "Identifier": {
+            "PURL": "pkg:npm/mime@1.6.0",
+            "UID": "d9cd68612837b52f"
+          },
+          "Version": "1.6.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5823,
+              "EndLine": 5834
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "mime-db@1.52.0",
+          "Name": "mime-db",
+          "Identifier": {
+            "PURL": "pkg:npm/mime-db@1.52.0",
+            "UID": "180d876418c71759"
+          },
+          "Version": "1.52.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5835,
+              "EndLine": 5843
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "mime-types@2.1.35",
+          "Name": "mime-types",
+          "Identifier": {
+            "PURL": "pkg:npm/mime-types@2.1.35",
+            "UID": "92a981ae72976e4e"
+          },
+          "Version": "2.1.35",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "mime-db@1.52.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5844,
+              "EndLine": 5855
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "minimatch@10.2.6",
+          "Name": "minimatch",
+          "Identifier": {
+            "PURL": "pkg:npm/minimatch@10.2.6",
+            "UID": "4de0e4f95d0fa248"
+          },
+          "Version": "10.2.6",
+          "Licenses": [
+            "BlueOak-1.0.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "brace-expansion@5.0.9"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5866,
+              "EndLine": 5880
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "minimist@1.2.8",
+          "Name": "minimist",
+          "Identifier": {
+            "PURL": "pkg:npm/minimist@1.2.8",
+            "UID": "ae86c0d3c87918b7"
+          },
+          "Version": "1.2.8",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5881,
+              "EndLine": 5889
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "minipass@7.1.3",
+          "Name": "minipass",
+          "Identifier": {
+            "PURL": "pkg:npm/minipass@7.1.3",
+            "UID": "c7426d22e4fbe765"
+          },
+          "Version": "7.1.3",
+          "Licenses": [
+            "BlueOak-1.0.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5890,
+              "EndLine": 5898
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "ms@2.0.0",
+          "Name": "ms",
+          "Identifier": {
+            "PURL": "pkg:npm/ms@2.0.0",
+            "UID": "afd13d4b987c8238"
+          },
+          "Version": "2.0.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2773,
+              "EndLine": 2778
+            },
+            {
+              "StartLine": 3951,
+              "EndLine": 3956
+            },
+            {
+              "StartLine": 4087,
+              "EndLine": 4092
+            },
+            {
+              "StartLine": 6847,
+              "EndLine": 6852
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "negotiator@0.6.3",
+          "Name": "negotiator",
+          "Identifier": {
+            "PURL": "pkg:npm/negotiator@0.6.3",
+            "UID": "3370f067dd4a4791"
+          },
+          "Version": "0.6.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5912,
+              "EndLine": 5920
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "object-assign@4.1.1",
+          "Name": "object-assign",
+          "Identifier": {
+            "PURL": "pkg:npm/object-assign@4.1.1",
+            "UID": "49f0e84f1b9fce68"
+          },
+          "Version": "4.1.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5968,
+              "EndLine": 5976
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "object-inspect@1.13.4",
+          "Name": "object-inspect",
+          "Identifier": {
+            "PURL": "pkg:npm/object-inspect@1.13.4",
+            "UID": "bbb4a9a5f34fd1b1"
+          },
+          "Version": "1.13.4",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5977,
+              "EndLine": 5988
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "on-exit-leak-free@2.1.2",
+          "Name": "on-exit-leak-free",
+          "Identifier": {
+            "PURL": "pkg:npm/on-exit-leak-free@2.1.2",
+            "UID": "e7e38568b830d162"
+          },
+          "Version": "2.1.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5989,
+              "EndLine": 5997
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "on-finished@2.4.1",
+          "Name": "on-finished",
+          "Identifier": {
+            "PURL": "pkg:npm/on-finished@2.4.1",
+            "UID": "470ee2b872a4d73"
+          },
+          "Version": "2.4.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "ee-first@1.1.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5998,
+              "EndLine": 6009
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "once@1.4.0",
+          "Name": "once",
+          "Identifier": {
+            "PURL": "pkg:npm/once@1.4.0",
+            "UID": "f5a042559b9e7dcf"
+          },
+          "Version": "1.4.0",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "wrappy@1.0.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6010,
+              "EndLine": 6018
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "package-json-from-dist@1.0.1",
+          "Name": "package-json-from-dist",
+          "Identifier": {
+            "PURL": "pkg:npm/package-json-from-dist@1.0.1",
+            "UID": "21534b6241e8bb37"
+          },
+          "Version": "1.0.1",
+          "Licenses": [
+            "BlueOak-1.0.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6101,
+              "EndLine": 6106
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "parseurl@1.3.3",
+          "Name": "parseurl",
+          "Identifier": {
+            "PURL": "pkg:npm/parseurl@1.3.3",
+            "UID": "a256e2d9753b4cc3"
+          },
+          "Version": "1.3.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6139,
+              "EndLine": 6147
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "path-key@3.1.1",
+          "Name": "path-key",
+          "Identifier": {
+            "PURL": "pkg:npm/path-key@3.1.1",
+            "UID": "ea5b289348d5582a"
+          },
+          "Version": "3.1.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6168,
+              "EndLine": 6176
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "path-scurry@2.0.2",
+          "Name": "path-scurry",
+          "Identifier": {
+            "PURL": "pkg:npm/path-scurry@2.0.2",
+            "UID": "cfd640e320bbbd6d"
+          },
+          "Version": "2.0.2",
+          "Licenses": [
+            "BlueOak-1.0.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "lru-cache@11.5.2",
+            "minipass@7.1.3"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6184,
+              "EndLine": 6199
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "path-to-regexp@0.1.13",
+          "Name": "path-to-regexp",
+          "Identifier": {
+            "PURL": "pkg:npm/path-to-regexp@0.1.13",
+            "UID": "93f929bf9df154a3"
+          },
+          "Version": "0.1.13",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6209,
+              "EndLine": 6214
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "pino-abstract-transport@1.2.0",
+          "Name": "pino-abstract-transport",
+          "Identifier": {
+            "PURL": "pkg:npm/pino-abstract-transport@1.2.0",
+            "UID": "af2620ac19b88de7"
+          },
+          "Version": "1.2.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "readable-stream@4.7.0",
+            "split2@4.2.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6257,
+              "EndLine": 6266
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "pino-std-serializers@6.2.2",
+          "Name": "pino-std-serializers",
+          "Identifier": {
+            "PURL": "pkg:npm/pino-std-serializers@6.2.2",
+            "UID": "6ebd1b88182bda78"
+          },
+          "Version": "6.2.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6304,
+              "EndLine": 6309
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "process@0.11.10",
+          "Name": "process",
+          "Identifier": {
+            "PURL": "pkg:npm/process@0.11.10",
+            "UID": "530cc254063d040b"
+          },
+          "Version": "0.11.10",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6447,
+              "EndLine": 6455
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "process-warning@3.0.0",
+          "Name": "process-warning",
+          "Identifier": {
+            "PURL": "pkg:npm/process-warning@3.0.0",
+            "UID": "304edf5df8e0e8d9"
+          },
+          "Version": "3.0.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6456,
+              "EndLine": 6461
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "proxy-addr@2.0.7",
+          "Name": "proxy-addr",
+          "Identifier": {
+            "PURL": "pkg:npm/proxy-addr@2.0.7",
+            "UID": "5b1466c75c96852"
+          },
+          "Version": "2.0.7",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "forwarded@0.2.0",
+            "ipaddr.js@1.9.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6476,
+              "EndLine": 6488
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "pump@3.0.4",
+          "Name": "pump",
+          "Identifier": {
+            "PURL": "pkg:npm/pump@3.0.4",
+            "UID": "c2ec97326d486b9d"
+          },
+          "Version": "3.0.4",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "end-of-stream@1.4.5",
+            "once@1.4.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6489,
+              "EndLine": 6498
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "qs@6.15.3",
+          "Name": "qs",
+          "Identifier": {
+            "PURL": "pkg:npm/qs@6.15.3",
+            "UID": "b428f3453c2cfa45"
+          },
+          "Version": "6.15.3",
+          "Licenses": [
+            "BSD-3-Clause"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "es-define-property@1.0.1",
+            "side-channel@1.1.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6526,
+              "EndLine": 6541
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "quick-format-unescaped@4.0.4",
+          "Name": "quick-format-unescaped",
+          "Identifier": {
+            "PURL": "pkg:npm/quick-format-unescaped@4.0.4",
+            "UID": "fc79fb02531a7714"
+          },
+          "Version": "4.0.4",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6563,
+              "EndLine": 6568
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "range-parser@1.2.1",
+          "Name": "range-parser",
+          "Identifier": {
+            "PURL": "pkg:npm/range-parser@1.2.1",
+            "UID": "9294700b8bc22453"
+          },
+          "Version": "1.2.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6569,
+              "EndLine": 6577
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "raw-body@2.5.3",
+          "Name": "raw-body",
+          "Identifier": {
+            "PURL": "pkg:npm/raw-body@2.5.3",
+            "UID": "d992133908fc54d3"
+          },
+          "Version": "2.5.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "bytes@3.1.2",
+            "http-errors@2.0.1",
+            "iconv-lite@0.4.24",
+            "unpipe@1.0.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6578,
+              "EndLine": 6592
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "readable-stream@4.7.0",
+          "Name": "readable-stream",
+          "Identifier": {
+            "PURL": "pkg:npm/readable-stream@4.7.0",
+            "UID": "41d0a76026079ad"
+          },
+          "Version": "4.7.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "abort-controller@3.0.0",
+            "buffer@6.0.3",
+            "events@3.3.0",
+            "process@0.11.10",
+            "string_decoder@1.3.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6600,
+              "EndLine": 6615
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "real-require@0.2.0",
+          "Name": "real-require",
+          "Identifier": {
+            "PURL": "pkg:npm/real-require@0.2.0",
+            "UID": "640e34fe974df49a"
+          },
+          "Version": "0.2.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6616,
+              "EndLine": 6624
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "require-from-string@2.0.2",
+          "Name": "require-from-string",
+          "Identifier": {
+            "PURL": "pkg:npm/require-from-string@2.0.2",
+            "UID": "3a12e8b42a3ee1f8"
+          },
+          "Version": "2.0.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6635,
+              "EndLine": 6643
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "safe-buffer@5.2.1",
+          "Name": "safe-buffer",
+          "Identifier": {
+            "PURL": "pkg:npm/safe-buffer@5.2.1",
+            "UID": "75264830ee69a86f"
+          },
+          "Version": "5.2.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6761,
+              "EndLine": 6780
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "safe-stable-stringify@2.5.0",
+          "Name": "safe-stable-stringify",
+          "Identifier": {
+            "PURL": "pkg:npm/safe-stable-stringify@2.5.0",
+            "UID": "2eb8e95dc937d429"
+          },
+          "Version": "2.5.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6781,
+              "EndLine": 6789
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "safer-buffer@2.1.2",
+          "Name": "safer-buffer",
+          "Identifier": {
+            "PURL": "pkg:npm/safer-buffer@2.1.2",
+            "UID": "ac87b35c38a15be4"
+          },
+          "Version": "2.1.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6790,
+              "EndLine": 6795
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "secure-json-parse@2.7.0",
+          "Name": "secure-json-parse",
+          "Identifier": {
+            "PURL": "pkg:npm/secure-json-parse@2.7.0",
+            "UID": "241dc4a5f798a61b"
+          },
+          "Version": "2.7.0",
+          "Licenses": [
+            "BSD-3-Clause"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6796,
+              "EndLine": 6801
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "semver@7.8.5",
+          "Name": "semver",
+          "Identifier": {
+            "PURL": "pkg:npm/semver@7.8.5",
+            "UID": "b92c3d06255c7a77"
+          },
+          "Version": "7.8.5",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6802,
+              "EndLine": 6813
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "send@0.19.2",
+          "Name": "send",
+          "Identifier": {
+            "PURL": "pkg:npm/send@0.19.2",
+            "UID": "7f31036878bd1bb7"
+          },
+          "Version": "0.19.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "debug@2.6.9",
+            "depd@2.0.0",
+            "destroy@1.2.0",
+            "encodeurl@2.0.0",
+            "escape-html@1.0.3",
+            "etag@1.8.1",
+            "fresh@0.5.2",
+            "http-errors@2.0.1",
+            "mime@1.6.0",
+            "ms@2.1.3",
+            "on-finished@2.4.1",
+            "range-parser@1.2.1",
+            "statuses@2.0.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6814,
+              "EndLine": 6837
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "serve-static@1.16.3",
+          "Name": "serve-static",
+          "Identifier": {
+            "PURL": "pkg:npm/serve-static@1.16.3",
+            "UID": "fbe4e5dc17077b0b"
+          },
+          "Version": "1.16.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "encodeurl@2.0.0",
+            "escape-html@1.0.3",
+            "parseurl@1.3.3",
+            "send@0.19.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6853,
+              "EndLine": 6867
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "setprototypeof@1.2.0",
+          "Name": "setprototypeof",
+          "Identifier": {
+            "PURL": "pkg:npm/setprototypeof@1.2.0",
+            "UID": "e44d6d9050545b3e"
+          },
+          "Version": "1.2.0",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6868,
+              "EndLine": 6873
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "shebang-command@2.0.0",
+          "Name": "shebang-command",
+          "Identifier": {
+            "PURL": "pkg:npm/shebang-command@2.0.0",
+            "UID": "16b0107a0e97b962"
+          },
+          "Version": "2.0.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "shebang-regex@3.0.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6874,
+              "EndLine": 6885
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "shebang-regex@3.0.0",
+          "Name": "shebang-regex",
+          "Identifier": {
+            "PURL": "pkg:npm/shebang-regex@3.0.0",
+            "UID": "60f7291e553b7359"
+          },
+          "Version": "3.0.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6886,
+              "EndLine": 6894
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "side-channel@1.1.1",
+          "Name": "side-channel",
+          "Identifier": {
+            "PURL": "pkg:npm/side-channel@1.1.1",
+            "UID": "42cad233ec493bec"
+          },
+          "Version": "1.1.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "es-errors@1.3.0",
+            "object-inspect@1.13.4",
+            "side-channel-list@1.0.1",
+            "side-channel-map@1.0.1",
+            "side-channel-weakmap@1.0.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6895,
+              "EndLine": 6913
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "side-channel-list@1.0.1",
+          "Name": "side-channel-list",
+          "Identifier": {
+            "PURL": "pkg:npm/side-channel-list@1.0.1",
+            "UID": "a9c8bc9ec2a9657f"
+          },
+          "Version": "1.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "es-errors@1.3.0",
+            "object-inspect@1.13.4"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6914,
+              "EndLine": 6929
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "side-channel-map@1.0.1",
+          "Name": "side-channel-map",
+          "Identifier": {
+            "PURL": "pkg:npm/side-channel-map@1.0.1",
+            "UID": "ffbd6c5fa5819673"
+          },
+          "Version": "1.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "call-bound@1.0.4",
+            "es-errors@1.3.0",
+            "get-intrinsic@1.3.0",
+            "object-inspect@1.13.4"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6930,
+              "EndLine": 6947
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "side-channel-weakmap@1.0.2",
+          "Name": "side-channel-weakmap",
+          "Identifier": {
+            "PURL": "pkg:npm/side-channel-weakmap@1.0.2",
+            "UID": "5295d764f31e28a6"
+          },
+          "Version": "1.0.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "call-bound@1.0.4",
+            "es-errors@1.3.0",
+            "get-intrinsic@1.3.0",
+            "object-inspect@1.13.4",
+            "side-channel-map@1.0.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6948,
+              "EndLine": 6966
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "signal-exit@4.1.0",
+          "Name": "signal-exit",
+          "Identifier": {
+            "PURL": "pkg:npm/signal-exit@4.1.0",
+            "UID": "55dd44b3dc18628f"
+          },
+          "Version": "4.1.0",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4148,
+              "EndLine": 4159
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "sonic-boom@3.8.1",
+          "Name": "sonic-boom",
+          "Identifier": {
+            "PURL": "pkg:npm/sonic-boom@3.8.1",
+            "UID": "d24f25f456ef76c3"
+          },
+          "Version": "3.8.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "atomic-sleep@1.0.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6991,
+              "EndLine": 6999
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "split2@4.2.0",
+          "Name": "split2",
+          "Identifier": {
+            "PURL": "pkg:npm/split2@4.2.0",
+            "UID": "4600c3b28199581e"
+          },
+          "Version": "4.2.0",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 7021,
+              "EndLine": 7029
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "statuses@2.0.2",
+          "Name": "statuses",
+          "Identifier": {
+            "PURL": "pkg:npm/statuses@2.0.2",
+            "UID": "8f6bc942300e3e54"
+          },
+          "Version": "2.0.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 7060,
+              "EndLine": 7068
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "string_decoder@1.3.0",
+          "Name": "string_decoder",
+          "Identifier": {
+            "PURL": "pkg:npm/string_decoder@1.3.0",
+            "UID": "39ae2cbae2bbbf64"
+          },
+          "Version": "1.3.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "safe-buffer@5.2.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 7069,
+              "EndLine": 7077
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "strip-json-comments@3.1.1",
+          "Name": "strip-json-comments",
+          "Identifier": {
+            "PURL": "pkg:npm/strip-json-comments@3.1.1",
+            "UID": "56f208fa27bfffd3"
+          },
+          "Version": "3.1.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 7140,
+              "EndLine": 7151
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "swagger-ui-dist@5.32.13",
+          "Name": "swagger-ui-dist",
+          "Identifier": {
+            "PURL": "pkg:npm/swagger-ui-dist@5.32.13",
+            "UID": "10437723eab3a0fa"
+          },
+          "Version": "5.32.13",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@scarf/scarf@1.4.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 7273,
+              "EndLine": 7281
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "thread-stream@2.7.0",
+          "Name": "thread-stream",
+          "Identifier": {
+            "PURL": "pkg:npm/thread-stream@2.7.0",
+            "UID": "53384836ef0221e1"
+          },
+          "Version": "2.7.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "real-require@0.2.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 7350,
+              "EndLine": 7358
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "toidentifier@1.0.1",
+          "Name": "toidentifier",
+          "Identifier": {
+            "PURL": "pkg:npm/toidentifier@1.0.1",
+            "UID": "927fcf22920a756f"
+          },
+          "Version": "1.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 7427,
+              "EndLine": 7435
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "type-is@1.6.18",
+          "Name": "type-is",
+          "Identifier": {
+            "PURL": "pkg:npm/type-is@1.6.18",
+            "UID": "fb77ea6bb3902a34"
+          },
+          "Version": "1.6.18",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "media-typer@0.3.0",
+            "mime-types@2.1.35"
+          ],
+          "Locations": [
+            {
+              "StartLine": 7614,
+              "EndLine": 7626
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "unpipe@1.0.0",
+          "Name": "unpipe",
+          "Identifier": {
+            "PURL": "pkg:npm/unpipe@1.0.0",
+            "UID": "e21221667a63ea80"
+          },
+          "Version": "1.0.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 7662,
+              "EndLine": 7670
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "utils-merge@1.0.1",
+          "Name": "utils-merge",
+          "Identifier": {
+            "PURL": "pkg:npm/utils-merge@1.0.1",
+            "UID": "3747b53747ff333e"
+          },
+          "Version": "1.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 7712,
+              "EndLine": 7720
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "vary@1.1.2",
+          "Name": "vary",
+          "Identifier": {
+            "PURL": "pkg:npm/vary@1.1.2",
+            "UID": "4c1ee809f19abdde"
+          },
+          "Version": "1.1.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 7743,
+              "EndLine": 7751
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "which@2.0.2",
+          "Name": "which",
+          "Identifier": {
+            "PURL": "pkg:npm/which@2.0.2",
+            "UID": "819055e823b5f998"
+          },
+          "Version": "2.0.2",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "isexe@2.0.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 7762,
+              "EndLine": 7776
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "wrappy@1.0.2",
+          "Name": "wrappy",
+          "Identifier": {
+            "PURL": "pkg:npm/wrappy@1.0.2",
+            "UID": "43fdef658ada8325"
+          },
+          "Version": "1.0.2",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 7812,
+              "EndLine": 7817
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "yaml@2.0.0-1",
+          "Name": "yaml",
+          "Identifier": {
+            "PURL": "pkg:npm/yaml@2.0.0-1",
+            "UID": "d5c147d1b08b3a74"
+          },
+          "Version": "2.0.0-1",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 7849,
+              "EndLine": 7857
+            }
+          ],
+          "AnalyzedBy": "npm"
+        }
+      ],
+      "Vulnerabilities": [
+        {
+          "VulnerabilityID": "CVE-2026-102276",
+          "VendorIDs": [
+            "GHSA-6j4f-fj2g-mc7p"
+          ],
+          "PkgID": "brace-expansion@5.0.9",
+          "PkgName": "brace-expansion",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/brace-expansion@5.0.9",
+            "UID": "ae6ab0288298d85c"
+          },
+          "InstalledVersion": "5.0.9",
+          "FixedVersion": "5.0.10, 3.0.7, 2.1.5, 1.1.19",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-102276",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:608a64048972a7b17c1498d39af12ff8b1dfaae87e1c55586b76288df513c060",
+          "Title": "brace-expansion: brace-expansion: Denial of Service via stack exhaustion from crafted brace patterns",
+          "Description": "The brace-expansion library generates arbitrary strings containing a common prefix and suffix. Prior to 1.1.19, 2.1.5, 3.0.7, and 5.0.10, crafted brace patterns can exhaust the native stack in parseCommaParts because parseCommaParts recursively processes the remainder once per brace group and uses push.apply to pass every element of a very large comma-part array as a function argument. Patterns containing many comma-separated brace groups trigger the recursive path, while the large array triggers the argument-array path without deep recursion. These paths cause recursive and argument-array native stack exhaustion before max or maxLength can limit output, potentially terminating the Node.js process in a process-terminating denial of service. This issue is fixed in versions 1.1.19, 2.1.5, 3.0.7, and 5.0.10.",
+          "Severity": "HIGH",
+          "CweIDs": [
+            "CWE-400",
+            "CWE-674"
+          ],
+          "VendorSeverity": {
+            "ghsa": 3,
+            "redhat": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+              "V3Score": 7.5
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-102276",
+            "https://github.com/juliangruber/brace-expansion",
+            "https://github.com/juliangruber/brace-expansion/commit/0bcbfc0a5928c3073d48f42999d1ce4fc1c42fbc",
+            "https://github.com/juliangruber/brace-expansion/commit/316359e6019c39b3254c8ba8e25dc586a480652c",
+            "https://github.com/juliangruber/brace-expansion/commit/5171e681c0922b7ae8bfaf9a331e309107be6edc",
+            "https://github.com/juliangruber/brace-expansion/commit/6735c94873ca570bcdd6a0690033bdd3126379d3",
+            "https://github.com/juliangruber/brace-expansion/security/advisories/GHSA-6j4f-fj2g-mc7p",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-102276",
+            "https://www.cve.org/CVERecord?id=CVE-2026-102276"
+          ],
+          "PublishedDate": "2026-09-28T21:17:16.033Z",
+          "LastModifiedDate": "2026-09-30T19:57:08.043Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-102278",
+          "VendorIDs": [
+            "GHSA-qhr7-859c-m2p7"
+          ],
+          "PkgID": "brace-expansion@5.0.9",
+          "PkgName": "brace-expansion",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/brace-expansion@5.0.9",
+            "UID": "ae6ab0288298d85c"
+          },
+          "InstalledVersion": "5.0.9",
+          "FixedVersion": "5.0.11, 3.0.8, 2.1.6, 1.1.20",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-102278",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:41cc31b3138b5807f9473834232e618f3bb4bfdffe4b240128e7e0b0b63a6062",
+          "Title": "brace-expansion: brace-expansion: Denial of Service via uncontrolled recursion in nested brace patterns",
+          "Description": "The brace-expansion library generates arbitrary strings containing a common prefix and suffix. Prior to 1.1.20, 2.1.6, 3.0.8, and 5.0.11, deeply nested brace groups cause expand_() to recurse once per nesting level at comma-member and single-set expansion sites, exhausting the native stack before output limits can apply and potentially terminating the Node.js process. expand_ performs uncontrolled recursion for nested brace alternatives and single-part sets. deeply nested brace groups supplied as an untrusted pattern. expand_ is affected. expand is affected. Comma members is affected. Single set is affected. native stack exhaustion during nested sub-expansion. process-terminating denial of service. This issue is fixed in versions 1.1.20, 2.1.6, 3.0.8, and 5.0.11.",
+          "Severity": "HIGH",
+          "CweIDs": [
+            "CWE-400",
+            "CWE-674"
+          ],
+          "VendorSeverity": {
+            "ghsa": 3,
+            "redhat": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+              "V3Score": 7.5
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-102278",
+            "https://github.com/juliangruber/brace-expansion",
+            "https://github.com/juliangruber/brace-expansion/commit/1efee7c397c191da6287a78ec19512476a966a7b",
+            "https://github.com/juliangruber/brace-expansion/commit/935d78f32f335b2ff76578e5c5e877d31ae9888c",
+            "https://github.com/juliangruber/brace-expansion/commit/de84f144e9816f30e25fc8179e2e1249ab6df0db",
+            "https://github.com/juliangruber/brace-expansion/security/advisories/GHSA-qhr7-859c-m2p7",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-102278",
+            "https://www.cve.org/CVERecord?id=CVE-2026-102278"
+          ],
+          "PublishedDate": "2026-09-28T21:17:16.517Z",
+          "LastModifiedDate": "2026-10-01T15:17:25.593Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-102277",
+          "VendorIDs": [
+            "GHSA-q2hr-2g5m-vwhr"
+          ],
+          "PkgID": "brace-expansion@5.0.9",
+          "PkgName": "brace-expansion",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/brace-expansion@5.0.9",
+            "UID": "ae6ab0288298d85c"
+          },
+          "InstalledVersion": "5.0.9",
+          "FixedVersion": "5.0.12, 3.0.9, 2.1.7, 1.1.21",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-102277",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:4ab26f8734a8a751308a37c37c82da5d9d2461798cae53ac368475b96948be03",
+          "Title": "brace-expansion: brace-expansion: Denial of Service via crafted brace patterns",
+          "Description": "The brace-expansion library generates arbitrary strings containing a common prefix and suffix. Prior to 1.1.21, 2.1.7, 3.0.9, and 5.0.12, the expand function handles untrusted {a},b}-shaped patterns with many trailing closing braces by restarting its scan once for each trailing closing brace. The successive full-input rescans with linear working-string growth cause quadratic CPU time and memory pressure that can block the Node.js event loop. The process eventually recovers, making the impact a recoverable CPU denial of service. This issue is fixed in versions 1.1.21, 2.1.7, 3.0.9, and 5.0.12.",
+          "Severity": "MEDIUM",
+          "CweIDs": [
+            "CWE-400",
+            "CWE-407"
+          ],
+          "VendorSeverity": {
+            "ghsa": 2,
+            "redhat": 2
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+              "V3Score": 5.3
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+              "V3Score": 5.3
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-102277",
+            "https://github.com/juliangruber/brace-expansion",
+            "https://github.com/juliangruber/brace-expansion/commit/33a5ef17b8d800bbfa8c52b14c39043b6aac1a96",
+            "https://github.com/juliangruber/brace-expansion/commit/bdff773f98e5988616b7039cc9b508df5d640b22",
+            "https://github.com/juliangruber/brace-expansion/commit/c55e67d8d8b1c56a2474afff15c2891166b2d364",
+            "https://github.com/juliangruber/brace-expansion/commit/ffdfa3e3806bed17c0874b8f1439b084de354a7e",
+            "https://github.com/juliangruber/brace-expansion/security/advisories/GHSA-q2hr-2g5m-vwhr",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-102277",
+            "https://www.cve.org/CVERecord?id=CVE-2026-102277"
+          ],
+          "PublishedDate": "2026-09-28T21:17:16.3Z",
+          "LastModifiedDate": "2026-09-30T19:57:08.043Z"
+        },
+        {
+          "VulnerabilityID": "GHSA-jggr-w7fw-pc2j",
+          "PkgID": "fast-copy@3.0.2",
+          "PkgName": "fast-copy",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/fast-copy@3.0.2",
+            "UID": "f1a519b73bfa162d"
+          },
+          "InstalledVersion": "3.0.2",
+          "FixedVersion": "4.1.0, 3.1.0, 2.2.0",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-jggr-w7fw-pc2j",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:0afd60de0d5949feb065e79ed368695a1397fe304742b6f621399992ba3f5a4f",
+          "Title": "fast-copy: Stack exhaustion in fast-copy when copying deeply-nested values",
+          "Description": "## Summary\n\n`fast-copy` traverses values recursively with no bound on depth. Copying a sufficiently deeply-nested value exhausts the JavaScript call stack and throws a native `RangeError: Maximum call stack size exceeded` from inside the library.\n\n## Details\n\nBoth `copy` and `copyStrict` recurse once per level of nesting. The value does not need to be circular (circular references were already handled correctly via an internal cache) and it does not need to be large. A plain object nested a few thousand levels deep is only a few\nkilobytes of equivalent JSON.\n\nMeasured depths at which copying begins to fail (Node.js, V8; the exact ceiling varies with JIT state and the stack available to the environment):\n\n| Call                 | Last depth that copies successfully |\n| -------------------- | ----------------------------------- |\n| `copy(object)`       | 2811                                |\n| `copy(array)`        | 3983                                |\n| `copyStrict(object)` | 1874                                |\n| `copyStrict(array)`  | 1874                                |\n\n`JSON.parse` is iterative and parses deeply-nested input without difficulty, so a payload that deserializes cleanly can fail in a subsequent `copy` call.\n\n## Impact\n\nThe failure is a synchronous, catchable `RangeError` confined to the `copy` call that received the value. There are no memory safety concerns, no data exposure, and no effect on state outside that call. In a typical server the result is a failed request rather than a failed process.\n\nApplications that call `copy` on externally-supplied data, such as request bodies, cached payloads, merged configuration, etc., do not expect a clone helper to throw may surface this as an unhandled error.\n\n## Patches\n\nFixed in 4.1.0, and backported to 3.1.0 and 2.2.0 so that every major line has a patch available without requiring a breaking upgrade.\n\nTraversal is now bounded by a `maxDepth` option, defaulting to `1000`, which sits below the native limit in standard environments. Exceeding it throws `MaxDepthExceededError`, which carries the limit that was exceeded and extends `RangeError` so existing handling continues to match.\n\nThe limit is configurable for consumers with legitimately deep data. On `3.x` and `4.x` it is set when creating a copier:\n\n```js\nimport { createCopier } from 'fast-copy';\n\nexport const copy = createCopier({ maxDepth: 5000 });\n```\n\nOn `2.x` it is passed per call, and the error is a property of the exported function rather than a named export:\n\n```js\nimport copy from 'fast-copy';\n\ncopy(value, { maxDepth: 5000 });\n// detection: error instanceof copy.MaxDepthExceededError\n```\n\nIn legacy environments without `Object.setPrototypeOf`, `instanceof MaxDepthExceededError` cannot be supported; check `error.name === 'MaxDepthExceededError'` or `error instanceof RangeError` instead.",
+          "Severity": "MEDIUM",
+          "VendorSeverity": {
+            "ghsa": 2
+          },
+          "CVSS": {
+            "ghsa": {
+              "V40Vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N",
+              "V40Score": 6.3
+            }
+          },
+          "References": [
+            "https://github.com/planttheidea/fast-copy",
+            "https://github.com/planttheidea/fast-copy/commit/359c00884ae8ae31f10925fd0e2fc66661db6cef",
+            "https://github.com/planttheidea/fast-copy/commit/caa7caace65767dfe252f0dc5115d82c99ca16b9",
+            "https://github.com/planttheidea/fast-copy/commit/dedf465e5329fbd149f13b53521af962d16ff8df",
+            "https://github.com/planttheidea/fast-copy/pull/137",
+            "https://github.com/planttheidea/fast-copy/pull/138",
+            "https://github.com/planttheidea/fast-copy/pull/139",
+            "https://github.com/planttheidea/fast-copy/releases/tag/v2.2.0",
+            "https://github.com/planttheidea/fast-copy/releases/tag/v3.1.0",
+            "https://github.com/planttheidea/fast-copy/releases/tag/v4.1.0",
+            "https://github.com/planttheidea/fast-copy/security/advisories/GHSA-jggr-w7fw-pc2j"
+          ],
+          "PublishedDate": "2026-10-05T22:52:09Z",
+          "LastModifiedDate": "2026-10-05T22:52:09Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-75899",
+          "VendorIDs": [
+            "GHSA-fph4-wmhf-6fwf"
+          ],
+          "PkgID": "fast-uri@3.1.5",
+          "PkgName": "fast-uri",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/fast-uri@3.1.5",
+            "UID": "b54b945bdf5a0fe9"
+          },
+          "InstalledVersion": "3.1.5",
+          "FixedVersion": "2.4.5, 3.1.6, 4.1.3",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-75899",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:e749078a37b8cbbd7198de07935479c3f5d988769d2122bc406cff592060d12e",
+          "Title": "fast-uri: fast-uri: Server-Side Request Forgery via repeated hostname percent-decoding",
+          "Description": "fast-uri is a URI parser for Node.js. It decodes percent escapes in a hostname during parsing and then decodes the parsed hostname a second time during authority recomposition, so a single call to normalize or resolve can turn nested percent-encoded input into a different network destination such as a loopback hostname or address. For example, a doubly encoded host that spells out a loopback name decodes to that live host in one operation, which contradicts RFC 3986 section 2.4 that an implementation must not decode the same string more than once. An application that normalizes or resolves an untrusted HTTP-family URI before outbound routing, redirect validation, or a host-policy check can receive a destination different from the one the original encoded host represented, giving a server-side request forgery and host-policy bypass primitive. This is an incomplete-fix variant of CVE-2026-6322. The affected versions are 2.4.1 up to but not including 2.4.5, 3.1.2 up to but not including 3.1.6, and 4.0.0 up to but not including 4.1.3. The issue is fixed in 2.4.5, 3.1.6, and 4.1.3, which normalize percent escapes once and preserve encoded percent signs. Users should upgrade to a patched version.",
+          "Severity": "HIGH",
+          "CweIDs": [
+            "CWE-174",
+            "CWE-918"
+          ],
+          "VendorSeverity": {
+            "alma": 3,
+            "ghsa": 3,
+            "oracle-oval": 3,
+            "redhat": 3,
+            "rocky": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+              "V3Score": 7.5
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://access.redhat.com/errata/RHSA-2026:71543",
+            "https://access.redhat.com/security/cve/CVE-2026-75899",
+            "https://bugzilla.redhat.com/2521778",
+            "https://bugzilla.redhat.com/2521779",
+            "https://bugzilla.redhat.com/2521798",
+            "https://bugzilla.redhat.com/2527747",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2521778",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2521779",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2521798",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2527747",
+            "https://cna.openjsf.org/security-advisories.html",
+            "https://creativecommons.org/licenses/by/4.0/",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-75899",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-75975",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-76172",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-84292",
+            "https://errata.almalinux.org/10/ALSA-2026-71543.html",
+            "https://errata.rockylinux.org/RLSA-2026:71543",
+            "https://github.com/fastify/fast-uri",
+            "https://github.com/fastify/fast-uri/commit/2642290672e7211c990aaed3749c2ce667d0af4f",
+            "https://github.com/fastify/fast-uri/commit/8c15dbe94ec50bb8e595791ebb42c35cef0fd304",
+            "https://github.com/fastify/fast-uri/commit/ae92a4c5d8c4b6c9e447f048d5fcbde7eebd5514",
+            "https://github.com/fastify/fast-uri/releases/tag/v2.4.5",
+            "https://github.com/fastify/fast-uri/releases/tag/v3.1.6",
+            "https://github.com/fastify/fast-uri/releases/tag/v4.1.3",
+            "https://github.com/fastify/fast-uri/security/advisories/GHSA-fph4-wmhf-6fwf",
+            "https://linux.oracle.com/cve/CVE-2026-75899.html",
+            "https://linux.oracle.com/errata/ELSA-2026-71543.html",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-75899",
+            "https://www.cve.org/CVERecord?id=CVE-2026-75899"
+          ],
+          "PublishedDate": "2026-08-24T10:16:39.96Z",
+          "LastModifiedDate": "2026-09-02T14:43:19.097Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-75931",
+          "VendorIDs": [
+            "GHSA-5jgf-p345-68v8"
+          ],
+          "PkgID": "fast-uri@3.1.5",
+          "PkgName": "fast-uri",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/fast-uri@3.1.5",
+            "UID": "b54b945bdf5a0fe9"
+          },
+          "InstalledVersion": "3.1.5",
+          "FixedVersion": "2.4.5, 3.1.6, 4.1.3",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-75931",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:88d77cd23cf26b1563a66583c1d5144818370140ee7f54cac503544881803ff2",
+          "Title": "fast-uri: fast-uri: Host confusion via skipped IDN canonicalization",
+          "Description": "fast-uri is a URI parser for Node.js. It canonicalizes a host to its ASCII form only when the input carries an explicit scheme, so a scheme-relative reference such as a host preceded by two slashes is returned with its host verbatim and no error set. As a result fast-uri's own entry points disagree with each other: parse, resolve, normalize, and equal can yield different hosts for the same input depending only on whether a scheme is written out, and equal can return opposite verdicts for the same pair of hosts. An application that extracts a host with fast-uri to check it against a policy list and then resolves the same reference can make its decision on one host while the destination is another, enabling host confusion and policy bypass. The affected versions are 2.4.2 up to but not including 2.4.5, 3.1.3 up to but not including 3.1.6, and 4.0.1 up to but not including 4.1.3. The issue is fixed in 2.4.5, 3.1.6, and 4.1.3, which canonicalize the host consistently across the resolve path. Users should upgrade to a patched version.",
+          "Severity": "HIGH",
+          "CweIDs": [
+            "CWE-436"
+          ],
+          "VendorSeverity": {
+            "ghsa": 3,
+            "redhat": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+              "V3Score": 7.5
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-75931",
+            "https://cna.openjsf.org/security-advisories.html",
+            "https://github.com/fastify/fast-uri",
+            "https://github.com/fastify/fast-uri/commit/0256bc8d1f28b5d0ac657faf67e2411a189dfcb5",
+            "https://github.com/fastify/fast-uri/commit/444ecdad447db2cc23c4d422acc6f0daa6fa8eef",
+            "https://github.com/fastify/fast-uri/commit/4e4ebd8b245f6ca16e448203559eea3e545453a3",
+            "https://github.com/fastify/fast-uri/releases/tag/v2.4.5",
+            "https://github.com/fastify/fast-uri/releases/tag/v3.1.6",
+            "https://github.com/fastify/fast-uri/releases/tag/v4.1.3",
+            "https://github.com/fastify/fast-uri/security/advisories/GHSA-5jgf-p345-68v8",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-75931",
+            "https://www.cve.org/CVERecord?id=CVE-2026-75931"
+          ],
+          "PublishedDate": "2026-08-24T10:16:40.113Z",
+          "LastModifiedDate": "2026-09-02T14:44:52.047Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-75975",
+          "VendorIDs": [
+            "GHSA-f65p-4m7j-42xc"
+          ],
+          "PkgID": "fast-uri@3.1.5",
+          "PkgName": "fast-uri",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/fast-uri@3.1.5",
+            "UID": "b54b945bdf5a0fe9"
+          },
+          "InstalledVersion": "3.1.5",
+          "FixedVersion": "2.4.5, 3.1.6, 4.1.3",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-75975",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:ce5207b19117ddc41119dea763a314c1cd47026c2e5258b48fb8eed1789a1e6e",
+          "Title": "fast-uri: fast-uri: Server-side request forgery via malformed IPv6 normalization",
+          "Description": "fast-uri is a URI parser for Node.js. Its custom parser for bracketed IPv6 literals does not validate the complete IPv6 grammar, so invalid trailing text in an authority can be silently discarded and a malformed attacker-controlled host is turned into a different valid IPv6 destination. For example, a bracketed literal with invalid trailing characters is normalized to the unspecified address, which a Node HTTP client then connects to a local service over loopback, and other malformed literals collapse to private-range addresses. No error is set on the parsed result, so an application checking the error field cannot detect the rewrite. An application that normalizes untrusted URLs before outbound requests, redirects, proxy routing, or address-policy enforcement can be redirected to a local or private IPv6 target, giving a server-side request forgery and address-policy bypass primitive. The affected versions are 2.3.1 up to but not including 2.4.5, 3.0.0 up to but not including 3.1.6, and 4.0.0 up to but not including 4.1.3. The issue is fixed in 2.4.5, 3.1.6, and 4.1.3, which validate bracketed IP literals against the full grammar and mark malformed literals as authority errors. Users should upgrade to a patched version.",
+          "Severity": "HIGH",
+          "CweIDs": [
+            "CWE-20",
+            "CWE-918"
+          ],
+          "VendorSeverity": {
+            "alma": 3,
+            "ghsa": 3,
+            "oracle-oval": 3,
+            "redhat": 3,
+            "rocky": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+              "V3Score": 7.5
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://access.redhat.com/errata/RHSA-2026:71543",
+            "https://access.redhat.com/security/cve/CVE-2026-75975",
+            "https://bugzilla.redhat.com/2521778",
+            "https://bugzilla.redhat.com/2521779",
+            "https://bugzilla.redhat.com/2521798",
+            "https://bugzilla.redhat.com/2527747",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2521778",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2521779",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2521798",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2527747",
+            "https://cna.openjsf.org/security-advisories.html",
+            "https://creativecommons.org/licenses/by/4.0/",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-75899",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-75975",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-76172",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-84292",
+            "https://errata.almalinux.org/10/ALSA-2026-71543.html",
+            "https://errata.rockylinux.org/RLSA-2026:71543",
+            "https://github.com/fastify/fast-uri",
+            "https://github.com/fastify/fast-uri/commit/3728465caacef4b16bc84b7d14760f1c8fe41595",
+            "https://github.com/fastify/fast-uri/commit/607bfbe953f28a14c2e06ae64aff38c81ca2937f",
+            "https://github.com/fastify/fast-uri/commit/9161eded1ff55fad9d9714c6ad6c0f0283547799",
+            "https://github.com/fastify/fast-uri/releases/tag/v2.4.5",
+            "https://github.com/fastify/fast-uri/releases/tag/v3.1.6",
+            "https://github.com/fastify/fast-uri/releases/tag/v4.1.3",
+            "https://github.com/fastify/fast-uri/security/advisories/GHSA-f65p-4m7j-42xc",
+            "https://linux.oracle.com/cve/CVE-2026-75975.html",
+            "https://linux.oracle.com/errata/ELSA-2026-71543.html",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-75975",
+            "https://www.cve.org/CVERecord?id=CVE-2026-75975"
+          ],
+          "PublishedDate": "2026-08-24T10:16:40.237Z",
+          "LastModifiedDate": "2026-09-02T14:44:17.457Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-76172",
+          "VendorIDs": [
+            "GHSA-jqff-g426-hqxp"
+          ],
+          "PkgID": "fast-uri@3.1.5",
+          "PkgName": "fast-uri",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/fast-uri@3.1.5",
+            "UID": "b54b945bdf5a0fe9"
+          },
+          "InstalledVersion": "3.1.5",
+          "FixedVersion": "2.4.5, 3.1.6, 4.1.3",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-76172",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:b2f84bbf1b875d441a75902105e81cb486b222ac9dc71c6418d8bbba3050eabe",
+          "Title": "fast-uri: fast-uri: URI parsing flaw enables server-side request forgery and redirects",
+          "Description": "fast-uri is a URI parser for Node.js. During parsing it runs a legacy decoding pass over the scheme component and never re-escapes the result, and serialization writes the scheme back out verbatim, unlike the host component which is re-escaped. As a result an input whose scheme carries percent-encoded slashes parses as a scheme with no authority, so the parsed host and error are both undefined, yet resolving or normalizing that same input emits a network-path reference whose authority is attacker-chosen and re-parses to that host. An application that allowlists on the parsed host, or treats a reference with no authority as safe to resolve against its base, gets the opposite of what it checked, giving an off-site redirect, server-side request forgery, or address-policy bypass. The legacy decoder also expands non-standard escape forms, widening the issue past upstream filters, and control characters in the scheme can reach the output as raw carriage return and line feed. The affected versions are 2.3.1 up to but not including 2.4.5, 3.0.0 up to but not including 3.1.6, and 4.0.0 up to but not including 4.1.3. The issue is fixed in 2.4.5, 3.1.6, and 4.1.3, which reject a scheme that is not valid after decoding. Users should upgrade to a patched version.",
+          "Severity": "HIGH",
+          "CweIDs": [
+            "CWE-177"
+          ],
+          "VendorSeverity": {
+            "alma": 3,
+            "ghsa": 3,
+            "oracle-oval": 3,
+            "redhat": 3,
+            "rocky": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+              "V3Score": 7.5
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://access.redhat.com/errata/RHSA-2026:71543",
+            "https://access.redhat.com/security/cve/CVE-2026-76172",
+            "https://bugzilla.redhat.com/2521778",
+            "https://bugzilla.redhat.com/2521779",
+            "https://bugzilla.redhat.com/2521798",
+            "https://bugzilla.redhat.com/2527747",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2521778",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2521779",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2521798",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2527747",
+            "https://cna.openjsf.org/security-advisories.html",
+            "https://creativecommons.org/licenses/by/4.0/",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-75899",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-75975",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-76172",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-84292",
+            "https://errata.almalinux.org/10/ALSA-2026-71543.html",
+            "https://errata.rockylinux.org/RLSA-2026:71543",
+            "https://github.com/fastify/fast-uri",
+            "https://github.com/fastify/fast-uri/commit/37f3417c82994279656854f83ce938acd81c3862",
+            "https://github.com/fastify/fast-uri/commit/a941e626411f576f8d90883231e57b6c9d0ff98b",
+            "https://github.com/fastify/fast-uri/commit/c6a74bfd9d8c6b0df5362b3c7ae88d8021cb1e39",
+            "https://github.com/fastify/fast-uri/releases/tag/v2.4.5",
+            "https://github.com/fastify/fast-uri/releases/tag/v3.1.6",
+            "https://github.com/fastify/fast-uri/releases/tag/v4.1.3",
+            "https://github.com/fastify/fast-uri/security/advisories/GHSA-jqff-g426-hqxp",
+            "https://linux.oracle.com/cve/CVE-2026-76172.html",
+            "https://linux.oracle.com/errata/ELSA-2026-71543.html",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-76172",
+            "https://www.cve.org/CVERecord?id=CVE-2026-76172"
+          ],
+          "PublishedDate": "2026-08-24T11:16:40.723Z",
+          "LastModifiedDate": "2026-09-02T14:43:42.77Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-84292",
+          "VendorIDs": [
+            "GHSA-qw65-cvwx-89v3"
+          ],
+          "PkgID": "fast-uri@3.1.5",
+          "PkgName": "fast-uri",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/fast-uri@3.1.5",
+            "UID": "b54b945bdf5a0fe9"
+          },
+          "InstalledVersion": "3.1.5",
+          "FixedVersion": "2.4.6, 3.1.7, 4.1.4",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-84292",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:43f271b87871f154cd809a60db14bfb6fbe8acc3df7baa62391de0a97bb97844",
+          "Title": "fast-uri: fast-uri: Authority Injection via Unvalidated Port Serialization",
+          "Description": "fast-uri serializes the port component of a URI without validating it. When recomposing the authority, the userinfo and host components are escaped but the port is concatenated verbatim, so a port value that is not a sequence of digits can inject authority delimiters, demoting the intended host to userinfo and pointing the authority at an attacker-controlled host. Both fast-uri and Node's URL read the result back as the attacker's host with no error, so re-validating the built URI does not catch it. This affects applications that build URIs from parts and assign untrusted data to the port component through the serialize, normalize, or equal functions in their object forms. The issue affects fast-uri versions before 2.4.6, from 3.0.0 before 3.1.7, and from 4.0.0 before 4.1.4. It is fixed in 2.4.6, 3.1.7, and 4.1.4, where recomposeAuthority rejects any port that is not a digit sequence per RFC 3986.",
+          "Severity": "HIGH",
+          "CweIDs": [
+            "CWE-116"
+          ],
+          "VendorSeverity": {
+            "alma": 3,
+            "ghsa": 3,
+            "oracle-oval": 3,
+            "redhat": 3,
+            "rocky": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+              "V3Score": 7.5
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://access.redhat.com/errata/RHSA-2026:71543",
+            "https://access.redhat.com/security/cve/CVE-2026-84292",
+            "https://bugzilla.redhat.com/2521778",
+            "https://bugzilla.redhat.com/2521779",
+            "https://bugzilla.redhat.com/2521798",
+            "https://bugzilla.redhat.com/2527747",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2521778",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2521779",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2521798",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2527747",
+            "https://cna.openjsf.org/security-advisories.html",
+            "https://creativecommons.org/licenses/by/4.0/",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-75899",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-75975",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-76172",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-84292",
+            "https://errata.almalinux.org/10/ALSA-2026-71543.html",
+            "https://errata.rockylinux.org/RLSA-2026:71543",
+            "https://github.com/fastify/fast-uri",
+            "https://github.com/fastify/fast-uri/commit/820e8478dd7da3d09f187bfaf35d50b71f67b8b4",
+            "https://github.com/fastify/fast-uri/releases/tag/v2.4.6",
+            "https://github.com/fastify/fast-uri/releases/tag/v3.1.7",
+            "https://github.com/fastify/fast-uri/releases/tag/v4.1.4",
+            "https://github.com/fastify/fast-uri/security/advisories/GHSA-qw65-cvwx-89v3",
+            "https://linux.oracle.com/cve/CVE-2026-84292.html",
+            "https://linux.oracle.com/errata/ELSA-2026-71543.html",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-84292",
+            "https://www.cve.org/CVERecord?id=CVE-2026-84292"
+          ],
+          "PublishedDate": "2026-09-02T20:17:39.543Z",
+          "LastModifiedDate": "2026-10-06T22:10:00.247Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-86472",
+          "VendorIDs": [
+            "GHSA-hrr3-gc8f-f4qj"
+          ],
+          "PkgID": "fast-uri@3.1.5",
+          "PkgName": "fast-uri",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/fast-uri@3.1.5",
+            "UID": "b54b945bdf5a0fe9"
+          },
+          "InstalledVersion": "3.1.5",
+          "FixedVersion": "2.4.7, 3.1.8, 4.1.5",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-86472",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:48482d07d37549cd4977afb208e494b5232aa58fbde5db2c09bd8d5ca6892118",
+          "Title": "fast-uri: fast-uri: Security bypass due to inconsistent host case normalization",
+          "Description": "fast-uri is a dependency-free RFC 3986 URI parser for Node.js, used by Fastify and ajv. In versions before 2.4.7, from 3.0.0 through 3.1.7, and from 4.0.0 through 4.1.4, fast-uri folds the host to lowercase before it percent-decodes the host, so a percent-encoded uppercase octet such as %41 decodes to a literal A that is never folded. For a scheme-relative reference such as //host there is no scheme, so the host canonicalization that would normally repair this does not run, and parse, normalize, and equal then disagree on the same host. An application that makes a case-sensitive host decision on fast-uri output, for example a host allowlist or denylist that compares the parsed host or uses equal, can be steered past the check with a percent-encoded uppercase octet, and because hostnames are case-insensitive in DNS and HTTP the evading spelling still reaches the host the check meant to gate. The issue is fixed in fast-uri 2.4.7, 3.1.8, and 4.1.5, and users should upgrade to one of those versions or later. As a workaround, compare hosts case-insensitively by lowercasing the parsed host before any allowlist or denylist decision.",
+          "Severity": "MEDIUM",
+          "CweIDs": [
+            "CWE-178"
+          ],
+          "VendorSeverity": {
+            "ghsa": 2,
+            "redhat": 2
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N",
+              "V3Score": 4.8
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N",
+              "V3Score": 4.8
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-86472",
+            "https://cna.openjsf.org/security-advisories.html",
+            "https://github.com/fastify/fast-uri",
+            "https://github.com/fastify/fast-uri/commit/5dabb86732aa2a7655e258719970e61e12b6b4d1",
+            "https://github.com/fastify/fast-uri/releases/tag/v2.4.7",
+            "https://github.com/fastify/fast-uri/releases/tag/v3.1.8",
+            "https://github.com/fastify/fast-uri/releases/tag/v4.1.5",
+            "https://github.com/fastify/fast-uri/security/advisories/GHSA-hrr3-gc8f-f4qj",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-86472",
+            "https://www.cve.org/CVERecord?id=CVE-2026-86472"
+          ],
+          "PublishedDate": "2026-09-15T11:17:12.327Z",
+          "LastModifiedDate": "2026-09-16T19:40:00.317Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-84375",
+          "VendorIDs": [
+            "GHSA-2883-xcg3-v3hh"
+          ],
+          "PkgID": "js-yaml@4.3.1",
+          "PkgName": "js-yaml",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/js-yaml@4.3.1",
+            "UID": "dbbf6638e6c00317"
+          },
+          "InstalledVersion": "4.3.1",
+          "FixedVersion": "4.3.2, 3.15.2",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-84375",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:c459220def451b4c2740ae686662f61f21509003f3204f066c60c6c4e413e7b4",
+          "Title": "js-yaml: js-yaml: Denial of Service vulnerability in YAML parsing",
+          "Description": "js-yaml is a JavaScript YAML parser and dumper. From 3.0.0 until 3.15.2, 4.3.2, and 5.4.1, maxTotalMergeKeys in lib/js-yaml/loader.js and lib/loader.js does not count empty mapping sources while processing the merge key \u003c\u003c. An attacker can alias a large sequence of empty mappings into many merge targets, causing O(N * K) processing while totalMergeKeys remains unchanged and the configured resource limit is never reached. A relatively small YAML document can therefore cause prolonged CPU consumption in applications that parse untrusted YAML, and merge processing is enabled by default on these release lines. In v3 \u0026 v4, merge is enabled by default so the severity score is higher. This issue is fixed in versions 3.15.2, 4.3.2, and 5.4.1.",
+          "Severity": "HIGH",
+          "CweIDs": [
+            "CWE-400",
+            "CWE-407"
+          ],
+          "VendorSeverity": {
+            "ghsa": 3,
+            "redhat": 2
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+              "V3Score": 7.5
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-84375",
+            "https://github.com/nodeca/js-yaml",
+            "https://github.com/nodeca/js-yaml/commit/3485bc06ff8a0251505f44a00414d90df2466639",
+            "https://github.com/nodeca/js-yaml/commit/6a8e05f9a485188ed730ac81e81ae221352ef480",
+            "https://github.com/nodeca/js-yaml/commit/d90b6612a5a84385bdcb556c44578eac76dc0f6b",
+            "https://github.com/nodeca/js-yaml/pull/797",
+            "https://github.com/nodeca/js-yaml/releases/tag/3.15.2",
+            "https://github.com/nodeca/js-yaml/releases/tag/4.3.2",
+            "https://github.com/nodeca/js-yaml/releases/tag/5.4.1",
+            "https://github.com/nodeca/js-yaml/security/advisories/GHSA-2883-xcg3-v3hh",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-84375",
+            "https://www.cve.org/CVERecord?id=CVE-2026-84375"
+          ],
+          "PublishedDate": "2026-09-01T22:17:19.44Z",
+          "LastModifiedDate": "2026-09-28T22:17:33.377Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-90711",
+          "VendorIDs": [
+            "GHSA-jqcg-44mw-7w3h"
+          ],
+          "PkgID": "proxy-addr@2.0.7",
+          "PkgName": "proxy-addr",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/proxy-addr@2.0.7",
+            "UID": "5b1466c75c96852"
+          },
+          "InstalledVersion": "2.0.7",
+          "FixedVersion": "2.0.8",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-90711",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:8130bddf9120d072dca7bfca4b016ead6f6fe9c0f781f83fb7d3d0f481ff52df",
+          "Title": "proxy-addr is a Node.js module that determines a request's client addr ...",
+          "Description": "proxy-addr is a Node.js module that determines a request's client address behind trusted reverse proxies, and it backs Express req.ip and req.ips. In versions 1.1.0 through 2.0.7, a trust subnet written in IPv4-mapped IPv6 notation with an IPv4-sized prefix, such as ::ffff:10.0.0.0/8 instead of the correct ::ffff:10.0.0.0/104, is accepted without error but trusts every IPv4 address on the internet rather than the block it names. Because the socket peer then becomes trusted at hop 0, any unauthenticated client can supply an arbitrary X-Forwarded-For header and control the address the application reads, which defeats IP-based access control, rate limiting, geolocation, and audit logging. This is a fail-open regression introduced in version 1.1.0. The issue is fixed in proxy-addr 2.0.8, and users should upgrade to 2.0.8 or later. As a workaround, ensure any IPv4-mapped IPv6 trust subnet uses a prefix length of at least 97, or express the range in plain IPv4 notation.",
+          "Severity": "CRITICAL",
+          "CweIDs": [
+            "CWE-290",
+            "CWE-348",
+            "CWE-697"
+          ],
+          "VendorSeverity": {
+            "ghsa": 4
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+              "V3Score": 9.1
+            }
+          },
+          "References": [
+            "https://cna.openjsf.org/security-advisories.html",
+            "https://github.com/jshttp/proxy-addr",
+            "https://github.com/jshttp/proxy-addr/commit/780911d84d18e2c5fa008ed0c0d387631ec11965",
+            "https://github.com/jshttp/proxy-addr/releases/tag/v2.0.8",
+            "https://github.com/jshttp/proxy-addr/security/advisories/GHSA-jqcg-44mw-7w3h",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-90711"
+          ],
+          "PublishedDate": "2026-09-15T07:16:33.683Z",
+          "LastModifiedDate": "2026-09-16T19:40:00.317Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-82417",
+          "VendorIDs": [
+            "GHSA-4mjr-xmp4-gh2g"
+          ],
+          "PkgID": "qs@6.15.3",
+          "PkgName": "qs",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/qs@6.15.3",
+            "UID": "b428f3453c2cfa45"
+          },
+          "InstalledVersion": "6.15.3",
+          "FixedVersion": "6.16.0",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-82417",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:70132f926698657be16d166591f2674e8aceeed50a16ab297c68b29acb7f5a5e",
+          "Title": "qs: qs: Denial of Service via improper validation in stringify function",
+          "Description": "### Summary\n\n\n\n`qs.stringify` throws a `TypeError` when it serializes an object whose own `constructor` property has a truthy, non-callable `isBuffer` member. `utils.isBuffer` duck-types buffers by calling `obj.constructor.isBuffer(obj)` after checking only that the property is truthy, so a value such as `{ constructor: { isBuffer: \"x\" } }` makes the call throw `TypeError: obj.constructor.isBuffer is not a function`.\n\n\n\n### Details\n\n\n\n`lib/stringify.js:127` calls `utils.isBuffer` on every non-primitive value it serializes. `utils.isBuffer` (`lib/utils.js:332`) reads `obj.constructor.isBuffer` and invokes it without verifying that it is a function. `constructor` and `isBuffer` are ordinary property names, so any object carrying them as own properties reaches the unchecked call.\n\n\n\nSuch an object can be built from untrusted input. `qs.parse(\"x[constructor][isBuffer]=y\", { plainObjects: true })` or `{ allowPrototypes: true }` keeps the `constructor` key as an own property (the default parse options drop it), and `JSON.parse(\"{\\\"a\\\":{\\\"constructor\\\":{\\\"isBuffer\\\":\\\"x\\\"}}}\")` produces the same shape with no qs option involved. Express 4 with its default `query parser` setting and body-parser with `extended: true` both call `qs.parse` with `allowPrototypes: true`, so on those stacks `req.query` and `req.body` can carry the shape directly.\n\n\n\n#### PoC\n\n\n\n```js\n\n\n\nvar qs = require(\"qs\");\n\n\n\nqs.stringify(qs.parse(\"x[constructor][isBuffer]=y\", { plainObjects: true }));\n\n\n\nqs.stringify(JSON.parse(\"{\\\"a\\\":{\\\"constructor\\\":{\\\"isBuffer\\\":\\\"x\\\"}}}\"));\n\n\n\n// TypeError: obj.constructor.isBuffer is not a function\n\n\n\n//     at Object.isBuffer (lib/utils.js:332:78)\n\n\n\n//     at stringify (lib/stringify.js:127:45)\n\n\n\n```\n\n\n\n#### Fix\n\n\n\n`lib/utils.js`, applied in e83d321 on `main` and released as v6.16.0:\n\n\n\n```diff\n\n\n\n- return !!(obj.constructor \u0026\u0026 obj.constructor.isBuffer \u0026\u0026 obj.constructor.isBuffer(obj));\n\n\n\n+ return !!(obj.constructor \u0026\u0026 typeof obj.constructor.isBuffer === \"function\" \u0026\u0026 obj.constructor.isBuffer(obj));\n\n\n\n```\n\n\n\nReal `Buffer`, `safer-buffer`, and browserify `buffer` polyfill instances serialize exactly as before; only the throw is removed.\n\n\n\n### Affected versions\n\n\n\n`\u003e=2.2.5 \u003c6.16.0`, fixed in v6.16.0.\n\n\n\nThe unguarded duck-type was introduced in 3768a75 and first shipped in v2.2.5 (September 2014). v2.2.4 and earlier used `Buffer.isBuffer` and are not affected. Every release from v2.2.5 through v6.15.3 contains the unguarded call.\n\n\n\n### Impact\n\n\n\nAn unauthenticated request can make any code path that re-serializes attacker-influenced data with `qs.stringify` (for example, rebuilding a query string from `req.query` for a redirect or an upstream request, or serializing a parsed JSON body) throw synchronously. In a typical Node.js HTTP framework the throw is caught by the framework error boundary and the affected request returns a 500; the process survives and other requests are unaffected. Where the call runs outside an error boundary, such as an `async` Express 4 handler (where the throw becomes an unhandled promise rejection) or a background job, the process exits, so the impact in that case depends on the application error handling rather than on qs.",
+          "Severity": "MEDIUM",
+          "CweIDs": [
+            "CWE-248",
+            "CWE-703"
+          ],
+          "VendorSeverity": {
+            "ghsa": 2,
+            "redhat": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+              "V40Vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N",
+              "V3Score": 5.3,
+              "V40Score": 6.3
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-82417",
+            "https://github.com/ljharb/qs",
+            "https://github.com/ljharb/qs/commit/e83d321ffafb38cf210683ac31714fce6ce1c6c6",
+            "https://github.com/ljharb/qs/security/advisories/GHSA-4mjr-xmp4-gh2g",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-82417",
+            "https://www.cve.org/CVERecord?id=CVE-2026-82417"
+          ],
+          "PublishedDate": "2026-08-30T00:16:34.657Z",
+          "LastModifiedDate": "2026-09-03T18:00:36.97Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-82562",
+          "VendorIDs": [
+            "GHSA-x5fp-wj9c-mxmx"
+          ],
+          "PkgID": "qs@6.15.3",
+          "PkgName": "qs",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/qs@6.15.3",
+            "UID": "b428f3453c2cfa45"
+          },
+          "InstalledVersion": "6.15.3",
+          "FixedVersion": "6.16.0",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-82562",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:04a9fbf8a5bc9c20398f0ad880f958da581dd82c3f9f9e66c6661694afbe4349",
+          "Title": "qs: qs: Denial of Service via array limit bypass in query string parsing",
+          "Description": "### Summary\n\n\n\nWhen `qs.parse` is called with `comma: true` and `throwOnLimitExceeded: true`, a comma-separated value under a bracket-push key (`a[]=1,2,3,4`) is split into an array without being compared against `arrayLimit`, while the same value under a flat key (`a=1,2,3,4`), an indexed key (`a[0]=`), a nested key (`a[b]=`), or a dotted key (`a.b=` with `allowDots`) throws the documented `RangeError`. A single parameter such as `a[]=1,2,2,...` therefore produces an inner array of arbitrary length even though the caller opted into the hard limit. This is the `[]=` key form that the fix for CVE-2026-2391 (qs 6.14.2) did not cover.\n\n\n\n### Details\n\n\n\nIn `lib/parse.js`, a comma-separated value under a `[]=` key is split and then wrapped as a single nested element (`val = [val]`, so that each `a[]=x,y` group counts as one element of the outer array). The `arrayLimit` check that 6.14.2 added for comma values runs after that wrap, so for `[]=` parts it only ever saw the wrapper of length 1. 6.15.3 added a pre-split comma count so that an oversized value throws before it is allocated, but gated it on an `isFlatArrayValue` flag that `parseValues` set to `false` for any part containing `[]=`, and did not pass it for object-valued input, so the gap remained.\n\n\n\n#### PoC\n\n\n\n```js\n\n\n\nvar qs = require('qs');\n\n\n\nvar options = { comma: true, arrayLimit: 3, throwOnLimitExceeded: true };\n\n\n\nqs.parse('a=1,2,3,4', options);   // RangeError: Array limit exceeded. Only 3 elements allowed in an array.\n\n\n\nqs.parse('a[]=1,2,3,4', options); // { a: [ [ '1', '2', '3', '4' ] ] }  (no throw)\n\n\n\nqs.parse('a[]=' + '1,'.repeat(1000000) + '1', { comma: true, arrayLimit: 20, throwOnLimitExceeded: true });\n\n\n\n// no throw; a 1,000,001-element inner array is allocated\n\n\n\n```\n\n\n\n#### Fix\n\n\n\n`lib/parse.js`, applied in 8859c37 on `main` and released as v6.16.0: the `isFlatArrayValue` gate is removed, so every comma-split value is counted against `arrayLimit` before splitting regardless of key form. An in-limit group under `a[]=` still counts as one element of the outer array, and the default (`throwOnLimitExceeded: false`) path is unchanged.\n\n\n\n### Affected versions\n\n\n\n`\u003e=6.14.2 \u003c6.16.0`, fixed in v6.16.0.\n\n\n\nv6.14.2 introduced `arrayLimit` enforcement for comma values (the fix for CVE-2026-2391) but only for values not under a `[]=` key, and every release from v6.14.2 through v6.15.3 has the same gap. v6.14.0 and v6.14.1, where `throwOnLimitExceeded` exists but does not apply to any comma form, are covered by CVE-2026-2391 rather than this record. Earlier lines (6.7.x through 6.13.x) have `comma` but no `throwOnLimitExceeded`, so there is no hard cap on any comma path to bypass; releases before 6.7.0 have no `comma` option.\n\n\n\n### Impact\n\n\n\nAn unauthenticated attacker who can reach an application that parses untrusted query strings or urlencoded bodies with both `comma: true` and `throwOnLimitExceeded: true` (both non-default) can bypass the configured limit with a single `a[]=` parameter and force the parser to allocate an array proportional to the request size. The cost is strictly linear in the attacker-supplied bytes (about 0.1 microseconds and 6 to 7 retained bytes per input byte; the same out-of-memory threshold as the documented default `throwOnLimitExceeded: false` path), so a transport-layer request or body size limit bounds it completely (and node's default maximum HTTP header size of 16 KB already bounds the request line, so multi-megabyte payloads need a body parser). The impact is that an opt-in hard limit fails open on one key spelling, not unbounded allocation from a small input.",
+          "Severity": "MEDIUM",
+          "CweIDs": [
+            "CWE-770"
+          ],
+          "VendorSeverity": {
+            "ghsa": 2,
+            "redhat": 1
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+              "V40Vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N",
+              "V3Score": 3.7,
+              "V40Score": 6.3
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+              "V3Score": 3.7
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-82562",
+            "https://github.com/ljharb/qs",
+            "https://github.com/ljharb/qs/commit/8859c37470e11b42b547b275e4e9bd0bc8cc5464",
+            "https://github.com/ljharb/qs/security/advisories/GHSA-w7fw-mjwx-w883",
+            "https://github.com/ljharb/qs/security/advisories/GHSA-x5fp-wj9c-mxmx",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-82562",
+            "https://www.cve.org/CVERecord?id=CVE-2026-82562"
+          ],
+          "PublishedDate": "2026-08-30T01:20:32.82Z",
+          "LastModifiedDate": "2026-09-03T18:00:36.97Z"
+        }
+      ]
+    },
+    {
+      "Target": "Dockerfile",
+      "Class": "config",
+      "Type": "dockerfile",
+      "MisconfSummary": {
+        "Successes": 25,
+        "Failures": 4
+      },
+      "Misconfigurations": [
+        {
+          "Type": "Dockerfile Security Check",
+          "ID": "DS-0002",
+          "Title": "Image user should not be 'root'",
+          "Description": "Running containers with 'root' user can lead to a container escape situation. It is a best practice to run containers as non-root users, which can be done by adding a 'USER' statement to the Dockerfile.",
+          "Message": "Specify at least 1 USER command in Dockerfile with non-root user as argument",
+          "Namespace": "builtin.dockerfile.DS002",
+          "Query": "data.builtin.dockerfile.DS002.deny",
+          "Resolution": "Add 'USER \u003cnon root user name\u003e' line to the Dockerfile",
+          "Severity": "HIGH",
+          "PrimaryURL": "https://avd.aquasec.com/misconfig/ds-0002",
+          "References": [
+            "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/",
+            "https://avd.aquasec.com/misconfig/ds-0002"
+          ],
+          "Status": "FAIL",
+          "CauseMetadata": {
+            "Provider": "Dockerfile",
+            "Service": "general"
+          }
+        },
+        {
+          "Type": "Dockerfile Security Check",
+          "ID": "DS-0029",
+          "Title": "'apt-get' missing '--no-install-recommends'",
+          "Description": "'apt-get' install should use '--no-install-recommends' to minimize image size.",
+          "Message": "'--no-install-recommends' flag is missed: 'apt-get update \u0026\u0026 apt-get install -y curl ca-certificates openssl tzdata \u0026\u0026     curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \u0026\u0026     apt-get install -y nodejs \u0026\u0026 rm -rf /var/lib/apt/lists/*'",
+          "Namespace": "builtin.dockerfile.DS029",
+          "Query": "data.builtin.dockerfile.DS029.deny",
+          "Resolution": "Add '--no-install-recommends' flag to 'apt-get'",
+          "Severity": "HIGH",
+          "PrimaryURL": "https://avd.aquasec.com/misconfig/ds-0029",
+          "References": [
+            "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/",
+            "https://avd.aquasec.com/misconfig/ds-0029"
+          ],
+          "Status": "FAIL",
+          "CauseMetadata": {
+            "Provider": "Dockerfile",
+            "Service": "general",
+            "StartLine": 8,
+            "EndLine": 10,
+            "Code": {
+              "Lines": [
+                {
+                  "Number": 8,
+                  "Content": "RUN apt-get update \u0026\u0026 apt-get install -y curl ca-certificates openssl tzdata \u0026\u0026 \\",
+                  "IsCause": true,
+                  "Annotation": "",
+                  "Truncated": false,
+                  "Highlighted": "\u001b[38;5;64mRUN\u001b[0m apt-get update \u001b[38;5;245m\u0026\u0026\u001b[0m apt-get install -y curl ca-certificates openssl tzdata \u001b[38;5;245m\u0026\u0026\u001b[0m \u001b[38;5;124m\\",
+                  "FirstCause": true,
+                  "LastCause": false
+                },
+                {
+                  "Number": 9,
+                  "Content": "    curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \u0026\u0026 \\",
+                  "IsCause": true,
+                  "Annotation": "",
+                  "Truncated": false,
+                  "Highlighted": "\u001b[0m    curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \u001b[38;5;245m\u0026\u0026\u001b[0m \u001b[38;5;124m\\",
+                  "FirstCause": false,
+                  "LastCause": false
+                },
+                {
+                  "Number": 10,
+                  "Content": "    apt-get install -y nodejs \u0026\u0026 rm -rf /var/lib/apt/lists/*",
+                  "IsCause": true,
+                  "Annotation": "",
+                  "Truncated": false,
+                  "Highlighted": "\u001b[0m    apt-get install -y nodejs \u001b[38;5;245m\u0026\u0026\u001b[0m rm -rf /var/lib/apt/lists/*",
+                  "FirstCause": false,
+                  "LastCause": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "Type": "Dockerfile Security Check",
+          "ID": "DS-0029",
+          "Title": "'apt-get' missing '--no-install-recommends'",
+          "Description": "'apt-get' install should use '--no-install-recommends' to minimize image size.",
+          "Message": "'--no-install-recommends' flag is missed: 'apt-get update \u0026\u0026 apt-get install -y curl ca-certificates openssl tzdata \u0026\u0026     curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \u0026\u0026     apt-get install -y nodejs \u0026\u0026 rm -rf /var/lib/apt/lists/*'",
+          "Namespace": "builtin.dockerfile.DS029",
+          "Query": "data.builtin.dockerfile.DS029.deny",
+          "Resolution": "Add '--no-install-recommends' flag to 'apt-get'",
+          "Severity": "HIGH",
+          "PrimaryURL": "https://avd.aquasec.com/misconfig/ds-0029",
+          "References": [
+            "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/",
+            "https://avd.aquasec.com/misconfig/ds-0029"
+          ],
+          "Status": "FAIL",
+          "CauseMetadata": {
+            "Provider": "Dockerfile",
+            "Service": "general",
+            "StartLine": 19,
+            "EndLine": 21,
+            "Code": {
+              "Lines": [
+                {
+                  "Number": 19,
+                  "Content": "RUN apt-get update \u0026\u0026 apt-get install -y curl ca-certificates openssl tzdata \u0026\u0026 \\",
+                  "IsCause": true,
+                  "Annotation": "",
+                  "Truncated": false,
+                  "Highlighted": "\u001b[38;5;64mRUN\u001b[0m apt-get update \u001b[38;5;245m\u0026\u0026\u001b[0m apt-get install -y curl ca-certificates openssl tzdata \u001b[38;5;245m\u0026\u0026\u001b[0m \u001b[38;5;124m\\",
+                  "FirstCause": true,
+                  "LastCause": false
+                },
+                {
+                  "Number": 20,
+                  "Content": "    curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \u0026\u0026 \\",
+                  "IsCause": true,
+                  "Annotation": "",
+                  "Truncated": false,
+                  "Highlighted": "\u001b[0m    curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \u001b[38;5;245m\u0026\u0026\u001b[0m \u001b[38;5;124m\\",
+                  "FirstCause": false,
+                  "LastCause": false
+                },
+                {
+                  "Number": 21,
+                  "Content": "    apt-get install -y nodejs \u0026\u0026 rm -rf /var/lib/apt/lists/*",
+                  "IsCause": true,
+                  "Annotation": "",
+                  "Truncated": false,
+                  "Highlighted": "\u001b[0m    apt-get install -y nodejs \u001b[38;5;245m\u0026\u0026\u001b[0m rm -rf /var/lib/apt/lists/*",
+                  "FirstCause": false,
+                  "LastCause": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "Type": "Dockerfile Security Check",
+          "ID": "DS-0029",
+          "Title": "'apt-get' missing '--no-install-recommends'",
+          "Description": "'apt-get' install should use '--no-install-recommends' to minimize image size.",
+          "Message": "'--no-install-recommends' flag is missed: 'apt-get update \u0026\u0026 apt-get install -y curl ca-certificates openssl tzdata \u0026\u0026     curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \u0026\u0026     apt-get install -y nodejs \u0026\u0026 rm -rf /var/lib/apt/lists/*'",
+          "Namespace": "builtin.dockerfile.DS029",
+          "Query": "data.builtin.dockerfile.DS029.deny",
+          "Resolution": "Add '--no-install-recommends' flag to 'apt-get'",
+          "Severity": "HIGH",
+          "PrimaryURL": "https://avd.aquasec.com/misconfig/ds-0029",
+          "References": [
+            "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/",
+            "https://avd.aquasec.com/misconfig/ds-0029"
+          ],
+          "Status": "FAIL",
+          "CauseMetadata": {
+            "Provider": "Dockerfile",
+            "Service": "general",
+            "StartLine": 36,
+            "EndLine": 38,
+            "Code": {
+              "Lines": [
+                {
+                  "Number": 36,
+                  "Content": "RUN apt-get update \u0026\u0026 apt-get install -y curl ca-certificates openssl tzdata \u0026\u0026 \\",
+                  "IsCause": true,
+                  "Annotation": "",
+                  "Truncated": false,
+                  "Highlighted": "\u001b[38;5;64mRUN\u001b[0m apt-get update \u001b[38;5;245m\u0026\u0026\u001b[0m apt-get install -y curl ca-certificates openssl tzdata \u001b[38;5;245m\u0026\u0026\u001b[0m \u001b[38;5;124m\\",
+                  "FirstCause": true,
+                  "LastCause": false
+                },
+                {
+                  "Number": 37,
+                  "Content": "    curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \u0026\u0026 \\",
+                  "IsCause": true,
+                  "Annotation": "",
+                  "Truncated": false,
+                  "Highlighted": "\u001b[0m    curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \u001b[38;5;245m\u0026\u0026\u001b[0m \u001b[38;5;124m\\",
+                  "FirstCause": false,
+                  "LastCause": false
+                },
+                {
+                  "Number": 38,
+                  "Content": "    apt-get install -y nodejs \u0026\u0026 rm -rf /var/lib/apt/lists/*",
+                  "IsCause": true,
+                  "Annotation": "",
+                  "Truncated": false,
+                  "Highlighted": "\u001b[0m    apt-get install -y nodejs \u001b[38;5;245m\u0026\u0026\u001b[0m rm -rf /var/lib/apt/lists/*",
+                  "FirstCause": false,
+                  "LastCause": true
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Target": "Dockerfile.dev",
+      "Class": "config",
+      "Type": "dockerfile",
+      "MisconfSummary": {
+        "Successes": 24,
+        "Failures": 3
+      },
+      "Misconfigurations": [
+        {
+          "Type": "Dockerfile Security Check",
+          "ID": "DS-0002",
+          "Title": "Image user should not be 'root'",
+          "Description": "Running containers with 'root' user can lead to a container escape situation. It is a best practice to run containers as non-root users, which can be done by adding a 'USER' statement to the Dockerfile.",
+          "Message": "Specify at least 1 USER command in Dockerfile with non-root user as argument",
+          "Namespace": "builtin.dockerfile.DS002",
+          "Query": "data.builtin.dockerfile.DS002.deny",
+          "Resolution": "Add 'USER \u003cnon root user name\u003e' line to the Dockerfile",
+          "Severity": "HIGH",
+          "PrimaryURL": "https://avd.aquasec.com/misconfig/ds-0002",
+          "References": [
+            "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/",
+            "https://avd.aquasec.com/misconfig/ds-0002"
+          ],
+          "Status": "FAIL",
+          "CauseMetadata": {
+            "Provider": "Dockerfile",
+            "Service": "general"
+          }
+        },
+        {
+          "Type": "Dockerfile Security Check",
+          "ID": "DS-0026",
+          "Title": "No HEALTHCHECK defined",
+          "Description": "You should add HEALTHCHECK instruction in your docker container images to perform the health check on running containers.",
+          "Message": "Add HEALTHCHECK instruction in your Dockerfile",
+          "Namespace": "builtin.dockerfile.DS026",
+          "Query": "data.builtin.dockerfile.DS026.deny",
+          "Resolution": "Add HEALTHCHECK instruction in Dockerfile",
+          "Severity": "LOW",
+          "PrimaryURL": "https://avd.aquasec.com/misconfig/ds-0026",
+          "References": [
+            "https://blog.aquasec.com/docker-security-best-practices",
+            "https://avd.aquasec.com/misconfig/ds-0026"
+          ],
+          "Status": "FAIL",
+          "CauseMetadata": {
+            "Provider": "Dockerfile",
+            "Service": "general"
+          }
+        },
+        {
+          "Type": "Dockerfile Security Check",
+          "ID": "DS-0029",
+          "Title": "'apt-get' missing '--no-install-recommends'",
+          "Description": "'apt-get' install should use '--no-install-recommends' to minimize image size.",
+          "Message": "'--no-install-recommends' flag is missed: 'apt-get update \u0026\u0026 apt-get install -y curl ca-certificates openssl tzdata \u0026\u0026     curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \u0026\u0026     apt-get install -y nodejs \u0026\u0026 rm -rf /var/lib/apt/lists/*'",
+          "Namespace": "builtin.dockerfile.DS029",
+          "Query": "data.builtin.dockerfile.DS029.deny",
+          "Resolution": "Add '--no-install-recommends' flag to 'apt-get'",
+          "Severity": "HIGH",
+          "PrimaryURL": "https://avd.aquasec.com/misconfig/ds-0029",
+          "References": [
+            "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/",
+            "https://avd.aquasec.com/misconfig/ds-0029"
+          ],
+          "Status": "FAIL",
+          "CauseMetadata": {
+            "Provider": "Dockerfile",
+            "Service": "general",
+            "StartLine": 8,
+            "EndLine": 10,
+            "Code": {
+              "Lines": [
+                {
+                  "Number": 8,
+                  "Content": "RUN apt-get update \u0026\u0026 apt-get install -y curl ca-certificates openssl tzdata \u0026\u0026 \\",
+                  "IsCause": true,
+                  "Annotation": "",
+                  "Truncated": false,
+                  "Highlighted": "RUN apt-get update \u0026\u0026 apt-get install -y curl ca-certificates openssl tzdata \u0026\u0026 \\",
+                  "FirstCause": true,
+                  "LastCause": false
+                },
+                {
+                  "Number": 9,
+                  "Content": "    curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \u0026\u0026 \\",
+                  "IsCause": true,
+                  "Annotation": "",
+                  "Truncated": false,
+                  "Highlighted": "    curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \u0026\u0026 \\",
+                  "FirstCause": false,
+                  "LastCause": false
+                },
+                {
+                  "Number": 10,
+                  "Content": "    apt-get install -y nodejs \u0026\u0026 rm -rf /var/lib/apt/lists/*",
+                  "IsCause": true,
+                  "Annotation": "",
+                  "Truncated": false,
+                  "Highlighted": "    apt-get install -y nodejs \u0026\u0026 rm -rf /var/lib/apt/lists/*",
+                  "FirstCause": false,
+                  "LastCause": true
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

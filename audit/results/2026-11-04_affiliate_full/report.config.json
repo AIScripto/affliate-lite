@@ -1,0 +1,21 @@
+{
+  "title": "Oval Media Affiliate Tracking & Campaign Platform Audit",
+  "project": "Affiliate Tracker",
+  "date": "2026-11-04",
+  "mode": "AUDIT-ONLY",
+  "scope": "Full Monorepo (backend and frontend)",
+  "auditor": "Principal Software Architect & Code Auditor",
+  "confidentiality": "Confidential",
+  "kit_version": "0.1.0",
+  "team_size": 2,
+  "release_cadence": "Continuous Delivery",
+  "repos": [
+    {
+      "name": "affliate",
+      "branch": "main",
+      "commit": "f9d0a44"
+    }
+  ],
+  "previous_run": null
+}
+

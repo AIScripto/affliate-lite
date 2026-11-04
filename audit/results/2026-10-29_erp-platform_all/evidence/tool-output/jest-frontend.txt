@@ -1,0 +1,31 @@
+
+> erp-financial-module@0.1.0 test
+> jest --watchman=false
+
+PASS tests/unit/ui/form-dialog.test.tsx
+PASS tests/unit/auth/use-permission.test.ts
+PASS tests/unit/fiscal-years/create-fiscal-year-dialog.test.tsx
+PASS tests/unit/ui/base-components.test.tsx
+PASS tests/unit/purchases/purchase-draft-form.test.ts
+PASS tests/unit/fiscal-years/fiscal-years-table.test.tsx
+PASS tests/unit/sales/sale-draft-form.test.ts
+PASS tests/unit/ui/document-status-label.test.ts
+PASS tests/unit/returns/return-draft-form.test.ts
+PASS tests/unit/fiscal-years/fiscal-year-rules.test.ts
+PASS tests/unit/vouchers/voucher-rules.test.ts
+PASS tests/unit/print/print-templates.test.ts
+PASS tests/unit/analytics/chart-data.test.ts
+PASS tests/unit/analytics/stat-tile.test.tsx
+PASS tests/unit/design/contrast.test.ts
+PASS tests/unit/stock-transfers/transfer-draft-form.test.ts
+PASS tests/unit/stock-adjustments/adjustment-draft-form.test.ts
+PASS tests/unit/stock-transfers/transfers.test.tsx
+PASS tests/unit/shell/navigation.test.tsx
+PASS tests/unit/sales/sale-voucher-page.test.tsx
+PASS tests/unit/purchases/purchase-voucher-page.test.tsx
+
+Test Suites: 21 passed, 21 total
+Tests:       196 passed, 196 total
+Snapshots:   0 total
+Time:        3.249 s
+Ran all test suites.

@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Oval Media Affiliate Tracking &amp; Campaign Platform Audit</title>
+<style>
+:root{
+  --bg:#F6F8FC;--surface:#fff;--surface-2:#EEF2F9;--line:#D5DCE8;--ink:#0B1630;--ink-2:#3D4A63;--ink-3:#5A6780;
+  --accent:#1D46F3;--accent-ink:#0A2DC1;--accent-soft:#EAF0FF;
+  --crit:#B91C1C;--crit-bg:#FEE2E2;--high:#C2410C;--high-bg:#FFEDD5;--med:#A15C07;--med-bg:#FEF3C7;--low:#475569;--low-bg:#E2E8F0;
+  --ok:#15803D;--bad:#B91C1C;--warn:#A15C07;
+  --display:"Plus Jakarta Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;--radius:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0A0F1E;--surface:#111827;--surface-2:#1A2234;--line:#2A3550;--ink:#F3F6FC;--ink-2:#C5CEDF;--ink-3:#98A3B8;
+  --accent:#2F5BFF;--accent-ink:#7AA2FF;--accent-soft:#14204A;
+  --crit:#F87171;--crit-bg:#450A0A;--high:#FB923C;--high-bg:#431407;--med:#FBBF24;--med-bg:#3D2604;--low:#CBD5E1;--low-bg:#243049;
+  --ok:#4ADE80;--bad:#F87171;--warn:#FBBF24;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A0F1E;--surface:#111827;--surface-2:#1A2234;--line:#2A3550;--ink:#F3F6FC;--ink-2:#C5CEDF;--ink-3:#98A3B8;
+  --accent:#2F5BFF;--accent-ink:#7AA2FF;--accent-soft:#14204A;
+  --crit:#F87171;--crit-bg:#450A0A;--high:#FB923C;--high-bg:#431407;--med:#FBBF24;--med-bg:#3D2604;--low:#CBD5E1;--low-bg:#243049;
+  --ok:#4ADE80;--bad:#F87171;--warn:#FBBF24;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--body);padding:0 16px 64px}
+.wrap{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px}
+nav.toc{position:sticky;top:0;align-self:start;padding-top:32px;max-height:100vh;overflow:auto}
+nav.toc .brand{font:800 14px/1 var(--display);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+nav.toc a{display:block;color:var(--ink-3);text-decoration:none;font-size:13.5px;padding:6px 10px;border-radius:6px}
+nav.toc a:hover{color:var(--ink);background:var(--surface-2)}
+#themeBtn{font:600 12px var(--body);background:var(--surface);color:var(--ink-2);border:1px solid var(--line);border-radius:6px;padding:4px 8px;cursor:pointer}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent-ink);outline-offset:2px}
+.mobile-toc{display:none;gap:6px;overflow-x:auto;padding:10px 0;position:sticky;top:0;background:var(--bg);z-index:5;border-bottom:1px solid var(--line)}
+.mobile-toc a{white-space:nowrap;font-size:13px;color:var(--ink-2);text-decoration:none;padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+@media (max-width:960px){.wrap{grid-template-columns:minmax(0,1fr);gap:0}nav.toc{display:none}.mobile-toc{display:flex}}
+main{min-width:0;padding-top:32px}
+section{padding-block:36px 8px;border-top:1px solid var(--line);scroll-margin-top:56px}
+h1,h2,h3,h4{font-family:var(--display);letter-spacing:-.015em;margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.12;font-weight:800}
+h2{font-size:23px;font-weight:700;margin-bottom:6px}
+h3{font-size:16px;font-weight:700;margin-bottom:6px}
+h4{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);margin:14px 0 6px}
+p{margin:0 0 10px;color:var(--ink-2);max-width:78ch}
+.sub{color:var(--ink-3);margin-bottom:16px}
+.muted{color:var(--ink-3)}
+code{font-family:var(--mono);font-size:.86em;background:var(--surface-2);padding:1px 5px;border-radius:4px;color:var(--ink);overflow-wrap:anywhere}
+a{color:var(--accent-ink)}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:12px}
+.top{padding-bottom:20px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:14px;font-size:13.5px;color:var(--ink-3)}
+.meta b{color:var(--ink);font-weight:600}
+.banner{margin-top:16px;padding:10px 14px;border:1px solid var(--line);border-left:4px solid var(--high);background:var(--surface);border-radius:8px;font-size:13.5px;color:var(--ink-2)}
+.lead{font-size:17px;color:var(--ink);max-width:68ch;margin:0 0 8px}
+.verdict{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-top:12px}
+.grade{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;text-align:center;border:6px solid var(--line)}
+.grade .g{font:800 40px/1 var(--display)}
+.grade .gl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);margin-top:-14px}
+.grade-a,.grade-b{border-color:var(--ok)}.grade-c{border-color:var(--med)}.grade-d{border-color:var(--high)}.grade-f{border-color:var(--crit)}
+@media (max-width:640px){.verdict{grid-template-columns:1fr}}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:16px 0}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px}
+.tile .n{font:800 28px/1 var(--display)}.tile .l{font-size:13px;color:var(--ink-3);margin-top:6px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.card ol,.card ul{margin:6px 0 0;padding-left:20px;color:var(--ink-2)}.card li{margin-bottom:6px}
+.ids{white-space:nowrap}
+.idlink{font-family:var(--mono);font-size:.86em;text-decoration:none;border-bottom:1px dotted var(--accent-ink)}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;font-size:14px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--surface-2);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-3)}
+td.num{width:44px;font-weight:700;white-space:nowrap}
+.idlink{white-space:nowrap}
+@media (max-width:760px){table{display:block;overflow-x:auto}}
+.pill{display:inline-flex;align-items:center;gap:5px;font:600 12px/1 var(--body);padding:4px 8px;border-radius:999px;background:var(--low-bg);color:var(--low);white-space:nowrap}
+.pill b{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:4px;border:1.5px solid currentColor;font-size:10px}
+.sev-critical.pill,.chip.sev-critical{background:var(--crit-bg);color:var(--crit)}
+.sev-high.pill,.chip.sev-high{background:var(--high-bg);color:var(--high)}
+.sev-medium.pill,.chip.sev-medium{background:var(--med-bg);color:var(--med)}
+.sev-low.pill,.chip.sev-low{background:var(--low-bg);color:var(--low)}
+.pill.urg{background:var(--accent-soft);color:var(--accent-ink)}
+.pill.area{background:var(--surface-2);color:var(--ink-2)}
+.pill.qw{background:var(--accent);color:#fff}
+.pill.chk{background:var(--high-bg);color:var(--high)}
+.pill.seq{background:var(--ink);color:var(--bg)}
+.pill.conf-confirmed{background:var(--surface-2);color:var(--ok)}.pill.conf-suspected{background:var(--surface-2);color:var(--warn)}.pill.conf-likely{background:var(--surface-2);color:var(--ink-2)}
+.pill.diff-new{background:var(--accent);color:#fff}.pill.diff-reg{background:var(--crit);color:#fff}
+.score-row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) 40px;gap:16px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.score-row .name{font-weight:600}.score-row .why{display:block;font-weight:400;font-size:13px;color:var(--ink-3)}
+.bar{height:10px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.bar span{display:block;height:100%;border-radius:99px}
+.bar .bad{background:var(--bad)}.bar .warn{background:var(--warn)}.bar .good{background:var(--accent)}
+.score-row .v{font:700 15px var(--display);text-align:right}
+@media (max-width:640px){.score-row{grid-template-columns:1fr 40px}.score-row .bar{grid-column:1/-1;order:3}}
+table.heat td,table.heat th{text-align:center;height:64px}
+table.heat th[scope=row]{width:80px}
+.hm{font-size:12px}.hm-0,.hm-1{background:var(--low-bg)}.hm-2{background:var(--med-bg)}.hm-3{background:var(--high-bg)}.hm-4{background:var(--crit-bg)}
+.wave-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.wave-id{font:700 12px var(--mono);background:var(--ink);color:var(--bg);padding:4px 8px;border-radius:6px}
+.why-order{border-left:3px solid var(--accent);padding-left:10px}
+.wlist{padding-left:20px;margin:0}.wlist li{margin-bottom:4px}
+.steps{padding-left:20px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{display:inline-flex;gap:6px;align-items:center;font:600 13px var(--body);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+.chip b{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:4px;border:1.5px solid currentColor;font-size:10px}
+.chip[aria-pressed=false]{opacity:.45;background:var(--surface);color:var(--ink-3)}
+select,input[type=search]{font:14px var(--body);padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+input[type=search]{min-width:220px;flex:1}
+.f{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--low);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px}
+.f.sev-critical{border-left-color:var(--crit)}.f.sev-high{border-left-color:var(--high)}.f.sev-medium{border-left-color:var(--med)}
+.f[hidden]{display:none}
+.f-head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.f-id{font:700 12px var(--mono);color:var(--ink-3)}.f-title{font:700 16px var(--display)}
+.f-pills{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.f-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:4px 20px}
+.f-body>div{min-width:0}
+.f-body p,.f-foot span,.f-title,.card p,.card li,td{overflow-wrap:anywhere}
+.f-body p{margin-bottom:6px}
+.f{min-width:0}
+.locs{display:flex;gap:6px;flex-wrap:wrap}
+.f-foot{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:13px;color:var(--ink-3);border-top:1px solid var(--line);padding-top:8px;margin-top:6px}
+.diffline{color:var(--ink-2)}
+@media print{
+  :root{--bg:#fff;--surface:#fff;--ink:#000;--ink-2:#222;--ink-3:#444}
+  nav.toc,.mobile-toc,.toolbar,#themeBtn{display:none}
+  .wrap{display:block}body{padding:0}
+  .f,.card,table,tr{break-inside:avoid}
+  h2,h3{break-after:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc" aria-label="Sections"><div class="brand"><span>Audit report</span><button id="themeBtn" type="button" aria-label="Switch theme">Theme</button></div><a href="#summary">Summary</a><a href="#fix-first">Fix first</a><a href="#scorecard">Scorecard</a><a href="#heatmap">Heat map</a><a href="#quick-wins">Quick wins</a><a href="#plan">Fix plan</a><a href="#chains">Attack chains</a><a href="#decisions">Decisions</a><a href="#findings">Findings</a><a href="#strengths">Strengths</a><a href="#coverage">Coverage</a><a href="#tools">Tools</a><a href="#appendix">Appendix</a></nav>
+<main>
+<nav class="mobile-toc" aria-label="Sections"><a href="#summary">Summary</a><a href="#fix-first">Fix first</a><a href="#scorecard">Scorecard</a><a href="#heatmap">Heat map</a><a href="#quick-wins">Quick wins</a><a href="#plan">Fix plan</a><a href="#chains">Attack chains</a><a href="#decisions">Decisions</a><a href="#findings">Findings</a><a href="#strengths">Strengths</a><a href="#coverage">Coverage</a><a href="#tools">Tools</a><a href="#appendix">Appendix</a></nav>
+<header class="top">
+  <div class="eyebrow">Confidential · Audit report</div>
+  <h1>Oval Media Affiliate Tracking &amp; Campaign Platform Audit</h1>
+  <div class="meta"><span><b>Date</b> 2026-11-04</span><span><b>Mode</b> AUDIT-ONLY</span><span><b>Scope</b> Full Monorepo (backend and frontend)</span><span><b>Auditor</b> Principal Software Architect &amp; Code Auditor</span><span><b>Kit</b> 0.1.0</span><span><b>affliate</b> main <code>f9d0a44</code></span></div>
+  <div class="banner" role="note">This report describes weaknesses in a system. Share it only with people who need it. Secret values are masked.</div>
+</header><section id="summary"><h2>Executive summary</h2>
+    <div class="verdict">
+      <div class="grade grade-d" aria-label="Overall grade D"><div class="g">D</div><div class="gl">Overall grade</div></div>
+      <div>
+        <p class="lead">Core tracking engine and 3D UI are solid, but critical authentication bypass, postback race condition, and in-memory aggregation require urgent remediation before production scaling.</p>
+        <p class="sub">Grade D assigned per kit rubric: One Critical finding (SEC-001 dev-mode admin auto-login bypass) and six High-severity findings across security, reliability, performance, and data integrity.</p>
+        
+      </div>
+    </div>
+    <div class="tiles"><div class="tile sev-critical"><div class="n">1</div><div class="l"><span class="pill sev-critical" title="Critical"><b aria-hidden="true">C</b>Critical</span></div></div><div class="tile sev-high"><div class="n">7</div><div class="l"><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></div></div><div class="tile sev-medium"><div class="n">3</div><div class="l"><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span></div></div><div class="tile sev-low"><div class="n">1</div><div class="l"><span class="pill sev-low" title="Low"><b aria-hidden="true">L</b>Low</span></div></div><div class="tile"><div class="n">12</div><div class="l">Open findings</div></div><div class="tile"><div class="n">3</div><div class="l">Quick wins</div></div></div>
+    <div class="two">
+      <div class="card"><h3>Top risks</h3><ol><li>Unauthenticated administrative access via dev-mode auth bypass when NODE_ENV is unset or development. <span class="ids"><a class="idlink" href="#f-SEC-001">SEC-001</a> <a class="idlink" href="#f-SEC-002">SEC-002</a> <a class="idlink" href="#f-ARC-002">ARC-002</a></span></li><li>Traffic leakage and conversion revenue loss on missing publisher parameters violating Zero-Leak standard. <span class="ids"><a class="idlink" href="#f-REL-001">REL-001</a></span></li><li>Postback race conditions and duplicate conversion payouts caused by lack of unique constraint on click IDs. <span class="ids"><a class="idlink" href="#f-DAT-001">DAT-001</a> <a class="idlink" href="#f-SEC-004">SEC-004</a></span></li><li>Outbound Server-Side Request Forgery (SSRF) vulnerability in publisher postback webhook dispatcher. <span class="ids"><a class="idlink" href="#f-SEC-003">SEC-003</a></span></li><li>Node.js memory exhaustion (OOM) during analytics reporting due to in-memory click/conversion aggregation. <span class="ids"><a class="idlink" href="#f-PRF-001">PRF-001</a></span></li></ol></div>
+      <div class="card"><h3>Do this week</h3><ul><li>Eliminate the dev-mode authentication bypass in auth middleware and add JWT interceptor in frontend api.ts (SEC-001, ARC-002).</li><li>Enforce mandatory process.env.JWT_SECRET at backend startup and remove hardcoded fallback secret (SEC-002).</li><li>Add Zero-Leak fallback to master affiliate account in handleClickRedirect (REL-001).</li><li>Add unique database index on clickId in Conversion table to guarantee postback idempotency (DAT-001).</li><li>Implement SSRF guard on publisher postback URL dispatching (SEC-003).</li></ul></div>
+    </div></section><section id="fix-first"><h2>Fix first</h2><p class="sub">The best order to start. The full order is in the fix plan and the findings list.</p><table><thead><tr><th>#</th><th>ID</th><th>Issue</th><th>Severity</th><th>Urgency</th><th>Effort</th><th>Why now</th></tr></thead><tbody><tr><td class="num">1</td><td><a class="idlink" href="#f-SEC-001">SEC-001</a></td><td>Development-mode admin auto-login bypasses authentication when NODE_ENV is unset</td><td><span class="pill sev-critical" title="Critical"><b aria-hidden="true">C</b>Critical</span></td><td><span class="pill urg" title="Now">U0 Now</span></td><td>S</td><td class="muted">Stops active administrative exposure when NODE_ENV is omitted in container environments.</td></tr><tr><td class="num">2</td><td><a class="idlink" href="#f-SEC-002">SEC-002</a></td><td>Hardcoded JWT secret fallback committed to source control</td><td><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></td><td><span class="pill urg" title="Now">U0 Now</span></td><td>S</td><td class="muted">Prevents offline JWT token forgery using committed default secret.</td></tr><tr><td class="num">3</td><td><a class="idlink" href="#f-ARC-002">ARC-002</a></td><td>Frontend API service lacks authentication header attachment and token management</td><td><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></td><td><span class="pill urg" title="Now">U0 Now</span></td><td>S</td><td class="muted">Prerequisite for strict authentication: equips frontend client with JWT token attachment.</td></tr><tr><td class="num">4</td><td><a class="idlink" href="#f-REL-001">REL-001</a></td><td>Tracking redirect returns 400 Bad Request on missing affiliate ID instead of Master Fallback</td><td><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></td><td><span class="pill urg" title="This sprint">U1 This sprint</span></td><td>S</td><td class="muted">Quick win: Prevents dropping user tracking traffic when aff_id parameter is missing.</td></tr><tr><td class="num">5</td><td><a class="idlink" href="#f-DAT-001">DAT-001</a></td><td>Missing unique constraint on Click ID in Conversions table enables postback race conditions</td><td><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></td><td><span class="pill urg" title="This sprint">U1 This sprint</span></td><td>M</td><td class="muted">Guarantees postback webhook idempotency and blocks duplicate affiliate commission payouts.</td></tr><tr><td class="num">6</td><td><a class="idlink" href="#f-SEC-003">SEC-003</a></td><td>Server-Side Request Forgery (SSRF) in outbound publisher postback dispatcher</td><td><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></td><td><span class="pill urg" title="This sprint">U1 This sprint</span></td><td>M</td><td class="muted">Blocks internal cloud metadata and private subnet probing via publisher postbacks.</td></tr><tr><td class="num">7</td><td><a class="idlink" href="#f-SEC-004">SEC-004</a></td><td>Postback endpoint accepts unauthenticated revenue overrides without validating advertiser token</td><td><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></td><td><span class="pill urg" title="This sprint">U1 This sprint</span></td><td>M</td><td class="muted">Validates advertiser tokens before allowing custom revenue overrides in postbacks.</td></tr><tr><td class="num">8</td><td><a class="idlink" href="#f-PRF-001">PRF-001</a></td><td>In-memory aggregation over unbounded click and conversion records causes high memory usage</td><td><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></td><td><span class="pill urg" title="This sprint">U1 This sprint</span></td><td>M</td><td class="muted">Converts unbounded in-memory array scans to database-level COUNT/SUM aggregations.</td></tr><tr><td class="num">9</td><td><a class="idlink" href="#f-OPS-001">OPS-001</a></td><td>Permissive wildcard CORS configuration with credentials enabled</td><td><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span></td><td><span class="pill urg" title="Next release">U2 Next release</span></td><td>S</td><td class="muted">Restricts wildcard CORS to trusted origins.</td></tr><tr><td class="num">10</td><td><a class="idlink" href="#f-TST-001">TST-001</a></td><td>Backend test runner ignores existing unit and postback integration test suites</td><td><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span></td><td><span class="pill urg" title="Next release">U2 Next release</span></td><td>S</td><td class="muted">Activates parameter tracking and postback attribution test suites in CI.</td></tr></tbody></table></section><section id="scorecard"><h2>Scorecard</h2><p class="sub">0 = absent or broken · 3 = acceptable · 5 = excellent</p><div class="score"><div class="score-row"><div class="name">Security<span class="why">Critical dev-mode auth bypass, hardcoded JWT secret fallback, and unvalidated SSRF in postbacks.</span></div><div class="bar" role="img" aria-label="Security: 1.5 out of 5"><span class="bad" style="width:30%"></span></div><div class="v">1.5</div></div><div class="score-row"><div class="name">Architecture<span class="why">Clean REST controller structure and 3D UI, but OfferBuilder is a 2,300+ line monolith and frontend lacks auth token injection.</span></div><div class="bar" role="img" aria-label="Architecture: 2.5 out of 5"><span class="warn" style="width:50%"></span></div><div class="v">2.5</div></div><div class="score-row"><div class="name">Data<span class="why">Prisma schema is well structured with clean enums, but lacks unique idempotency constraint on conversion click IDs.</span></div><div class="bar" role="img" aria-label="Data: 2.5 out of 5"><span class="warn" style="width:50%"></span></div><div class="v">2.5</div></div><div class="score-row"><div class="name">Performance<span class="why">Reports load unbounded click and conversion arrays into Node.js heap memory rather than aggregating in SQL.</span></div><div class="bar" role="img" aria-label="Performance: 2 out of 5"><span class="warn" style="width:40%"></span></div><div class="v">2.0</div></div><div class="score-row"><div class="name">Reliability<span class="why">Tracking redirect returns 400 Bad Request on missing publisher parameter instead of safely routing to master account.</span></div><div class="bar" role="img" aria-label="Reliability: 2.5 out of 5"><span class="warn" style="width:50%"></span></div><div class="v">2.5</div></div><div class="score-row"><div class="name">Observability<span class="why">Basic /health and /health/database endpoints are active, but structured application logging and trace IDs are absent.</span></div><div class="bar" role="img" aria-label="Observability: 3 out of 5"><span class="good" style="width:60%"></span></div><div class="v">3.0</div></div><div class="score-row"><div class="name">Testing<span class="why">TypeScript compiles cleanly with 0 errors, but backend npm test script ignores 2 out of 3 test files.</span></div><div class="bar" role="img" aria-label="Testing: 2.5 out of 5"><span class="warn" style="width:50%"></span></div><div class="v">2.5</div></div><div class="score-row"><div class="name">CI/CD and supply chain<span class="why">Clean multi-stage Docker build and deployment shell script, but permissive wildcard CORS.</span></div><div class="bar" role="img" aria-label="CI/CD and supply chain: 3 out of 5"><span class="good" style="width:60%"></span></div><div class="v">3.0</div></div><div class="score-row"><div class="name">Dependencies<span class="why">Modern dependencies (Node 22+, React 18, Vite 6, Prisma 6, Tailwind 3) with clean lockfiles.</span></div><div class="bar" role="img" aria-label="Dependencies: 4 out of 5"><span class="good" style="width:80%"></span></div><div class="v">4.0</div></div><div class="score-row"><div class="name">Accessibility<span class="why">Lucide icons with descriptive labels, modal dialogs, and clear UI text across components.</span></div><div class="bar" role="img" aria-label="Accessibility: 3.5 out of 5"><span class="good" style="width:70%"></span></div><div class="v">3.5</div></div><div class="score-row"><div class="name">UX and design<span class="why">Full visual parity across Dark and Light modes, tactile 3D gradients, scannable parameter tables per DOD.</span></div><div class="bar" role="img" aria-label="UX and design: 4 out of 5"><span class="good" style="width:80%"></span></div><div class="v">4.0</div></div><div class="score-row"><div class="name">Code health<span class="why">Zero TypeScript errors, but monolithic OfferBuilder component and magic numbers in dashboard trends.</span></div><div class="bar" role="img" aria-label="Code health: 3 out of 5"><span class="good" style="width:60%"></span></div><div class="v">3.0</div></div><div class="score-row"><div class="name">Documentation<span class="why">Clear parameter guides, targeting modals, and DOD specification present in repo.</span></div><div class="bar" role="img" aria-label="Documentation: 3.5 out of 5"><span class="good" style="width:70%"></span></div><div class="v">3.5</div></div></div></section><section id="heatmap"><h2>Risk heat map</h2><table class="heat"><thead><tr><th></th><th scope="col">Low</th><th scope="col">Medium</th><th scope="col">High</th></tr></thead><tbody><tr><th scope="row">High</th><td class="hm hm-2"></td><td class="hm hm-3"><a class="idlink" href="#f-SEC-003">SEC-003</a></td><td class="hm hm-4"><a class="idlink" href="#f-SEC-001">SEC-001</a> <a class="idlink" href="#f-SEC-002">SEC-002</a> <a class="idlink" href="#f-SEC-004">SEC-004</a> <a class="idlink" href="#f-DAT-001">DAT-001</a> <a class="idlink" href="#f-REL-001">REL-001</a> <a class="idlink" href="#f-PRF-001">PRF-001</a> <a class="idlink" href="#f-ARC-002">ARC-002</a></td></tr><tr><th scope="row">Medium</th><td class="hm hm-1"></td><td class="hm hm-2"><a class="idlink" href="#f-OPS-001">OPS-001</a></td><td class="hm hm-3"><a class="idlink" href="#f-ARC-001">ARC-001</a> <a class="idlink" href="#f-TST-001">TST-001</a></td></tr><tr><th scope="row">Low</th><td class="hm hm-0"><a class="idlink" href="#f-CDH-001">CDH-001</a></td><td class="hm hm-1"></td><td class="hm hm-2"></td></tr></tbody></table><p class="sub">Rows: impact. Columns: likelihood. Only findings with both ratings appear.</p></section><section id="quick-wins"><h2>Quick wins</h2><p class="sub">High impact, small effort, low risk to fix. Do these early.</p><table><thead><tr><th>ID</th><th>Issue</th><th>Severity</th><th>Urgency</th><th>Fix</th></tr></thead><tbody><tr><td><a class="idlink" href="#f-ARC-002">ARC-002</a></td><td>Frontend API service lacks authentication header attachment and token management</td><td><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></td><td><span class="pill urg" title="Now">U0 Now</span></td><td class="muted">Implement an apiFetch wrapper in frontend/src/services/api.ts that retrieves the JWT from localStorage and attaches Authorization: Bearer ${token} to every request.</td></tr><tr><td><a class="idlink" href="#f-SEC-002">SEC-002</a></td><td>Hardcoded JWT secret fallback committed to source control</td><td><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></td><td><span class="pill urg" title="Now">U0 Now</span></td><td class="muted">Assert that process.env.JWT_SECRET is non-empty at startup, throw a fatal initialization error if missing, and remove the hardcoded fallback string.</td></tr><tr><td><a class="idlink" href="#f-REL-001">REL-001</a></td><td>Tracking redirect returns 400 Bad Request on missing affiliate ID instead of Master Fallback</td><td><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></td><td><span class="pill urg" title="This sprint">U1 This sprint</span></td><td class="muted">Resolve publisherId with fallback to designated master admin affiliate ID when aff_id is missing or invalid, ensuring 100% of traffic redirects successfully.</td></tr></tbody></table></section><section id="plan"><h2>Fix plan</h2><p class="sub">Waves run in order. A wave ends in a checkpoint when marked. The order is a recommendation based on urgency, dependencies, effort and risk.</p><div class="waves"><article class="card wave" id="w-wave-0">
+      <div class="wave-head"><span class="wave-id">wave-0</span><h3>Wave 0: Immediate Security Hardening &amp; Zero-Leak Redirection</h3><span class="pill area">Engineering</span><span class="pill chk">Checkpoint</span></div>
+      <p>Contain the authentication bypass, secure JWT secret configuration, equip frontend with auth tokens, and enforce zero-leak master fallback redirection.</p>
+      <p class="muted"><b>4</b> findings (1 Critical · 3 High) · effort 5.5 hours</p>
+      <p class="why-order"><b>Why this order:</b> Stops active administrative exposure, seals traffic leakage immediately, and lays the required foundation for all subsequent work.</p>
+      <h4>Exit criteria</h4><ul><li>Unauthenticated requests to /api/v1/offers return 401 Unauthorized in all environments.</li><li>Backend server throws startup error if JWT_SECRET environment variable is missing.</li><li>Frontend transmits Authorization: Bearer &lt;token&gt; on all API requests.</li><li>Inbound clicks with missing aff_id safely fallback to master affiliate account with 302 redirect.</li></ul>
+      <h4>Findings, in order</h4>
+      <ol class="wlist"><li><a class="idlink" href="#f-SEC-001">SEC-001</a> Development-mode admin auto-login bypasses authentication when NODE_ENV is unset <span class="pill sev-critical" title="Critical"><b aria-hidden="true">C</b>Critical</span></li><li><a class="idlink" href="#f-ARC-002">ARC-002</a> Frontend API service lacks authentication header attachment and token management <span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></li><li><a class="idlink" href="#f-SEC-002">SEC-002</a> Hardcoded JWT secret fallback committed to source control <span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></li><li><a class="idlink" href="#f-REL-001">REL-001</a> Tracking redirect returns 400 Bad Request on missing affiliate ID instead of Master Fallback <span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></li></ol>
+    </article><article class="card wave" id="w-wave-1">
+      <div class="wave-head"><span class="wave-id">wave-1</span><h3>Wave 1: Data Integrity &amp; Postback Protection</h3><span class="pill area">Engineering</span><span class="pill chk">Checkpoint</span></div>
+      <p>Eliminate postback race conditions, validate advertiser tokens, and secure outbound webhooks against SSRF.</p>
+      <p class="muted"><b>4</b> findings (4 High) · effort 14 hours</p>
+      <p class="why-order"><b>Why this order:</b> Guarantees financial integrity of affiliate balances and eliminates database memory exhaustion risks.</p>
+      <h4>Exit criteria</h4><ul><li>Duplicate postbacks for the same clickId are blocked at the database level.</li><li>Advertiser security tokens are verified before accepting revenue overrides.</li><li>Outbound publisher postbacks block private IP addresses and cloud metadata services.</li><li>Reporting queries aggregate data in SQL without loading unbounded click records into memory.</li></ul>
+      <h4>Findings, in order</h4>
+      <ol class="wlist"><li><a class="idlink" href="#f-DAT-001">DAT-001</a> Missing unique constraint on Click ID in Conversions table enables postback race conditions <span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></li><li><a class="idlink" href="#f-PRF-001">PRF-001</a> In-memory aggregation over unbounded click and conversion records causes high memory usage <span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></li><li><a class="idlink" href="#f-SEC-003">SEC-003</a> Server-Side Request Forgery (SSRF) in outbound publisher postback dispatcher <span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></li><li><a class="idlink" href="#f-SEC-004">SEC-004</a> Postback endpoint accepts unauthenticated revenue overrides without validating advertiser token <span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></li></ol>
+    </article><article class="card wave" id="w-wave-2">
+      <div class="wave-head"><span class="wave-id">wave-2</span><h3>Wave 2: Component Architecture &amp; Operational Polish</h3><span class="pill area">UI/UX &amp; Operations</span></div>
+      <p>Decompose monolithic OfferBuilder into maintainable sub-tabs, tighten CORS origins, enable full test execution, and remove magic numbers.</p>
+      <p class="muted"><b>4</b> findings (3 Medium · 1 Low) · effort 11 hours</p>
+      <p class="why-order"><b>Why this order:</b> Long-term architectural maintainability and test coverage after core security and financial invariants are secured.</p>
+      <h4>Exit criteria</h4><ul><li>OfferBuilder is split into clean modular sub-components under 400 lines each.</li><li>CORS origin is restricted to configured frontend domains.</li><li>npm test executes all backend test suites including parameter and postback tests.</li><li>Dashboard trend indicators reflect actual day-over-day calculations.</li></ul>
+      <h4>Findings, in order</h4>
+      <ol class="wlist"><li><a class="idlink" href="#f-OPS-001">OPS-001</a> Permissive wildcard CORS configuration with credentials enabled <span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span></li><li><a class="idlink" href="#f-TST-001">TST-001</a> Backend test runner ignores existing unit and postback integration test suites <span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span></li><li><a class="idlink" href="#f-ARC-001">ARC-001</a> Monolithic 2,300+ line OfferBuilder component violates modular component architecture <span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span></li><li><a class="idlink" href="#f-CDH-001">CDH-001</a> Hardcoded KPI trend multipliers and magic numbers in dashboard analytics <span class="pill sev-low" title="Low"><b aria-hidden="true">L</b>Low</span></li></ol>
+    </article></div></section><section id="chains"><h2>Attack chains</h2><p class="sub">Combinations of findings that are worse together.</p><article class="card"><h3>CHAIN-1 · Unauthenticated Monorepo Access and Internal Network Reconnaissance</h3><ol class="steps"><li>Attacker sends unauthenticated request to /api/v1/* while NODE_ENV is unset or development (SEC-001)</li><li>Backend automatically assigns active Admin identity zeeshan@gmail.com</li><li>Attacker accesses publisher management and registers an SSRF webhook pointing to cloud metadata or internal databases (SEC-003)</li><li>Attacker triggers /postback to exfiltrate internal service responses</li></ol><p class="muted">Findings: <a class="idlink" href="#f-SEC-001">SEC-001</a> <a class="idlink" href="#f-SEC-002">SEC-002</a> <a class="idlink" href="#f-ARC-002">ARC-002</a> <a class="idlink" href="#f-SEC-003">SEC-003</a></p><p><b>Cheapest place to break it:</b> <a class="idlink" href="#f-SEC-001">SEC-001</a></p></article></section><section id="decisions"><h2>Decisions needed</h2><p class="sub">Choices that belong to the project owner. The audit does not make them.</p><article class="card"><h3>DEC-001 · Should publisher postback webhooks be queued asynchronously via Redis/BullMQ or dispatched inline with timeout?</h3><ul><li>Inline dispatch with a strict 3-second timeout and SSRF IP validation (simpler, zero extra infrastructure)</li><li>Background job queue via Redis/BullMQ (more resilient against publisher endpoint outages, requires Redis instance)</li></ul><p><b>Recommended:</b> Inline dispatch with strict 3-second timeout for current scale; migrate to BullMQ when volume exceeds 10,000 conversions/day.</p><p class="muted">Blocks: <a class="idlink" href="#f-SEC-003">SEC-003</a> · needed by wave-1</p></article></section><section id="findings"><h2>Findings</h2>
+    <div class="toolbar">
+      <div class="chips" id="sevChips"><button type="button" class="chip sev-critical" aria-pressed="true" data-k="Critical"><b aria-hidden="true">C</b>Critical</button><button type="button" class="chip sev-high" aria-pressed="true" data-k="High"><b aria-hidden="true">H</b>High</button><button type="button" class="chip sev-medium" aria-pressed="true" data-k="Medium"><b aria-hidden="true">M</b>Medium</button><button type="button" class="chip sev-low" aria-pressed="true" data-k="Low"><b aria-hidden="true">L</b>Low</button></div>
+      <select id="fUrg" aria-label="Urgency"><option value="">All urgency</option><option value="U0">U0 Now</option><option value="U1">U1 This sprint</option><option value="U2">U2 Next release</option><option value="U3">U3 Planned</option><option value="U4">U4 Backlog</option></select>
+      <select id="fDim" aria-label="Dimension"><option value="">All dimensions</option><option value="architecture">Architecture</option><option value="cicd-supply-chain">CI/CD and supply chain</option><option value="code-health">Code health</option><option value="data">Data</option><option value="performance">Performance</option><option value="reliability">Reliability</option><option value="security">Security</option><option value="testing">Testing</option></select>
+      
+      <select id="fSort" aria-label="Sort"><option value="seq">Recommended order</option><option value="sev">Severity</option></select>
+      <input id="fSearch" type="search" placeholder="Search ID, file or word" aria-label="Search findings">
+    </div>
+    <p class="sub" id="fCount" aria-live="polite">Showing 12 of 12 findings</p>
+    <div id="fList"><article class="f sev-critical" id="f-SEC-001" data-sev="Critical" data-urg="U0" data-dim="security" data-repo="affliate" data-seq="1" data-sevrank="0" data-q="sec-001 development-mode admin auto-login bypasses authentication when node_env is unset lines 40-50 in backend/src/middleware/auth.ts: if (process.env.node_env === &#39;development&#39; || !process.env.node_env) { req.user = { id: 1, email: &#39;zeeshan@gmail.com&#39;, name: &#39;adren v&#39;, role: &#39;admin&#39;, status: &#39;active&#39; }; return next(); } remove the automatic admin injection from authenticate(). protected endpoints must strictly require a valid bearer jwt. for local testing, generate a test token or seed script. security backend/src/middleware/auth.ts:40-50">
+      <div class="f-head"><span class="f-id">SEC-001</span><span class="f-title">Development-mode admin auto-login bypasses authentication when NODE_ENV is unset</span></div>
+      <div class="f-pills"><span class="pill sev-critical" title="Critical"><b aria-hidden="true">C</b>Critical</span><span class="pill urg" title="Now">U0 Now</span><span class="pill area">Security</span><span class="pill area">affliate</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort S (~1.5h)</span><span class="pill area">Fix risk medium</span><span class="pill seq" title="Recommended order">#1</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>Lines 40-50 in backend/src/middleware/auth.ts: if (process.env.NODE_ENV === &#39;development&#39; || !process.env.NODE_ENV) { req.user = { id: 1, email: &#39;zeeshan@gmail.com&#39;, name: &#39;adren v&#39;, role: &#39;ADMIN&#39;, status: &#39;ACTIVE&#39; }; return next(); }</p><p class="locs"><code>backend/src/middleware/auth.ts:40-50</code></p></div>
+        <div><b>Fix</b><p>Remove the automatic admin injection from authenticate(). Protected endpoints must strictly require a valid Bearer JWT. For local testing, generate a test token or seed script.</p><p><b>Proof test:</b> Issue an HTTP GET /api/v1/offers without Authorization header. Server must return 401 Unauthorized regardless of NODE_ENV.</p></div>
+        <div><b>Why it matters</b><p>Complete monorepo administration takeover and unauthorized campaign modification.</p></div>
+        <div><b>Root cause</b><p>Hardcoded developer convenience bypass placed directly inside production-facing auth middleware.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Any unauthenticated internet caller is granted immediate full administrator privileges if NODE_ENV is omitted or set to development.</span><span><b>Chain:</b> CHAIN-1</span><span><b>Wave:</b> <a href="#w-wave-0">wave-0</a></span></div>
+    </article><article class="f sev-high" id="f-ARC-002" data-sev="High" data-urg="U0" data-dim="architecture" data-repo="affliate" data-seq="2" data-sevrank="1" data-q="arc-002 frontend api service lacks authentication header attachment and token management all fetch() calls in frontend/src/services/api.ts:17-48 omit authorization: bearer headers, relying exclusively on the backend dev-mode backdoor. implement an apifetch wrapper in frontend/src/services/api.ts that retrieves the jwt from localstorage and attaches authorization: bearer ${token} to every request. architecture frontend/src/services/api.ts:17-48">
+      <div class="f-head"><span class="f-id">ARC-002</span><span class="f-title">Frontend API service lacks authentication header attachment and token management</span></div>
+      <div class="f-pills"><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span><span class="pill urg" title="Now">U0 Now</span><span class="pill area">Architecture</span><span class="pill area">affliate</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort S (~2h)</span><span class="pill qw">Quick win</span><span class="pill area">Fix risk low</span><span class="pill seq" title="Recommended order">#2</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>All fetch() calls in frontend/src/services/api.ts:17-48 omit Authorization: Bearer headers, relying exclusively on the backend dev-mode backdoor.</p><p class="locs"><code>frontend/src/services/api.ts:17-48</code></p></div>
+        <div><b>Fix</b><p>Implement an apiFetch wrapper in frontend/src/services/api.ts that retrieves the JWT from localStorage and attaches Authorization: Bearer ${token} to every request.</p><p><b>Proof test:</b> Inspect outgoing network requests from frontend; all /api/v1/* requests must carry Authorization header.</p></div>
+        <div><b>Why it matters</b><p>Enforcing secure authentication on the backend will immediately break all frontend functionality with 401 Unauthorized errors.</p></div>
+        <div><b>Root cause</b><p>API service layer was built without a centralized HTTP client wrapper that injects stored authentication tokens.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Hardens the frontend client to transmit JWT tokens so strict backend authentication can be safely enforced.</span><span><b>Chain:</b> CHAIN-1</span><span><b>Wave:</b> <a href="#w-wave-0">wave-0</a></span></div>
+    </article><article class="f sev-high" id="f-SEC-002" data-sev="High" data-urg="U0" data-dim="security" data-repo="affliate" data-seq="3" data-sevrank="1" data-q="sec-002 hardcoded jwt secret fallback committed to source control line 5 in backend/src/middleware/auth.ts: const jwt_secret = process.env.jwt_secret || &#39;super_secure_affiliate_jwt_token_2026&#39;; assert that process.env.jwt_secret is non-empty at startup, throw a fatal initialization error if missing, and remove the hardcoded fallback string. security backend/src/middleware/auth.ts:5">
+      <div class="f-head"><span class="f-id">SEC-002</span><span class="f-title">Hardcoded JWT secret fallback committed to source control</span></div>
+      <div class="f-pills"><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span><span class="pill urg" title="Now">U0 Now</span><span class="pill area">Security</span><span class="pill area">affliate</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort S (~1h)</span><span class="pill qw">Quick win</span><span class="pill area">Fix risk low</span><span class="pill seq" title="Recommended order">#3</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>Line 5 in backend/src/middleware/auth.ts: const JWT_SECRET = process.env.JWT_SECRET || &#39;super_secure_affiliate_jwt_token_2026&#39;;</p><p class="locs"><code>backend/src/middleware/auth.ts:5</code></p></div>
+        <div><b>Fix</b><p>Assert that process.env.JWT_SECRET is non-empty at startup, throw a fatal initialization error if missing, and remove the hardcoded fallback string.</p><p><b>Proof test:</b> Start backend server without JWT_SECRET in environment; server must fail fast with descriptive error.</p></div>
+        <div><b>Why it matters</b><p>Offline cryptographic signature forgery granting admin session tokens.</p></div>
+        <div><b>Root cause</b><p>Fallback default secret string used in place of strict startup environment assertion.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Enables attackers to forge valid administrator JWT tokens offline whenever JWT_SECRET is not explicitly provided in the environment.</span><span><b>Chain:</b> CHAIN-1</span><span><b>Wave:</b> <a href="#w-wave-0">wave-0</a></span></div>
+    </article><article class="f sev-high" id="f-REL-001" data-sev="High" data-urg="U1" data-dim="reliability" data-repo="affliate" data-seq="4" data-sevrank="1" data-q="rel-001 tracking redirect returns 400 bad request on missing affiliate id instead of master fallback lines 10-13 in backend/src/controllers/trackingcontroller.ts: if (isnan(offerid) || isnan(publisherid)) { res.status(400).json({ error: &#39;bad request&#39;, message: &#39;missing offer_id or aff_id&#39; }); return; } resolve publisherid with fallback to designated master admin affiliate id when aff_id is missing or invalid, ensuring 100% of traffic redirects successfully. reliability backend/src/controllers/trackingcontroller.ts:10-13">
+      <div class="f-head"><span class="f-id">REL-001</span><span class="f-title">Tracking redirect returns 400 Bad Request on missing affiliate ID instead of Master Fallback</span></div>
+      <div class="f-pills"><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span><span class="pill urg" title="This sprint">U1 This sprint</span><span class="pill area">Reliability</span><span class="pill area">affliate</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort S (~1.5h)</span><span class="pill qw">Quick win</span><span class="pill area">Fix risk low</span><span class="pill seq" title="Recommended order">#4</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>Lines 10-13 in backend/src/controllers/trackingController.ts: if (isNaN(offerId) || isNaN(publisherId)) { res.status(400).json({ error: &#39;Bad Request&#39;, message: &#39;Missing offer_id or aff_id&#39; }); return; }</p><p class="locs"><code>backend/src/controllers/trackingController.ts:10-13</code></p></div>
+        <div><b>Fix</b><p>Resolve publisherId with fallback to designated master admin affiliate ID when aff_id is missing or invalid, ensuring 100% of traffic redirects successfully.</p><p><b>Proof test:</b> Request /click?offer_id=1 without aff_id; response must be 302 redirecting to offer destination with master account attribution.</p></div>
+        <div><b>Why it matters</b><p>Direct loss of incoming traffic, consumer abandonment, and lost advertiser revenue when partner query parameters are omitted or malformed.</p></div>
+        <div><b>Root cause</b><p>Controller abruptly returns JSON error instead of resolving default master publisher account fallback.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Violates the project Zero-Leak Redirection standard (DOD Rule 6), causing live user traffic to be discarded with an error page.</span><span><b>Wave:</b> <a href="#w-wave-0">wave-0</a></span></div>
+    </article><article class="f sev-high" id="f-DAT-001" data-sev="High" data-urg="U1" data-dim="data" data-repo="affliate" data-seq="5" data-sevrank="1" data-q="dat-001 missing unique constraint on click id in conversions table enables postback race conditions backend/prisma/schema.prisma:237 defines clickid without @unique or composite index, and trackingcontroller.ts:131-137 uses non-atomic findfirst followed by create. add a unique index or constraint on (clickid, goalvalue) in prisma/schema.prisma and handle unique constraint violations gracefully in handlepostback. data backend/prisma/schema.prisma:237 backend/src/controllers/trackingcontroller.ts:131-137">
+      <div class="f-head"><span class="f-id">DAT-001</span><span class="f-title">Missing unique constraint on Click ID in Conversions table enables postback race conditions</span></div>
+      <div class="f-pills"><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span><span class="pill urg" title="This sprint">U1 This sprint</span><span class="pill area">Data</span><span class="pill area">affliate</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort M (~3h)</span><span class="pill area">Fix risk medium</span><span class="pill seq" title="Recommended order">#5</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>backend/prisma/schema.prisma:237 defines clickId without @unique or composite index, and trackingController.ts:131-137 uses non-atomic findFirst followed by create.</p><p class="locs"><code>backend/prisma/schema.prisma:237</code> <code>backend/src/controllers/trackingController.ts:131-137</code></p></div>
+        <div><b>Fix</b><p>Add a unique index or constraint on (clickId, goalValue) in prisma/schema.prisma and handle unique constraint violations gracefully in handlePostback.</p><p><b>Proof test:</b> Fire 5 simultaneous POST /postback requests with identical clickid; exactly 1 conversion must be created, and 4 must return 409 Conflict.</p></div>
+        <div><b>Why it matters</b><p>Duplicate commission accruals and financial payout inflation when networks retry webhook postbacks simultaneously.</p></div>
+        <div><b>Root cause</b><p>Application-level duplicate check rather than database-enforced unique constraint or atomic upsert.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Concurrent postbacks for the same clickId bypass findFirst check and insert duplicate conversions, resulting in double payout payouts.</span><span><b>Wave:</b> <a href="#w-wave-1">wave-1</a></span></div>
+    </article><article class="f sev-high" id="f-PRF-001" data-sev="High" data-urg="U1" data-dim="performance" data-repo="affliate" data-seq="6" data-sevrank="1" data-q="prf-001 in-memory aggregation over unbounded click and conversion records causes high memory usage backend/src/controllers/reportscontroller.ts:22-30 and 125-132 fetch all click ids and conversion objects into memory, then execute in-process .filter() and .reduce(). refactor reports queries to use prisma groupby / aggregate or raw sql joins returning computed summary totals directly from postgresql. performance backend/src/controllers/reportscontroller.ts:22-30 backend/src/controllers/reportscontroller.ts:125-132">
+      <div class="f-head"><span class="f-id">PRF-001</span><span class="f-title">In-memory aggregation over unbounded click and conversion records causes high memory usage</span></div>
+      <div class="f-pills"><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span><span class="pill urg" title="This sprint">U1 This sprint</span><span class="pill area">Performance</span><span class="pill area">affliate</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort M (~4h)</span><span class="pill area">Fix risk medium</span><span class="pill seq" title="Recommended order">#6</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>backend/src/controllers/reportsController.ts:22-30 and 125-132 fetch all click IDs and conversion objects into memory, then execute in-process .filter() and .reduce().</p><p class="locs"><code>backend/src/controllers/reportsController.ts:22-30</code> <code>backend/src/controllers/reportsController.ts:125-132</code></p></div>
+        <div><b>Fix</b><p>Refactor reports queries to use Prisma groupBy / aggregate or raw SQL joins returning computed summary totals directly from PostgreSQL.</p><p><b>Proof test:</b> Seed 50,000 clicks; verify report response time remains under 200ms and Node.js heap memory delta is negligible.</p></div>
+        <div><b>Why it matters</b><p>Production OOM crashes and server unresponsiveness when generating reports across large traffic volumes.</p></div>
+        <div><b>Root cause</b><p>Using Prisma relational include with in-process array iteration instead of SQL COUNT, SUM, and groupBy aggregates.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Networks and Offers reporting controllers load full arrays of historical clicks and conversions into Node.js heap memory.</span><span><b>Wave:</b> <a href="#w-wave-1">wave-1</a></span></div>
+    </article><article class="f sev-high" id="f-SEC-003" data-sev="High" data-urg="U1" data-dim="security" data-repo="affliate" data-seq="7" data-sevrank="1" data-q="sec-003 server-side request forgery (ssrf) in outbound publisher postback dispatcher lines 166-177 in backend/src/controllers/trackingcontroller.ts: if (click.publisher.postbackurl) { ... fetch(outurl, { method: &#39;get&#39; }) } without validating protocol or destination ip address. implement an ssrf-safe http dispatch helper that validates url protocols (enforce https), resolves target hostname ips, and blocks private/loopback/link-local ranges (127.0.0.0/8, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16). security backend/src/controllers/trackingcontroller.ts:166-177">
+      <div class="f-head"><span class="f-id">SEC-003</span><span class="f-title">Server-Side Request Forgery (SSRF) in outbound publisher postback dispatcher</span></div>
+      <div class="f-pills"><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span><span class="pill urg" title="This sprint">U1 This sprint</span><span class="pill area">Security</span><span class="pill area">affliate</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort M (~4h)</span><span class="pill area">Fix risk low</span><span class="pill seq" title="Recommended order">#7</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>Lines 166-177 in backend/src/controllers/trackingController.ts: if (click.publisher.postbackUrl) { ... fetch(outUrl, { method: &#39;GET&#39; }) } without validating protocol or destination IP address.</p><p class="locs"><code>backend/src/controllers/trackingController.ts:166-177</code></p></div>
+        <div><b>Fix</b><p>Implement an SSRF-safe HTTP dispatch helper that validates URL protocols (enforce https), resolves target hostname IPs, and blocks private/loopback/link-local ranges (127.0.0.0/8, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16).</p><p><b>Proof test:</b> Configure publisher postback URL to http://127.0.0.1:5432 and http://169.254.169.254; postback engine must reject dispatch with security warning.</p></div>
+        <div><b>Why it matters</b><p>Scanning and potential data exfiltration from internal cloud metadata services (169.254.169.254) or localhost ports.</p></div>
+        <div><b>Root cause</b><p>Invoking fetch() on arbitrary user-configured URLs without DNS pre-resolution and IP range blacklisting.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Outbound HTTP requests are dispatched to publisher-provided URLs without IP validation, allowing internal subnet scanning.</span><span><b>Chain:</b> CHAIN-1</span><span><b>Wave:</b> <a href="#w-wave-1">wave-1</a></span></div>
+    </article><article class="f sev-high" id="f-SEC-004" data-sev="High" data-urg="U1" data-dim="security" data-repo="affliate" data-seq="8" data-sevrank="1" data-q="sec-004 postback endpoint accepts unauthenticated revenue overrides without validating advertiser token lines 101 and 142 in backend/src/controllers/trackingcontroller.ts: const sumoverride = query.sum ? parsefloat(query.sum as string) : undefined; while offer.advertisersecuritytoken is never validated. when an offer defines an advertisersecuritytoken, verify that the incoming postback request includes a matching token or signature before processing the conversion. security backend/src/controllers/trackingcontroller.ts:101-143">
+      <div class="f-head"><span class="f-id">SEC-004</span><span class="f-title">Postback endpoint accepts unauthenticated revenue overrides without validating advertiser token</span></div>
+      <div class="f-pills"><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span><span class="pill urg" title="This sprint">U1 This sprint</span><span class="pill area">Security</span><span class="pill area">affliate</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort M (~3h)</span><span class="pill area">Fix risk medium</span><span class="pill seq" title="Recommended order">#8</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>Lines 101 and 142 in backend/src/controllers/trackingController.ts: const sumOverride = query.sum ? parseFloat(query.sum as string) : undefined; while offer.advertiserSecurityToken is never validated.</p><p class="locs"><code>backend/src/controllers/trackingController.ts:101-143</code></p></div>
+        <div><b>Fix</b><p>When an Offer defines an advertiserSecurityToken, verify that the incoming postback request includes a matching token or signature before processing the conversion.</p><p><b>Proof test:</b> Postback call with mismatched or absent security token on a token-protected offer must return 403 Forbidden.</p></div>
+        <div><b>Why it matters</b><p>Falsification of financial revenue metrics and publisher balance accruals by unauthorized external callers.</p></div>
+        <div><b>Root cause</b><p>Lack of security token or signature verification on inbound S2S postback receiver.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Any external caller with a click_id can forge conversion postbacks and inflate recorded revenue via query.sum parameter.</span><span><b>Wave:</b> <a href="#w-wave-1">wave-1</a></span></div>
+    </article><article class="f sev-medium" id="f-OPS-001" data-sev="Medium" data-urg="U2" data-dim="cicd-supply-chain" data-repo="affliate" data-seq="9" data-sevrank="2" data-q="ops-001 permissive wildcard cors configuration with credentials enabled lines 14-19 in backend/src/index.ts: app.use(cors({ origin: &#39;*&#39;, credentials: true })); replace wildcard origin with a configurable whitelist driven by cors_allowed_origins environment variable. cicd-supply-chain backend/src/index.ts:14-19">
+      <div class="f-head"><span class="f-id">OPS-001</span><span class="f-title">Permissive wildcard CORS configuration with credentials enabled</span></div>
+      <div class="f-pills"><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span><span class="pill urg" title="Next release">U2 Next release</span><span class="pill area">CI/CD and supply chain</span><span class="pill area">affliate</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort S (~1h)</span><span class="pill area">Fix risk low</span><span class="pill seq" title="Recommended order">#9</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>Lines 14-19 in backend/src/index.ts: app.use(cors({ origin: &#39;*&#39;, credentials: true }));</p><p class="locs"><code>backend/src/index.ts:14-19</code></p></div>
+        <div><b>Fix</b><p>Replace wildcard origin with a configurable whitelist driven by CORS_ALLOWED_ORIGINS environment variable.</p><p><b>Proof test:</b> Verify CORS headers return the specific requesting origin when whitelisted and reject unlisted origins.</p></div>
+        <div><b>Why it matters</b><p>Non-compliant CORS headers can cause browser fetch rejections or permit cross-origin requests from arbitrary domains.</p></div>
+        <div><b>Root cause</b><p>Development convenience configuration not tightened for production deployment.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Wildcard origin with credentials allowed violates web security standards and creates cross-origin ambiguity.</span><span><b>Wave:</b> <a href="#w-wave-2">wave-2</a></span></div>
+    </article><article class="f sev-medium" id="f-TST-001" data-sev="Medium" data-urg="U2" data-dim="testing" data-repo="affliate" data-seq="10" data-sevrank="2" data-q="tst-001 backend test runner ignores existing unit and postback integration test suites backend/package.json line 16 defines test as node_env=test tsx --test tests/api.test.ts rather than a glob pattern. update backend package.json test script to node_env=test tsx --test &#39;tests/**/*.test.ts&#39;. testing backend/package.json:16">
+      <div class="f-head"><span class="f-id">TST-001</span><span class="f-title">Backend test runner ignores existing unit and postback integration test suites</span></div>
+      <div class="f-pills"><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span><span class="pill urg" title="Next release">U2 Next release</span><span class="pill area">Testing</span><span class="pill area">affliate</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort S (~0.5h)</span><span class="pill area">Fix risk low</span><span class="pill seq" title="Recommended order">#10</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>backend/package.json line 16 defines test as NODE_ENV=test tsx --test tests/api.test.ts rather than a glob pattern.</p><p class="locs"><code>backend/package.json:16</code></p></div>
+        <div><b>Fix</b><p>Update backend package.json test script to NODE_ENV=test tsx --test &#39;tests/**/*.test.ts&#39;.</p><p><b>Proof test:</b> Run npm --prefix backend test; verify all test files are executed and report passes.</p></div>
+        <div><b>Why it matters</b><p>Regressions in postback attribution or parameter replacement are not caught during automated verification.</p></div>
+        <div><b>Root cause</b><p>Hardcoded single test filename in package.json scripts.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> npm test only executes api.test.ts, bypassing urlParameters.test.ts and postbackAttribution.test.ts.</span><span><b>Wave:</b> <a href="#w-wave-2">wave-2</a></span></div>
+    </article><article class="f sev-medium" id="f-ARC-001" data-sev="Medium" data-urg="U2" data-dim="architecture" data-repo="affliate" data-seq="11" data-sevrank="2" data-q="arc-001 monolithic 2,300+ line offerbuilder component violates modular component architecture frontend/src/components/offers/offerbuilder.tsx is 2,304 lines long, packaging general, tracking, targeting, payouts, and postback modals inside a single file. decompose offerbuilder into modular subcomponents under frontend/src/components/offers/builder/ (generaltab.tsx, trackingtab.tsx, targetingtab.tsx, payoutstab.tsx, affiliatestab.tsx). architecture frontend/src/components/offers/offerbuilder.tsx:1-2304">
+      <div class="f-head"><span class="f-id">ARC-001</span><span class="f-title">Monolithic 2,300+ line OfferBuilder component violates modular component architecture</span></div>
+      <div class="f-pills"><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span><span class="pill urg" title="Next release">U2 Next release</span><span class="pill area">Architecture</span><span class="pill area">affliate</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort L (~8h)</span><span class="pill area">Fix risk medium</span><span class="pill seq" title="Recommended order">#11</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>frontend/src/components/offers/OfferBuilder.tsx is 2,304 lines long, packaging General, Tracking, Targeting, Payouts, and Postback modals inside a single file.</p><p class="locs"><code>frontend/src/components/offers/OfferBuilder.tsx:1-2304</code></p></div>
+        <div><b>Fix</b><p>Decompose OfferBuilder into modular subcomponents under frontend/src/components/offers/builder/ (GeneralTab.tsx, TrackingTab.tsx, TargetingTab.tsx, PayoutsTab.tsx, AffiliatesTab.tsx).</p><p><b>Proof test:</b> Component tests verify all tabs mount, state is retained across tab switches, and tsc --noEmit passes cleanly.</p></div>
+        <div><b>Why it matters</b><p>Difficult maintainability, sluggish IDE typing, and heightened regression risk during campaign configuration changes.</p></div>
+        <div><b>Root cause</b><p>Failure to decompose the campaign wizard into focused, tab-specific subcomponents.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> High file complexity creates fragility and contributed directly to recent React hook order regressions.</span><span><b>Wave:</b> <a href="#w-wave-2">wave-2</a></span></div>
+    </article><article class="f sev-low" id="f-CDH-001" data-sev="Low" data-urg="U3" data-dim="code-health" data-repo="affliate" data-seq="12" data-sevrank="3" data-q="cdh-001 hardcoded kpi trend multipliers and magic numbers in dashboard analytics backend/src/controllers/dashboardcontroller.ts:58-59 uses math.round((todayclicks / (totalclicks || 1)) * 100 * 2.5) || 136. query yesterday&#39;s click and conversion counts to compute genuine day-over-day percentage changes. code-health backend/src/controllers/dashboardcontroller.ts:58-59">
+      <div class="f-head"><span class="f-id">CDH-001</span><span class="f-title">Hardcoded KPI trend multipliers and magic numbers in dashboard analytics</span></div>
+      <div class="f-pills"><span class="pill sev-low" title="Low"><b aria-hidden="true">L</b>Low</span><span class="pill urg" title="Planned">U3 Planned</span><span class="pill area">Code health</span><span class="pill area">affliate</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort S (~1.5h)</span><span class="pill area">Fix risk low</span><span class="pill seq" title="Recommended order">#12</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>backend/src/controllers/dashboardController.ts:58-59 uses Math.round((todayClicks / (totalClicks || 1)) * 100 * 2.5) || 136.</p><p class="locs"><code>backend/src/controllers/dashboardController.ts:58-59</code></p></div>
+        <div><b>Fix</b><p>Query yesterday&#39;s click and conversion counts to compute genuine day-over-day percentage changes.</p><p><b>Proof test:</b> Verify dashboard summary returns mathematically exact deltas matching database records.</p></div>
+        <div><b>Why it matters</b><p>Administrators see inaccurate performance deltas on the main dashboard KPI cards.</p></div>
+        <div><b>Root cause</b><p>Placeholder mock calculations left in place after prototype phase.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Displays misleading synthetic growth percentages (+136%, +200%) rather than authentic statistical comparisons.</span><span><b>Wave:</b> <a href="#w-wave-2">wave-2</a></span></div>
+    </article></div></section><section id="strengths"><h2>Strengths to keep</h2><div class="two"><div class="card"><h3>Strict Type-Safety and Compilation Health</h3><p>Both frontend and backend compile cleanly with 0 errors across TypeScript 5.7+ with strict mode enabled.</p><p class="locs"><code>frontend/tsconfig.json:1</code> <code>backend/tsconfig.json:1</code></p></div><div class="card"><h3>Tactile 3D Gradient Aesthetic &amp; Dual-Theme Parity</h3><p>Implements modern 3D depth, subtle top bevel highlights, tactile button shadows, and full visual parity across Dark and Light modes per project Definition of Done.</p><p class="locs"><code>frontend/src/index.css:1-307</code> <code>frontend/src/context/ThemeContext.tsx:1-53</code></p></div><div class="card"><h3>Table-First Visual Architecture</h3><p>Parameter configurations, tracking domains, and affiliate reports are organized into scannable tables with clear columns rather than cluttered pill badges.</p><p class="locs"><code>frontend/src/components/offers/postbacks/PostbackParametersTable.tsx:1-488</code> <code>frontend/src/components/common/DataTable.tsx:1-310</code></p></div><div class="card"><h3>Idempotent Deployment &amp; Rollback Infrastructure</h3><p>Production deployment is automated with health verification, automated database backups prior to migration, and single-command instant rollback.</p><p class="locs"><code>deployment/deploy.sh:1-180</code> <code>deployment/rollback.sh:1-100</code></p></div></div></section><section id="coverage"><h2>Coverage and gaps</h2><p class="sub">What this audit did and did not look at. Gaps are stated, not hidden.</p>
+      <div class="two">
+        <div class="card"><h3>Reviewed</h3><ul><li><b>backend/src/middleware/auth.ts</b> <span class="muted">(line-by-line inspection of token generation and verification)</span></li><li><b>backend/src/controllers/trackingController.ts</b> <span class="muted">(deep trace of click redirection and postback conversion handling)</span></li><li><b>backend/src/controllers/reportsController.ts</b> <span class="muted">(memory and query performance analysis)</span></li><li><b>backend/prisma/schema.prisma</b> <span class="muted">(complete database schema, relations, indexes, and constraints review)</span></li><li><b>frontend/src/components/offers/OffersView.tsx</b> <span class="muted">(React hook ordering and state lifecycle verification)</span></li><li><b>frontend/src/components/offers/OfferBuilder.tsx</b> <span class="muted">(component structure and state management review)</span></li><li><b>frontend/src/services/api.ts</b> <span class="muted">(API client authentication and error handling inspection)</span></li><li><b>deployment/ and Dockerfiles</b> <span class="muted">(container security and port exposures)</span></li></ul></div>
+        <div class="card"><h3>Not reviewed</h3><ul><li><b>audit/Archive/</b>: historical archived files outside active runtime</li><li><b>node_modules</b>: third-party vendor libraries</li></ul></div>
+      </div><p>End-to-end automated browser tests were not executed per Workspace Rule 1 (automated test suite command constraint).</p></section><section id="tools"><h2>Tools and baselines</h2><p class="sub">Numbers come from the tools listed. Nothing here is estimated.</p>
+      <table><thead><tr><th>Tool</th><th>Version</th><th>Purpose</th><th>Result</th></tr></thead><tbody><tr><td>tsc (Backend)</td><td>5.7.3</td><td>Static type checking and syntax verification for backend services</td><td>Passed with 0 errors</td></tr><tr><td>tsc (Frontend)</td><td>5.7.3</td><td>Static type checking and React component interface validation</td><td>Passed with 0 errors</td></tr><tr><td>Secret Scanner (Custom AST / Regex)</td><td>1.0.0</td><td>Detect hardcoded credentials, JWT secrets, and database URLs</td><td>Identified hardcoded JWT fallback string in auth.ts</td></tr><tr><td>Git Churn Analyzer</td><td>git 2.43+</td><td>Identify architectural hotspots and frequently modified files</td><td>Identified OfferBuilder.tsx and OffersView.tsx as primary churn hotspots</td></tr></tbody></table>
+      <h3>Baselines</h3><table><thead><tr><th>Measure</th><th>Value</th></tr></thead><tbody><tr><td>type_errors</td><td>0</td></tr><tr><td>total_lines_of_code</td><td>16007</td></tr><tr><td>exposed_ports</td><td>{&quot;frontend&quot;:3085,&quot;backend&quot;:3086}</td></tr></tbody></table></section><section id="appendix"><h2>Appendix: how to read this report</h2>
+  <div class="two">
+    <div class="card"><h3>Severity (how bad)</h3><ul>
+      <li><span class="pill sev-critical" title="Critical"><b aria-hidden="true">C</b>Critical</span> Direct path to serious breach, data loss or outage with little precondition.</li>
+      <li><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span> Likely significant incident or a broken core guarantee, with some precondition.</li>
+      <li><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span> Real weakness with limited reach or unusual conditions.</li>
+      <li><span class="pill sev-low" title="Low"><b aria-hidden="true">L</b>Low</span> Hardening, polish or small maintainability issue.</li></ul></div>
+    <div class="card"><h3>Urgency (how soon)</h3><ul><li><span class="pill urg" title="Now">U0 Now</span></li><li><span class="pill urg" title="This sprint">U1 This sprint</span></li><li><span class="pill urg" title="Next release">U2 Next release</span></li><li><span class="pill urg" title="Planned">U3 Planned</span></li><li><span class="pill urg" title="Backlog">U4 Backlog</span></li></ul>
+      <p class="muted">U0 within 24 to 72 hours · U1 this sprint · U2 next 1 to 2 releases · U3 this quarter · U4 backlog.</p></div>
+  </div>
+  <p><b>Sequence</b> is the recommended order to fix things. It follows urgency first, then dependencies (blocked-by), then quick wins, and puts risky changes last. It is a recommendation, not an instruction.</p>
+  <p><b>Confidence:</b> confirmed (traced or reproduced) · likely (strong evidence, not fully traced) · suspected (worth a human look).</p>
+  <p><b>Quick win:</b> high impact, small effort, low fix risk.</p></section>
+</main>
+</div>
+<script>
+(function(){
+  try{var t=localStorage.getItem('auditTheme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}
+  var btn=document.getElementById('themeBtn');
+  if(btn)btn.addEventListener('click',function(){
+    var el=document.documentElement,cur=el.getAttribute('data-theme');
+    var dark=cur==='dark'||(!cur&&matchMedia('(prefers-color-scheme: dark)').matches);
+    var next=dark?'light':'dark';el.setAttribute('data-theme',next);
+    try{localStorage.setItem('auditTheme',next)}catch(e){}
+  });
+  var list=document.getElementById('fList');if(!list)return;
+  var cards=[].slice.call(list.querySelectorAll('.f'));
+  var chips=[].slice.call(document.querySelectorAll('#sevChips .chip'));
+  var on={};chips.forEach(function(c){on[c.dataset.k]=true});
+  var $=function(id){return document.getElementById(id)};
+  function apply(){
+    var urg=$('fUrg').value,dim=$('fDim').value,repo=$('fRepo')?$('fRepo').value:'',q=$('fSearch').value.trim().toLowerCase(),sort=$('fSort').value;
+    var shown=0;
+    cards.sort(function(a,b){return sort==='sev'?(a.dataset.sevrank-b.dataset.sevrank)||(a.dataset.seq-b.dataset.seq):a.dataset.seq-b.dataset.seq})
+      .forEach(function(c){
+        var ok=on[c.dataset.sev]&&(!urg||c.dataset.urg===urg)&&(!dim||c.dataset.dim===dim)&&(!repo||c.dataset.repo===repo)&&(!q||c.dataset.q.indexOf(q)>-1);
+        c.hidden=!ok;if(ok)shown++;list.appendChild(c);
+      });
+    $('fCount').textContent='Showing '+shown+' of '+cards.length+' findings';
+    try{
+      var off=chips.filter(function(c){return !on[c.dataset.k]}).map(function(c){return c.dataset.k});
+      var p=[];if(urg)p.push('urg='+urg);if(dim)p.push('dim='+dim);if(repo)p.push('repo='+encodeURIComponent(repo));if(q)p.push('q='+encodeURIComponent(q));if(sort!=='seq')p.push('sort='+sort);if(off.length)p.push('hide='+off.join(','));
+      history.replaceState(null,'',p.length?'#findings?'+p.join('&'):location.pathname+location.search);
+    }catch(e){}
+  }
+  chips.forEach(function(c){c.addEventListener('click',function(){
+    on[c.dataset.k]=!on[c.dataset.k];
+    if(!chips.some(function(x){return on[x.dataset.k]})){on[c.dataset.k]=true}
+    c.setAttribute('aria-pressed',on[c.dataset.k]?'true':'false');apply();
+  })});
+  ['fUrg','fDim','fRepo','fSort'].forEach(function(id){var e=$(id);if(e)e.addEventListener('change',apply)});
+  $('fSearch').addEventListener('input',apply);
+  try{
+    var h=location.hash;if(h.indexOf('#findings?')===0){
+      h.slice(10).split('&').forEach(function(kv){var s=kv.split('='),k=s[0],v=decodeURIComponent(s[1]||'');
+        if(k==='urg')$('fUrg').value=v;if(k==='dim')$('fDim').value=v;if(k==='repo'&&$('fRepo'))$('fRepo').value=v;
+        if(k==='q')$('fSearch').value=v;if(k==='sort')$('fSort').value=v;
+        if(k==='hide')v.split(',').forEach(function(x){if(on[x]!==undefined){on[x]=false;var c=chips.filter(function(y){return y.dataset.k===x})[0];if(c)c.setAttribute('aria-pressed','false')}});
+      });apply();
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

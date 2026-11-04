@@ -1,0 +1,20 @@
+{"reviewed":[
+{"area":"Frontend data truth: numeric fallbacks, Math.random, DB ids on screen/CSV, readiness/CEFR recomputation, rounding, colours, HelpButton coverage","depth":"grep-measured over all non-test src, key lines opened"},
+{"area":"Frontend security: authStore, session.ts, ProtectedRoute, api.ts interceptor, XSS sinks, VITE_* vars, vite.config, routing","depth":"full read of those files"},
+{"area":"Dockerfiles (3), frontend/nginx.conf, nginx/nginx.conf, deployments/vm-nginx.conf, three compose files","depth":"full read"},
+{"area":"Both bitbucket-pipelines.yml","depth":"full read"},
+{"area":"deployments/deploy.sh, scripts/deploy-prod.sh, scripts/backup.sh","depth":"full read; rct-backup-prod, restore-script-*, init-letsencrypt, tkxel-rct-backup-dev only grepped"},
+{"area":"Backend tests: HTTP-level/RBAC presence, lcov per-file coverage, skipped tests","depth":"grep plus lcov.info parsed (61 files)"},
+{"area":"Frontend e2e specs, sonar-project.properties","depth":"harness and spec titles read; sonar file read in full"},
+{"area":"Accessibility quick check: Modal, ConfirmDialog, SidePanel, clickable div count, label/htmlFor counts","depth":"code read plus grep counts"},
+{"area":"Large files (useConfig.ts, BulkAssessmentTable.tsx, AIInsightsTab.tsx)","depth":"size and grep complexity indicators only, not line-by-line"}],
+"not_verified":[
+"Whether the demo accounts (1363, 1139, 2166, 1818, 2754) exist in production with the seed password (no DB access; owner should check read-only).",
+"Which nginx config is actually live on the VM (nginx/nginx.conf vs deployments/vm-nginx.conf) and whether a cloud firewall blocks host port 4000/3001.",
+"Whether the S3 backup bucket has encryption, versioning or lifecycle rules, and whether backups are scheduled by cron.",
+"Frontend bundle sizes come from dist built 2026-09-23, not a fresh build (build not allowed).",
+"Whether the 400-line-plus panels in components/config and dashboard recompute scores beyond the places listed (grep for Math.round only; no data-flow tracing).",
+"Contrast, screen-reader behaviour and real focus order were not tested in a browser (code check only).",
+"Duplicate-code and import-cycle checks (jscpd, madge) not run.",
+"Trivy details for the Dockerfiles were taken from tool-summary, not re-run; frontend Dockerfile.dev does not exist as listed.",
+"Backend routes' individual authorize guards were not audited (belongs to the backend security pass); only the absence of HTTP-level tests was verified."]}

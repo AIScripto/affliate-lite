@@ -1,0 +1,96 @@
+diff -ruN a/scripts/backup.sh b/scripts/backup.sh
+--- a/scripts/backup.sh	2026-10-12 19:19:07
++++ b/scripts/backup.sh	2026-10-12 19:19:07
+@@ -3,6 +3,9 @@
+ # Stop immediately on errors and unset variables.
+ set -euo pipefail
+ 
++# Backups hold personal data: files are readable by the owner only.
++umask 077
++
+ fail() {
+   message="$1"
+   code="${2:-1}"
+@@ -31,7 +34,9 @@
+ AWS_PROFILE="postgres-backup-rct"
+ 
+ # Local working directory and generated file names.
+-BACKUP_DIR="/tmp/postgres-backup-rct"
++# A private, one-off folder (mode 700) that is always removed on exit, even when a step fails.
++BACKUP_DIR="$(mktemp -d /tmp/postgres-backup-rct.XXXXXX)"
++trap 'rm -rf "$BACKUP_DIR"' EXIT
+ LOG_DIR="/var/log/postgres-backup-rct"
+ 
+ # Creates a UTC timestamp such as 2026-06-05T10-00-00Z for unique backup names.
+@@ -48,7 +53,7 @@
+ if mkdir -p "$LOG_DIR" 2>/dev/null && touch "$LOG_FILE" 2>/dev/null; then
+   :
+ else
+-  LOG_FILE="${BACKUP_DIR}/backup.log"
++  LOG_FILE="${HOME}/postgres-backup-rct.log"   # not in the temporary folder, which is removed on exit
+   touch "$LOG_FILE"
+ fi
+ 
+@@ -86,12 +91,14 @@
+ aws s3 cp "$BACKUP_DIR/$BACKUP_FILE" \
+   "s3://${S3_BUCKET}/${S3_PREFIX}/${BACKUP_FILE}" \
+   --profile "$AWS_PROFILE" \
++  --sse AES256 \
+   || fail "Failed to upload backup to s3://${S3_BUCKET}/${S3_PREFIX}/${BACKUP_FILE}. Check AWS profile '${AWS_PROFILE}', credentials, and S3 permissions."
+ 
+ # Uploads the checksum file next to the backup file in S3.
+ aws s3 cp "$BACKUP_DIR/$CHECKSUM_FILE" \
+   "s3://${S3_BUCKET}/${S3_PREFIX}/${CHECKSUM_FILE}" \
+   --profile "$AWS_PROFILE" \
++  --sse AES256 \
+   || fail "Failed to upload checksum to s3://${S3_BUCKET}/${S3_PREFIX}/${CHECKSUM_FILE}. Check AWS profile '${AWS_PROFILE}', credentials, and S3 permissions."
+ 
+ # Writes a success message after both uploads complete.
+diff -ruN a/scripts/rct-backup-prod.sh b/scripts/rct-backup-prod.sh
+--- a/scripts/rct-backup-prod.sh	2026-10-12 19:19:07
++++ b/scripts/rct-backup-prod.sh	2026-10-12 19:19:07
+@@ -3,6 +3,9 @@
+ # Stop immediately on errors and unset variables.
+ set -euo pipefail
+ 
++# Backups hold personal data: files are readable by the owner only.
++umask 077
++
+ fail() {
+   message="$1"
+   code="${2:-1}"
+@@ -37,7 +40,9 @@
+ # ---------------------------
+ 
+ # Local working directory and generated file names.
+-BACKUP_DIR="/tmp/postgres-backup-rct"
++# A private, one-off folder (mode 700) that is always removed on exit, even when a step fails.
++BACKUP_DIR="$(mktemp -d /tmp/postgres-backup-rct.XXXXXX)"
++trap 'rm -rf "$BACKUP_DIR"' EXIT
+ LOG_DIR="/var/log/postgres-backup-rct"
+ 
+ # Creates a UTC timestamp such as 2026-06-05T10-00-00Z for unique backup names.
+@@ -54,7 +59,7 @@
+ if mkdir -p "$LOG_DIR" 2>/dev/null && touch "$LOG_FILE" 2>/dev/null; then
+   :
+ else
+-  LOG_FILE="${BACKUP_DIR}/backup.log"
++  LOG_FILE="${HOME}/postgres-backup-rct.log"   # not in the temporary folder, which is removed on exit
+   touch "$LOG_FILE"
+ fi
+ 
+@@ -93,12 +98,14 @@
+ aws s3 cp "$BACKUP_DIR/$BACKUP_FILE" \
+   "s3://${S3_BUCKET}/${S3_PREFIX}/${BACKUP_FILE}" \
+   --profile "$AWS_PROFILE" \
++  --sse AES256 \
+   || fail "Failed to upload backup to s3://${S3_BUCKET}/${S3_PREFIX}/${BACKUP_FILE}. Check AWS profile '${AWS_PROFILE}', credentials, and S3 permissions."
+ 
+ # Uploads the checksum file next to the backup file in S3.
+ aws s3 cp "$BACKUP_DIR/$CHECKSUM_FILE" \
+   "s3://${S3_BUCKET}/${S3_PREFIX}/${CHECKSUM_FILE}" \
+   --profile "$AWS_PROFILE" \
++  --sse AES256 \
+   || fail "Failed to upload checksum to s3://${S3_BUCKET}/${S3_PREFIX}/${CHECKSUM_FILE}. Check AWS profile '${AWS_PROFILE}', credentials, and S3 permissions."
+ 
+ # Writes a success message after both uploads complete.

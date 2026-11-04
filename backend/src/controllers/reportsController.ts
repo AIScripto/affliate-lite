@@ -6,7 +6,6 @@ export async function getNetworksReport(req: Request, res: Response): Promise<vo
   const publisherId = isPublisher ? req.user?.id : undefined;
   const search = ((req.query.search as string) || '').trim().toLowerCase();
 
-  // Fetch all networks with their offers and stats
   const networks = await prisma.network.findMany({
     where: search
       ? {
@@ -18,20 +17,51 @@ export async function getNetworksReport(req: Request, res: Response): Promise<vo
       : {},
     include: {
       offers: {
-        include: {
-          clicks: {
-            where: publisherId ? { publisherId } : {},
-            select: { id: true },
-          },
-          conversions: {
-            where: publisherId ? { publisherId } : {},
-            select: { id: true, status: true, payout: true, revenue: true },
-          },
-        },
+        select: { id: true, name: true, networkId: true },
       },
     },
     orderBy: { id: 'asc' },
   });
+
+  // Database-level grouping for clicks and conversions
+  const clickWhere = publisherId ? { publisherId } : {};
+  const convWhere = publisherId ? { publisherId } : {};
+
+  const [clickCounts, conversionAggs] = await Promise.all([
+    prisma.click.groupBy({
+      by: ['offerId'],
+      where: clickWhere,
+      _count: { id: true },
+    }),
+    prisma.conversion.groupBy({
+      by: ['offerId', 'status'],
+      where: convWhere,
+      _count: { id: true },
+      _sum: { payout: true, revenue: true },
+    }),
+  ]);
+
+  const clickMap = new Map<number, number>();
+  for (const c of clickCounts) {
+    clickMap.set(c.offerId, c._count.id);
+  }
+
+  const convMap = new Map<
+    number,
+    { approved: number; unchecked: number; total: number; payout: number; revenue: number }
+  >();
+
+  for (const c of conversionAggs) {
+    if (!convMap.has(c.offerId)) {
+      convMap.set(c.offerId, { approved: 0, unchecked: 0, total: 0, payout: 0, revenue: 0 });
+    }
+    const item = convMap.get(c.offerId)!;
+    item.total += c._count.id;
+    if (c.status === 'APPROVED') item.approved += c._count.id;
+    if (c.status === 'UNCHECKED') item.unchecked += c._count.id;
+    item.payout += Number(c._sum.payout || 0);
+    item.revenue += Number(c._sum.revenue || 0);
+  }
 
   const rows: Array<{
     id: number;
@@ -65,11 +95,8 @@ export async function getNetworksReport(req: Request, res: Response): Promise<vo
       });
     } else {
       for (const off of net.offers) {
-        const approved = off.conversions.filter((c) => c.status === 'APPROVED').length;
-        const unchecked = off.conversions.filter((c) => c.status === 'UNCHECKED').length;
-        const totalConv = off.conversions.length;
-        const payout = off.conversions.reduce((sum, c) => sum + Number(c.payout), 0);
-        const revenue = off.conversions.reduce((sum, c) => sum + Number(c.revenue), 0);
+        const clicks = clickMap.get(off.id) || 0;
+        const conv = convMap.get(off.id) || { approved: 0, unchecked: 0, total: 0, payout: 0, revenue: 0 };
 
         rows.push({
           id: net.id,
@@ -77,21 +104,20 @@ export async function getNetworksReport(req: Request, res: Response): Promise<vo
           networkName: net.name,
           offer: off.name,
           offerName: off.name,
-          clicks: off.clicks.length,
-          conversionsApproved: approved,
-          approvedConversions: approved,
-          conversionsUnchecked: unchecked,
-          uncheckedConversions: unchecked,
-          conversionsTotal: totalConv,
-          totalConversions: totalConv,
-          payout: Number(payout.toFixed(2)),
-          revenue: Number(revenue.toFixed(2)),
+          clicks,
+          conversionsApproved: conv.approved,
+          approvedConversions: conv.approved,
+          conversionsUnchecked: conv.unchecked,
+          uncheckedConversions: conv.unchecked,
+          conversionsTotal: conv.total,
+          totalConversions: conv.total,
+          payout: Number(conv.payout.toFixed(2)),
+          revenue: Number(conv.revenue.toFixed(2)),
         });
       }
     }
   }
 
-  // Summary row
   const summary = {
     totalClicks: rows.reduce((s, r) => s + r.clicks, 0),
     totalApproved: rows.reduce((s, r) => s + r.approvedConversions, 0),
@@ -109,45 +135,66 @@ export async function getOffersReport(req: Request, res: Response): Promise<void
   const publisherId = isPublisher ? req.user?.id : undefined;
   const search = ((req.query.search as string) || '').trim().toLowerCase();
 
-  const offers = await prisma.offer.findMany({
-    where: {
-      ...(search ? { name: { contains: search, mode: 'insensitive' } } : {}),
-      ...(publisherId
-        ? {
-            OR: [
-              { visibility: 'PUBLIC' },
-              { publishers: { some: { publisherId, isEnabled: true } } },
-            ],
-          }
-        : {}),
-    },
-    include: {
-      clicks: {
-        where: publisherId ? { publisherId } : {},
-        select: { id: true },
-      },
-      conversions: {
-        where: publisherId ? { publisherId } : {},
-        select: { id: true, payout: true, revenue: true },
-      },
-    },
-    orderBy: { id: 'asc' },
-  });
+  const offerWhere = {
+    ...(search ? { name: { contains: search, mode: 'insensitive' as const } } : {}),
+    ...(publisherId
+      ? {
+          OR: [
+            { visibility: 'PUBLIC' as const },
+            { publishers: { some: { publisherId, isEnabled: true } } },
+          ],
+        }
+      : {}),
+  };
+
+  const clickWhere = publisherId ? { publisherId } : {};
+  const convWhere = publisherId ? { publisherId } : {};
+
+  const [offers, clickCounts, conversionAggs] = await Promise.all([
+    prisma.offer.findMany({
+      where: offerWhere,
+      select: { id: true, name: true },
+      orderBy: { id: 'asc' },
+    }),
+    prisma.click.groupBy({
+      by: ['offerId'],
+      where: clickWhere,
+      _count: { id: true },
+    }),
+    prisma.conversion.groupBy({
+      by: ['offerId'],
+      where: convWhere,
+      _count: { id: true },
+      _sum: { payout: true, revenue: true },
+    }),
+  ]);
+
+  const clickMap = new Map<number, number>();
+  for (const c of clickCounts) {
+    clickMap.set(c.offerId, c._count.id);
+  }
+
+  const convMap = new Map<number, { count: number; payout: number; revenue: number }>();
+  for (const c of conversionAggs) {
+    convMap.set(c.offerId, {
+      count: c._count.id,
+      payout: Number(c._sum.payout || 0),
+      revenue: Number(c._sum.revenue || 0),
+    });
+  }
 
   const rows = offers.map((off) => {
-    const clicks = off.clicks.length;
-    const conversions = off.conversions.length;
-    const payout = off.conversions.reduce((sum, c) => sum + Number(c.payout), 0);
-    const revenue = off.conversions.reduce((sum, c) => sum + Number(c.revenue), 0);
-    const epc = clicks > 0 ? Number((payout / clicks).toFixed(2)) : 0.0;
+    const clicks = clickMap.get(off.id) || 0;
+    const conv = convMap.get(off.id) || { count: 0, payout: 0, revenue: 0 };
+    const epc = clicks > 0 ? Number((conv.payout / clicks).toFixed(2)) : 0.0;
 
     return {
       id: off.id,
       name: off.name,
       offerName: off.name,
-      conversions,
-      payout: Number(payout.toFixed(2)),
-      revenue: Number(revenue.toFixed(2)),
+      conversions: conv.count,
+      payout: Number(conv.payout.toFixed(2)),
+      revenue: Number(conv.revenue.toFixed(2)),
       clicks,
       epc,
     };
@@ -179,18 +226,81 @@ export async function getPublishersReport(req: Request, res: Response): Promise<
     where: {
       role: 'PUBLISHER',
       ...(publisherId ? { id: publisherId } : {}),
-      ...(search ? { name: { contains: search, mode: 'insensitive' } } : {}),
+      ...(search ? { name: { contains: search, mode: 'insensitive' as const } } : {}),
     },
-    include: {
-      clicks: {
-        include: { offer: { select: { id: true, name: true } } },
-      },
-      conversions: {
-        include: { offer: { select: { id: true, name: true } } },
-      },
+    select: {
+      id: true,
+      name: true,
     },
     orderBy: { id: 'asc' },
   });
+
+  const pubIds = publishers.map((p) => p.id);
+
+  // Grouped aggregation by publisherId and offerId
+  const [clickCounts, conversionAggs, offers] = await Promise.all([
+    prisma.click.groupBy({
+      by: ['publisherId', 'offerId'],
+      where: { publisherId: { in: pubIds } },
+      _count: { id: true },
+    }),
+    prisma.conversion.groupBy({
+      by: ['publisherId', 'offerId', 'status'],
+      where: { publisherId: { in: pubIds } },
+      _count: { id: true },
+      _sum: { payout: true },
+    }),
+    prisma.offer.findMany({
+      select: { id: true, name: true },
+    }),
+  ]);
+
+  const offerNameMap = new Map<number, string>();
+  for (const o of offers) {
+    offerNameMap.set(o.id, o.name);
+  }
+
+  // Aggregate stats per [publisherId, offerId]
+  const pubOfferMap = new Map<
+    string,
+    { publisherId: number; offerId: number; clicks: number; approved: number; unchecked: number; total: number; payout: number }
+  >();
+
+  for (const c of clickCounts) {
+    const key = `${c.publisherId}_${c.offerId}`;
+    if (!pubOfferMap.has(key)) {
+      pubOfferMap.set(key, {
+        publisherId: c.publisherId,
+        offerId: c.offerId,
+        clicks: 0,
+        approved: 0,
+        unchecked: 0,
+        total: 0,
+        payout: 0,
+      });
+    }
+    pubOfferMap.get(key)!.clicks += c._count.id;
+  }
+
+  for (const c of conversionAggs) {
+    const key = `${c.publisherId}_${c.offerId}`;
+    if (!pubOfferMap.has(key)) {
+      pubOfferMap.set(key, {
+        publisherId: c.publisherId,
+        offerId: c.offerId,
+        clicks: 0,
+        approved: 0,
+        unchecked: 0,
+        total: 0,
+        payout: 0,
+      });
+    }
+    const item = pubOfferMap.get(key)!;
+    item.total += c._count.id;
+    if (c.status === 'APPROVED') item.approved += c._count.id;
+    if (c.status === 'UNCHECKED') item.unchecked += c._count.id;
+    item.payout += Number(c._sum.payout || 0);
+  }
 
   const rows: Array<{
     id: number;
@@ -210,45 +320,9 @@ export async function getPublishersReport(req: Request, res: Response): Promise<
   }> = [];
 
   for (const pub of publishers) {
-    // Group by offer
-    const offerMap = new Map<
-      number,
-      { offerName: string; clicks: number; approved: number; unchecked: number; total: number; payout: number }
-    >();
+    const userOffers = Array.from(pubOfferMap.values()).filter((v) => v.publisherId === pub.id);
 
-    pub.clicks.forEach((c) => {
-      if (!offerMap.has(c.offer.id)) {
-        offerMap.set(c.offer.id, {
-          offerName: c.offer.name,
-          clicks: 0,
-          approved: 0,
-          unchecked: 0,
-          total: 0,
-          payout: 0,
-        });
-      }
-      offerMap.get(c.offer.id)!.clicks += 1;
-    });
-
-    pub.conversions.forEach((conv) => {
-      if (!offerMap.has(conv.offer.id)) {
-        offerMap.set(conv.offer.id, {
-          offerName: conv.offer.name,
-          clicks: 0,
-          approved: 0,
-          unchecked: 0,
-          total: 0,
-          payout: 0,
-        });
-      }
-      const item = offerMap.get(conv.offer.id)!;
-      item.total += 1;
-      if (conv.status === 'APPROVED') item.approved += 1;
-      if (conv.status === 'UNCHECKED') item.unchecked += 1;
-      item.payout += Number(conv.payout);
-    });
-
-    if (offerMap.size === 0) {
+    if (userOffers.length === 0) {
       rows.push({
         id: pub.id,
         name: pub.name,
@@ -266,14 +340,16 @@ export async function getPublishersReport(req: Request, res: Response): Promise<
         payout: 0.0,
       });
     } else {
-      for (const [, val] of offerMap.entries()) {
+      for (const val of userOffers) {
         const epc = val.clicks > 0 ? Number((val.payout / val.clicks).toFixed(2)) : 0.0;
+        const offerName = offerNameMap.get(val.offerId) || `Offer #${val.offerId}`;
+
         rows.push({
           id: pub.id,
           name: pub.name,
           publisherName: pub.name,
-          offer: val.offerName,
-          offerName: val.offerName,
+          offer: offerName,
+          offerName,
           clicks: val.clicks,
           approvedConversions: val.approved,
           conversionsApproved: val.approved,

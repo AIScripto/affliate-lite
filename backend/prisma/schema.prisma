@@ -251,6 +251,7 @@ model Conversion {
   publisher User    @relation(fields: [publisherId], references: [id], onDelete: Cascade)
   network   Network @relation(fields: [networkId], references: [id], onDelete: Cascade)
 
+  @@unique([clickId, goalValue], map: "idx_conversions_click_goal_unique")
   @@index([createdAt, networkId, offerId, publisherId, status], map: "idx_conversions_report")
   @@map("conversions")
 }

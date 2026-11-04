@@ -1,0 +1,31 @@
+{
+  "kit_version": "0.1.0",
+  "model": "gemini-2.5-pro",
+  "mode": "AUDIT-ONLY",
+  "depth": "standard",
+  "date": "2026-10-29",
+  "repos": [
+    {
+      "name": "erp-platform",
+      "branch": "main",
+      "commit": "c6971b4"
+    }
+  ],
+  "tools": [
+    { "name": "check:secrets", "version": "scripts/check-secrets.mjs", "command": "node scripts/check-secrets.mjs --all", "exit_code": 0, "result": "905 files clean in working tree" },
+    { "name": "gitleaks", "version": "8.30.1", "command": "gitleaks detect", "exit_code": 0, "result": "2 leaks found in git history at commit f58a6b1a" },
+    { "name": "tsc", "version": "5.8.0", "command": "npm run type-check", "exit_code": 0, "result": "0 errors across backend and frontend" },
+    { "name": "eslint", "version": "9.0.0", "command": "npm --prefix frontend run lint", "exit_code": 0, "result": "0 errors, 0 warnings" },
+    { "name": "check:colors", "version": "scripts/check-raw-colors.mjs", "command": "node scripts/check-raw-colors.mjs", "exit_code": 0, "result": "0 raw color violations" },
+    { "name": "jest", "version": "29.7.0", "command": "npm --prefix frontend test", "exit_code": 0, "result": "21/21 suites passed, 196/196 tests" },
+    { "name": "vitest", "version": "5.0.5", "command": "npm --prefix backend test", "exit_code": 0, "result": "6/6 suites passed, 40/40 tests" },
+    { "name": "next build", "version": "15.5.28", "command": "npm --prefix frontend run build", "exit_code": 0, "result": "Production build passed, 51 static pages compiled" }
+  ],
+  "not_run": ["semgrep (not installed)", "trivy fs (offline/sandbox)", "npm audit (offline/sandbox)"],
+  "limits": [
+    "Read-only static and test audit. No production live database connection.",
+    "Dependency vulnerability databases could not be refreshed due to network-isolated sandbox."
+  ],
+  "safety": "Read-only. No live production credentials accessed. Secrets masked."
+}
+

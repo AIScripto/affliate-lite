@@ -232,7 +232,7 @@ export function DomainsView() {
       {/* 4 Color Tiles With Gradients */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {/* Tile 1: Total Domains - Indigo Gradient */}
-        <div className="tile-gradient-indigo p-4.5">
+        <div className="tile-gradient-indigo p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-fg">Total Domains</span>
             <div className="w-8 h-8 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center shadow-sm">
@@ -247,7 +247,7 @@ export function DomainsView() {
         </div>
 
         {/* Tile 2: Active Routing - Emerald Gradient */}
-        <div className="tile-gradient-emerald p-4.5">
+        <div className="tile-gradient-emerald p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-fg">Active Routing</span>
             <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shadow-sm">
@@ -266,7 +266,7 @@ export function DomainsView() {
         </div>
 
         {/* Tile 3: SSL Verified - Sky Gradient */}
-        <div className="tile-gradient-sky p-4.5">
+        <div className="tile-gradient-sky p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-fg">SSL Secured</span>
             <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-500 border border-sky-500/30 flex items-center justify-center shadow-sm">
@@ -283,7 +283,7 @@ export function DomainsView() {
         </div>
 
         {/* Tile 4: Custom Endpoints - Purple Gradient */}
-        <div className="tile-gradient-purple p-4.5">
+        <div className="tile-gradient-purple p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-fg">Custom Endpoints</span>
             <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center justify-center shadow-sm">

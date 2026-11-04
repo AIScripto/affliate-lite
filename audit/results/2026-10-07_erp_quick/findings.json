@@ -1,0 +1,2878 @@
+{
+  "summary": {
+    "headline": "ERP is well tested and carefully structured, but 7 High findings (password hashes in API responses and audit logs, an unscoped CEFR approval route, overwritten appraisal history, a non-atomic score update, and demo logins in the production bundle) need fixing before the platform is relied on.",
+    "overall_grade": "D",
+    "grade_note": "Rule used: no Critical findings, but three or more High findings means D. 7 High, 38 Medium, 11 Low.",
+    "top_risks": [
+      {
+        "text": "Password hashes are sent in admin API responses and saved in the audit log.",
+        "ids": [
+          "SEC-001",
+          "SEC-002"
+        ]
+      },
+      {
+        "text": "Any manager can change or approve any employee's CEFR assessment.",
+        "ids": [
+          "SEC-003"
+        ]
+      },
+      {
+        "text": "Test logins for admin-level employee codes ship inside the production JavaScript bundle.",
+        "ids": [
+          "SEC-004"
+        ]
+      },
+      {
+        "text": "Appraisal history is overwritten, and an assessment save can leave scores stale with no error.",
+        "ids": [
+          "DAT-005",
+          "REL-001"
+        ]
+      },
+      {
+        "text": "There are no HTTP role-by-route tests, and a stale main branch can also publish production images.",
+        "ids": [
+          "TST-001",
+          "OPS-001"
+        ]
+      }
+    ],
+    "do_this_week": [
+      "Stop returning password hashes and stop writing them to the audit log (SEC-001, SEC-002); then scrub old log rows and rotate passwords yourself.",
+      "Add the scope check to the CEFR status route (SEC-003).",
+      "Check whether the demo logins exist in production, and remove the demo list from production builds (SEC-004).",
+      "Make master the only branch that publishes production images (OPS-001)."
+    ],
+    "fix_first": [
+      {
+        "id": "SEC-001",
+        "reason": "Active exposure; the fix is one shared safe-select. Starts the chain."
+      },
+      {
+        "id": "SEC-002",
+        "reason": "Stops new hashes entering logs; the owner scrubs old rows."
+      },
+      {
+        "id": "SEC-003",
+        "reason": "One missing scope check; closes a live approval hole."
+      },
+      {
+        "id": "SEC-004",
+        "reason": "Cheap, and only the owner can check production."
+      },
+      {
+        "id": "TST-001",
+        "reason": "Prerequisite for proving every access-control fix."
+      },
+      {
+        "id": "OPS-001",
+        "reason": "One pipeline edit removes an unreviewed path to production."
+      },
+      {
+        "id": "SEC-005",
+        "reason": "Closes the way an approved score can change silently."
+      },
+      {
+        "id": "REL-001",
+        "reason": "Must exist before the appraisal-history change."
+      },
+      {
+        "id": "DEP-001",
+        "reason": "Cheap upgrade; needed before fixing proxy trust."
+      },
+      {
+        "id": "SEC-009",
+        "reason": "Makes a password reset actually end sessions."
+      }
+    ]
+  },
+  "scorecard": [
+    {
+      "dimension": "security",
+      "score": 1.5,
+      "why": "Hashes in responses and logs, an unscoped approval route, weak session handling."
+    },
+    {
+      "dimension": "data",
+      "score": 2,
+      "why": "History overwritten, locked periods only locked in code, config unversioned."
+    },
+    {
+      "dimension": "reliability",
+      "score": 2.5,
+      "why": "Swallowed recompute errors, no concurrency control, abrupt shutdown."
+    },
+    {
+      "dimension": "testing",
+      "score": 2.5,
+      "why": "Many tests (548 backend, 2,334 frontend), but no HTTP or role-by-route tests; backend 66% lines."
+    },
+    {
+      "dimension": "cicd-supply-chain",
+      "score": 2,
+      "why": "Root containers, floating tags, stale main branch deploys, personal registry."
+    },
+    {
+      "dimension": "dependencies",
+      "score": 2.5,
+      "why": "Known flaws in production packages; no scan step in CI."
+    },
+    {
+      "dimension": "architecture",
+      "score": 2.5,
+      "why": "Clean module slices, but five very large files and logic duplicated across tiers."
+    },
+    {
+      "dimension": "performance",
+      "score": 3,
+      "why": "Per-competency recompute and compute-on-read reports; one large initial script."
+    },
+    {
+      "dimension": "observability",
+      "score": 2,
+      "why": "Logs not redacted, raw errors to clients, no audit trail for user changes."
+    },
+    {
+      "dimension": "accessibility",
+      "score": 2,
+      "why": "Confirm on any Enter key; no focus trapping in dialogs."
+    },
+    {
+      "dimension": "ux-design",
+      "score": 2.5,
+      "why": "Single URL with no deep links; help modals missing on many screens."
+    },
+    {
+      "dimension": "code-health",
+      "score": 2.5,
+      "why": "Very large files; widespread hard-coded colours."
+    }
+  ],
+  "findings": [
+    {
+      "id": "SEC-001",
+      "title": "Password hashes are sent to the browser by the user, assignment and audit-log endpoints",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "High",
+      "likelihood": "Medium",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U0",
+      "urgency_reason": "Credential material is exposed to admin users and through the assignment endpoints; cheap to contain.",
+      "evidence": "listUsers/createUser/updateUser/deleteUser use prisma `include: { employee: true, role_ref: true }` on the User model (no select/omit), and the controller returns the row as is (config.controller.ts:256-293). Prisma include returns every scalar of User, including password_hash and password_reset_token (schema.prisma:384-401). The same happens in listAccessAuditLogs (`actor_user: { include: { employee: true } }`, `target_user: ...`), listDepartmentAssignments / listLineManagerAssignments (`user: { include: { employee: true, role_ref: true } }`, `manager_user: ...`). No sanitising helper exists: grep for password_hash in modules/config finds only the two write sites (config.service.ts:1036, 1072).",
+      "locations": [
+        "backend/src/modules/config/config.service.ts:1022",
+        "backend/src/modules/config/config.service.ts:1042",
+        "backend/src/modules/config/config.service.ts:1078",
+        "backend/src/modules/config/config.service.ts:479",
+        "backend/src/modules/config/config.service.ts:492",
+        "backend/src/modules/config/config.service.ts:577",
+        "backend/src/modules/config/config.controller.ts:256",
+        "backend/src/modules/config/config.service.ts:1020-1026",
+        "backend/src/modules/config/config.service.ts:1033-1043",
+        "backend/src/modules/config/config.service.ts:1069-1074",
+        "backend/src/modules/config/config.service.ts:1197-1215",
+        "backend/src/modules/config/config.service.ts:575-583",
+        "backend/src/modules/config/config.controller.ts:256-264"
+      ],
+      "impact_text": "Anyone holding users.manage or assignments.manage (and any proxy, browser cache or log that sees these responses) gets the bcrypt hash of every user, which can be cracked offline.",
+      "root_cause": "Nested prisma include of the User model instead of an explicit select; no shared safe-user shape.",
+      "fix": "Add one `safeUserSelect` (id, username, role, is_active, employee, role_ref) and use `select` for every nested user/manager_user/actor_user/target_user/creator in config.service.ts; or add a Prisma client extension that omits password_hash and password_reset_token everywhere. Also strip them in the response for create/update user.",
+      "test": "For each of GET /config/users, POST/PATCH /config/users, GET /config/access/audit-logs, department-assignments, line-manager-assignments: assert JSON.stringify(response) contains neither 'password_hash' nor 'password_reset_token' nor a '$2' bcrypt prefix.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": "CHAIN-1",
+      "status": "open",
+      "references": [
+        "draft:A-01",
+        "draft:B-01"
+      ],
+      "unblocks": [],
+      "quick_win": true,
+      "wave": "W0",
+      "sequence": 1
+    },
+    {
+      "id": "SEC-002",
+      "title": "Password hashes are written into access_audit_logs",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "High",
+      "likelihood": "High",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U0",
+      "urgency_reason": "Hashes stay in the log table after the API leak is fixed; the owner must scrub existing rows.",
+      "evidence": "upsertDepartmentAssignment, updateDepartmentAssignment, deleteDepartmentAssignment and the line-manager equivalents fetch the row with `user: { include: { employee: true, role_ref: true } }` / `manager_user: {...}` and then pass the whole object as newValue to createAccessAuditLog, which stores it in the Json column new_value (config.service.ts:505-527, 596-620, 785-800, 454-476). The nested user object contains password_hash. Every assignment change therefore copies a hash into a table that is also served by GET /config/access/audit-logs and kept in backups.",
+      "locations": [
+        "backend/src/modules/config/config.service.ts:513-527",
+        "backend/src/modules/config/config.service.ts:577-620",
+        "backend/src/modules/config/config.service.ts:454-476"
+      ],
+      "impact_text": "Credential hashes are copied into a long-lived audit table and its backups, widening the number of places a leak can happen and breaking the rule that audit rows hold no hashes.",
+      "root_cause": "Audit helper serialises whatever object it is given; callers pass fully-included relations.",
+      "fix": "Audit only the assignment scalar fields (before/after of the assignment row without includes), and make createAccessAuditLog deep-strip keys named password_hash, password_reset_token, token_hash. Run a one-off cleanup of existing rows (owner decision, production data).",
+      "test": "Unit test: upsert an assignment with a mocked user containing password_hash, assert the object passed to accessAuditLog.create has no password_hash key at any depth.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": "CHAIN-1",
+      "status": "open",
+      "references": [
+        "draft:A-02"
+      ],
+      "unblocks": [],
+      "quick_win": true,
+      "wave": "W0",
+      "sequence": 2
+    },
+    {
+      "id": "SEC-003",
+      "title": "Any manager can change or approve any employee's CEFR assessment (no scope check on status route)",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "High",
+      "likelihood": "Medium",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U0",
+      "urgency_reason": "Any manager can change any employee's CEFR result today; the fix is one scope check.",
+      "evidence": "PATCH /comm/assessments/:id/status is guarded only by requireRole(MANAGER, LINE_MANAGER, TOP_MANAGEMENT, ADMIN) (communication.router.ts:76-81). updateAssessmentStatus in the controller (communication.controller.ts:216-266) rejects ENGINEER and the LM/MANAGER self case, then calls the service. It never calls canAccessEmployee, unlike every other handler in the file. The service looks the row up by id only and can set status to approved/draft/pending and replace all ratings (communication.service.ts:457-500). The assessment id is a UUID that GET /comm/subjects/:id/history returns to anyone with scope, but also appears in any exported or shared link.",
+      "locations": [
+        "backend/src/modules/communication/communication.controller.ts:216",
+        "backend/src/modules/communication/communication.router.ts:76",
+        "backend/src/modules/communication/communication.service.ts:457"
+      ],
+      "impact_text": "A line manager in one team can approve or rewrite another team's language ratings, which feed promotion readiness.",
+      "root_cause": "Object-level scope check is missing in one handler; the route trusts the role only.",
+      "fix": "In updateAssessmentStatus, after loading `target`, call accessScopeService.canAccessEmployee(req.user, target.employee_id, { forAssessment: true }) and return 403 (or 404) when false.",
+      "test": "Controller test: a LINE_MANAGER with no assignment to the subject PATCHes /comm/assessments/:id/status and gets 403; with an active can_assess assignment gets 200.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": "CHAIN-2",
+      "status": "open",
+      "references": [
+        "draft:A-03"
+      ],
+      "unblocks": [],
+      "quick_win": true,
+      "wave": "W0",
+      "sequence": 3
+    },
+    {
+      "id": "SEC-004",
+      "title": "Demo login list with a shared test password ships inside the production JavaScript bundle",
+      "dimension": "security",
+      "repo": "frontend",
+      "severity": "High",
+      "likelihood": "Medium",
+      "impact": "High",
+      "confidence": "likely",
+      "urgency": "U0",
+      "urgency_reason": "Test logins for admin-level employee codes ship in the bundle; only the owner can check whether they exist in production.",
+      "evidence": "src/components/login/DemoAccounts.tsx:3 defines one shared test password and lines 7-11 list five employee-code usernames (Admin, Top Management, Manager, Line Manager, Engineer) using it. LoginPage.tsx:14 only hides the component at runtime (showDemoAccounts); the module is still imported (line 11), so it is not tree-shaken: grep -c on the existing build frontend/dist/assets/index-92f26164.js finds the password string once. backend/prisma/seed/seed.ts:871 hashes the same password for seeded users. The comment in store/authStore.ts says empCode <employee code> is a real employee code, and <employee code> is in the demo list. Whether those accounts exist in production with that password was NOT checked (no DB access).",
+      "locations": [
+        "src/components/login/DemoAccounts.tsx:3",
+        "src/components/login/DemoAccounts.tsx:7",
+        "src/pages/LoginPage.tsx:14",
+        "src/pages/LoginPage.tsx:88",
+        "backend/prisma/seed/seed.ts:871"
+      ],
+      "impact_text": "Anyone who opens the public site's JavaScript can read admin-level usernames and a password to try; if any of those accounts exist in production the whole appraisal dataset is exposed.",
+      "root_cause": "Visibility is a runtime flag around a statically imported component, so the credentials are always compiled into the bundle.",
+      "fix": "Load DemoAccounts with a dynamic import behind import.meta.env.DEV (or a build-time define) so the credentials are dropped from production builds; remove real employee codes from the list; confirm in production that no seeded user still has the seed password and rotate if so.",
+      "test": "After npm run build, grep dist for the test password: expect 0 matches. Unit test: with PROD=true LoginPage renders no demo list.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "needs_decision": true,
+      "decision_id": "D0",
+      "status": "open",
+      "references": [
+        "draft:C-01"
+      ],
+      "unblocks": [],
+      "quick_win": true,
+      "wave": "W0",
+      "sequence": 4
+    },
+    {
+      "id": "OPS-002",
+      "title": "Production deploys default to the moving `latest` tag, and two different pipeline triggers overwrite it",
+      "dimension": "cicd-supply-chain",
+      "repo": "workspace",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "Production can run an unreviewed image; cheap to pin.",
+      "evidence": "docker-compose.yml:5,17 and deployments/docker-compose.prod.yml:7,19 use `${BACKEND_TAG:-latest}`; scripts/deploy-prod.sh:14 defaults to `latest`. In backend and frontend bitbucket-pipelines.yml every push to master (line 112/116) AND to main (118/122) AND every v*.*.* tag (line 145/149) pushes `:latest`, so a plain `./deploy-prod.sh` deploys whatever built last, from any of three triggers. deployments/deploy.sh:10-11 itself admits a migrated release cannot be rolled back. A dated tag exists (v<ver>-<timestamp>) but the compose files do not use it by default.",
+      "locations": [
+        "docker-compose.yml:5",
+        "deployments/docker-compose.prod.yml:7",
+        "scripts/deploy-prod.sh:14",
+        "backend/bitbucket-pipelines.yml:76",
+        "backend/bitbucket-pipelines.yml:145",
+        "frontend/bitbucket-pipelines.yml:80"
+      ],
+      "impact_text": "Nobody can say for sure which build is running in production, and rollback to a known good build is manual guesswork.",
+      "root_cause": "Convenience default tag instead of a required, immutable version.",
+      "fix": "Make the tag mandatory (`${BACKEND_TAG:?set a version}`), deploy only vX.Y.Z or production-<sha>, stop pushing :latest from tag builds, and record the deployed tags in a log line on the server.",
+      "test": "Running deploy-prod.sh without arguments exits with an error; a deploy log shows the exact tags.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": "CHAIN-4",
+      "status": "open",
+      "references": [
+        "draft:C-03"
+      ],
+      "unblocks": [],
+      "quick_win": true,
+      "wave": "W1",
+      "sequence": 5
+    },
+    {
+      "id": "DEP-001",
+      "title": "Backend production dependencies have known vulnerabilities (1 critical, 3 high)",
+      "dimension": "dependencies",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Low",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "Cheap upgrade; also a prerequisite for fixing proxy trust (SEC-proxy).",
+      "evidence": "npm audit --omit=dev reports 8 issues (1 critical, 3 high, 4 moderate). Critical: proxy-addr 2.0.7, IP spoofing via an IPv4-mapped IPv6 trust subnet (fix 2.0.8). High: fast-uri 3.1.5 (SSRF and host confusion, fix 3.1.7), brace-expansion 5.0.9, js-yaml 4.3.1. Moderate: express, body-parser, qs, fast-copy. Rated Medium, not Critical, because Express has no trust proxy setting today (see SEC-proxy), so the proxy-addr flaw is not reachable yet. Trivy agrees (1 critical, 8 high).",
+      "locations": [
+        "backend/package.json:26",
+        "backend/package-lock.json:1"
+      ],
+      "impact_text": "Known flaws in packages that run in production, one rated critical by the scanner.",
+      "root_cause": "Dependencies not updated since the lockfile was created; no scan step in the pipeline (see OPS-ci).",
+      "fix": "Update to the fixed versions within the allowed ranges (express chain, proxy-addr 2.0.8, fast-uri 3.1.7, js-yaml 4.3.2, brace-expansion), run the full test suite, then re-run npm audit --omit=dev.",
+      "test": "npm audit --omit=dev shows no high or critical; full backend suite passes.",
+      "effort": "S",
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "status": "open",
+      "references": [],
+      "unblocks": [
+        "SEC-011"
+      ],
+      "quick_win": false,
+      "wave": "W1",
+      "sequence": 6
+    },
+    {
+      "id": "OPS-001",
+      "title": "Both repositories deploy production images from the stale `main` branch as well as `master`",
+      "dimension": "cicd-supply-chain",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "A stale branch can publish production images; one pipeline edit.",
+      "evidence": "backend/bitbucket-pipelines.yml:112-122 and frontend/bitbucket-pipelines.yml:116-126 define identical pipelines for `master` and `main`, both ending in the step that pushes :latest and :production tags. config.md says master is the only base and `main` is not used. Anyone with push access to a `main` branch can publish the production image without the master review flow.",
+      "locations": [
+        "backend/bitbucket-pipelines.yml:118",
+        "frontend/bitbucket-pipelines.yml:122"
+      ],
+      "impact_text": "A forgotten branch can silently replace what the next deploy pulls.",
+      "root_cause": "Pipeline copied from a template that supports both branch names.",
+      "fix": "Delete the `main` pipeline block in both files, delete the remote `main` branch, and restrict production tags/branches with Bitbucket branch permissions.",
+      "test": "Push a trivial commit to a throwaway `main`: no pipeline starts.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": "CHAIN-4",
+      "status": "open",
+      "references": [
+        "draft:C-04"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W1",
+      "sequence": 7
+    },
+    {
+      "id": "OPS-003",
+      "title": "CI uses floating `latest` scanner images, has no dependency or image vulnerability step, and builds Docker Hub login from an 11-name variable fallback chain",
+      "dimension": "cicd-supply-chain",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "The pipeline has no dependency or image scan, and its scanners float.",
+      "evidence": "Both pipelines: gitleaks image `zricethezav/gitleaks:latest` (line 14) and `sonarsource/sonar-scanner-cli:latest` (backend line 35, frontend line 39). Neither pipeline runs `npm audit`, trivy or any image scan (grep for audit/trivy: none in backend; frontend `npm run audit` is the project defect audit, not dependency audit) although the Stage 1 scan found 1 critical production vulnerability in the backend. Docker login: lines 48-49 (backend) build DH_USER and DH_TOKEN from `DOCKER_USERNAME`, `DOCKERHUB_USERNAME`, `docker_username`, `DOCKER_USER` and `DOCKER_TOKEN`, `DOCKERHUB_TOKEN`, `docker_tocken`, `docker_token`, `DOCKER_TOCKEN`; line 50 echoes the resolved user name into the log; the same block is copy-pasted 4 times per file (8 total). Positive: tests, lint, type-check, Sonar gate and gitleaks all run before any image build step, and the token goes through --password-stdin.",
+      "locations": [
+        "backend/bitbucket-pipelines.yml:14",
+        "backend/bitbucket-pipelines.yml:35",
+        "backend/bitbucket-pipelines.yml:48",
+        "frontend/bitbucket-pipelines.yml:14",
+        "frontend/bitbucket-pipelines.yml:39",
+        "frontend/bitbucket-pipelines.yml:52"
+      ],
+      "impact_text": "A compromised or broken scanner image can break or silently weaken every release, and known vulnerable packages ship without any CI signal.",
+      "root_cause": "Pipeline grew by copy-paste; variable names were guessed over time instead of fixed.",
+      "fix": "Pin scanner images to versions or digests; add `npm audit --omit=dev --audit-level=high` and a trivy image scan (fail on critical); define one DOCKERHUB_USERNAME/TOKEN pair, delete the typo variants, and move the login into one reusable step definition.",
+      "test": "Introduce a known vulnerable test dependency on a branch: pipeline fails at the audit step. Grep shows one login block.",
+      "effort": "M",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-05"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W1",
+      "sequence": 8
+    },
+    {
+      "id": "TST-001",
+      "title": "Backend has no HTTP-level route or role-by-route test; routers and app wiring have 0% coverage",
+      "dimension": "testing",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "Prerequisite: without HTTP role-by-route tests, the access fixes cannot be proven or protected from regression.",
+      "evidence": "supertest is in backend/package.json:52 but grep -rl supertest src returns nothing. The only router-level test is src/modules/communication/communication.router.test.ts: it mocks the controller and checks three GET paths return 401 without a token (lines 1-40); there is no 403 case and no role matrix. coverage/lcov.info (dated 2026-10-07) shows 0% line coverage for src/app.ts (36 lines), config.router.ts (97), assessment.router.ts (30), reports.router.ts (24), auth.router.ts (14), behavioral.router.ts (15), ai.controller.ts (18). authorize.ts is covered 64% (25 lines missed). RBAC is database-driven, so which route has which guard is only proven by running requests.",
+      "locations": [
+        "backend/src/modules/communication/communication.router.test.ts:1",
+        "backend/package.json:52",
+        "backend/src/app.ts:1",
+        "backend/src/modules/config/config.router.ts:1",
+        "backend/src/middleware/authorize.ts:1"
+      ],
+      "impact_text": "A removed or wrong permission guard on one route would pass all 548 tests and could expose employee appraisals to the wrong role.",
+      "root_cause": "Tests target services and controllers with mocks; no integration layer was set up.",
+      "fix": "Add a supertest suite that boots the Express app with a mocked Prisma client and a generated role-by-route table (7 roles x every route) asserting 401/403/200; fail the build if a new route is missing from the table.",
+      "test": "The matrix test itself; mutation check: delete one authorize() call and the suite fails.",
+      "effort": "M",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-12"
+      ],
+      "unblocks": [
+        "SEC-005",
+        "SEC-006",
+        "SEC-007",
+        "SEC-014",
+        "SEC-015",
+        "DAT-005"
+      ],
+      "quick_win": false,
+      "wave": "W1",
+      "sequence": 9
+    },
+    {
+      "id": "DEP-002",
+      "title": "Frontend production dependencies have known vulnerabilities (7 high, 4 moderate)",
+      "dimension": "dependencies",
+      "repo": "frontend",
+      "severity": "Medium",
+      "likelihood": "Low",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Several flaws are in the Node side of axios and in build tools, so exposure in browsers is limited.",
+      "evidence": "npm audit --omit=dev reports 11 issues (7 high, 4 moderate, 0 critical). axios 1.19.0 has 7 CVEs (fix 1.20.0; several apply to the Node HTTP adapter, one to a prototype-pollution gadget). react-router-dom has an open-redirect issue (moderate). The tailwindcss chain (braces, micromatch, chokidar, fast-glob, source-map-js) is build-time. Trivy agrees (9 high).",
+      "locations": [
+        "frontend/package.json:26",
+        "frontend/package.json:34"
+      ],
+      "impact_text": "Known flaws in the HTTP client and router used by every screen.",
+      "root_cause": "Dependencies not updated; no scan step in the pipeline (see OPS-ci).",
+      "fix": "Upgrade axios to 1.20.0 or later and react-router-dom to a patched version; plan the Tailwind upgrade separately; re-run the tests and npm audit --omit=dev.",
+      "test": "npm audit --omit=dev shows no high on axios and react-router-dom; frontend suite and e2e smoke pass.",
+      "effort": "S",
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "status": "open",
+      "references": [],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W1",
+      "sequence": 10
+    },
+    {
+      "id": "SEC-005",
+      "title": "An engineer can alter an already approved skill through the create route without re-approval",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "High",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "Breaks the approval guarantee: an approved score can change with no new approval.",
+      "evidence": "POST /assessments/skill-assessments upserts by (employee, technology). For ENGINEER (and a manager on their own record, mapped to ENGINEER) the controller only deletes `level` (assessment.controller.ts:43-48). In the upsert update branch the service rewrites type, projects, level (defaults to 'Unset'), score, appraisal_period_id and assessed_by, but sets status via resolveUpdateStatus(request.status, isEngineer), which returns undefined when no status is sent, so the status stays 'approved' (assessment.service.ts:222-233, 57-61). Result: an approved row keeps its approved status while its type/projects change (and the stored score is recomputed from them) with no manager review, and assessed_by now names the engineer instead of the approver. The PATCH route does force status=draft, so the two routes disagree.",
+      "locations": [
+        "backend/src/modules/assessment/assessment.service.ts:222",
+        "backend/src/modules/assessment/assessment.service.ts:57",
+        "backend/src/modules/assessment/assessment.controller.ts:43"
+      ],
+      "impact_text": "Approved ratings can be silently changed by the employee they describe, so score history cannot be trusted.",
+      "root_cause": "The upsert update branch keeps the old status when the caller is an engineer instead of resetting it to draft.",
+      "fix": "In the upsert update branch, when isEngineer force status to draft whenever any of type/projects/level changes (or refuse the create when a row exists and is approved/pending). Do not overwrite assessed_by on approved rows.",
+      "test": "Service test: existing approved row, engineer POST with different projects -> resulting status is draft (or 409) and score not counted until approved.",
+      "effort": "S",
+      "fix_risk": "medium",
+      "blocked_by": [
+        "TST-001"
+      ],
+      "chain_id": "CHAIN-2",
+      "status": "open",
+      "references": [
+        "draft:A-05"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W2",
+      "sequence": 11
+    },
+    {
+      "id": "SEC-008",
+      "title": "Logging out in the app does not revoke the refresh token",
+      "dimension": "security",
+      "repo": "frontend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "A stolen refresh token stays valid after the user logs out.",
+      "evidence": "DashboardPage.handleLogout only calls the store logout(), clears the query cache and redirects (DashboardPage.tsx:153-157). grep for '/auth/logout' in frontend/src finds no caller. The backend revoke (auth.service.ts:220-228) and cookie clear (auth.controller.ts:116-117) are therefore never reached from the UI. The httpOnly refresh cookie stays valid for 7 days and can mint new access tokens. Even if called, the route needs a valid access token (auth.router.ts:47), so a user with an expired access token cannot revoke.",
+      "locations": [
+        "frontend/src/pages/DashboardPage.tsx:153",
+        "backend/src/modules/auth/auth.router.ts:47",
+        "backend/src/modules/auth/auth.service.ts:220"
+      ],
+      "impact_text": "On a shared or later-stolen device, 'log out' does not end the session for up to a week.",
+      "root_cause": "Logout is client-state only; server revocation exists but is not wired to the UI.",
+      "fix": "Call POST /auth/logout (await, ignore failure) before clearing state; let the backend logout revoke by the presented refresh cookie without requiring a valid access token (look the token up by hash), and clear the cookie with the same options used to set it.",
+      "test": "Frontend test: click Logout -> apiClient.post('/auth/logout') is called. Backend test: logout with expired access token and valid cookie revokes the row; a later /auth/refresh returns 401.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:A-06"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W2",
+      "sequence": 12
+    },
+    {
+      "id": "SEC-009",
+      "title": "Changing or resetting a password does not end existing sessions; refresh tokens are never rotated",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "A password reset does not end existing sessions, which defeats the usual response to a leaked hash.",
+      "evidence": "changePassword only updates password_hash (auth.service.ts:230-259); it does not call refreshToken.updateMany. Admin updateUser also sets a new hash without revoking tokens or clearing login_attempts (config.service.ts:1071-1081). refresh() has `// TODO: Optionally rotate refresh token here` and returns only a new access token, so one stolen cookie works for the full 7 days (auth.service.ts:215). Access tokens are re-checked against the database on each request (authenticate.ts:47-57), which is good, but the refresh path is the weak link. Also found separately: POST /auth/refresh has no rate limiter (auth.router.ts:29). Refresh DB expiry is hard-coded to 7 days (auth.service.ts:150) while the JWT lifetime comes from JWT_REFRESH_EXPIRY, so changing the env var makes them disagree. jwt.verify is called without an `algorithms` allowlist (authenticate.ts:37, auth.service.ts:179); with an HMAC string secret this is safe in jsonwebtoken 9 but is not pinned. res.clearCookie('refreshToken') omits the options used when setting (auth.controller.ts:117), which works only because path is default. env.ts does not require JWT_SECRET and JWT_REFRESH_SECRET to differ. The Cookie 'secure' flag depends on NODE_ENV === 'production' (auth.controller.ts:56). The API-side helmet CSP allows 'unsafe-inline' scripts (app.ts:35), unnecessary for a JSON API.",
+      "locations": [
+        "backend/src/modules/auth/auth.service.ts:246",
+        "backend/src/modules/auth/auth.service.ts:215",
+        "backend/src/modules/config/config.service.ts:1071",
+        "backend/src/modules/auth/auth.router.ts:29",
+        "backend/src/modules/auth/auth.service.ts:150",
+        "backend/src/middleware/authenticate.ts:37",
+        "backend/src/modules/auth/auth.controller.ts:117",
+        "backend/src/app.ts:35"
+      ],
+      "impact_text": "A stolen session survives the victim changing their password, which is the usual response to a suspected compromise.",
+      "root_cause": "Session revocation is only wired to logout; rotation was left as a TODO.",
+      "fix": "Revoke all the user's refresh tokens in the same transaction as any password change (self and admin); rotate the refresh token on every refresh (new cookie, revoke old) and treat reuse of a revoked token as theft (revoke all). Also: Add a limiter to /auth/refresh; derive expires_at from the decoded token exp; pass { algorithms: ['HS256'] } to jwt.verify; share cookie options between set and clear; refine env schema to require different secrets; drop 'unsafe-inline' from the API CSP.",
+      "test": "After changePassword, a previously issued refresh cookie gets 401 on /auth/refresh. After one refresh, the old cookie gets 401. Unit tests: expires_at equals token exp; token signed with alg none is rejected; clearCookie called with the same options.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "chain_id": "CHAIN-1",
+      "status": "open",
+      "references": [
+        "draft:A-07",
+        "draft:A-20"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W2",
+      "sequence": 13
+    },
+    {
+      "id": "SEC-010",
+      "title": "Bearer tokens and the refresh cookie are written to request logs",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "High",
+      "impact": "Medium",
+      "confidence": "likely",
+      "urgency": "U2",
+      "urgency_reason": "Tokens may land in logs; verify the actual log output first (not observed).",
+      "evidence": "app.ts:26 uses `pinoHttp({ logger })` with no serializers or redact. config/logger.ts builds pino with no `redact` option. The default pino-http req serializer logs req.headers, which include Authorization and Cookie (refreshToken). Not verified at runtime (no code run); based on the library default.",
+      "locations": [
+        "backend/src/app.ts:26",
+        "backend/src/config/logger.ts:5",
+        "backend/src/config/logger.ts:1-22",
+        "backend/src/app.ts:27"
+      ],
+      "impact_text": "Anyone who can read application logs can replay live access tokens and steal refresh cookies.",
+      "root_cause": "No redaction configured for the request logger.",
+      "fix": "Add `redact: ['req.headers.authorization','req.headers.cookie','res.headers[\"set-cookie\"]']` to the pino config (and to pinoHttp), or a custom req serializer that keeps only method, url and id.",
+      "test": "Unit test: log a request with Authorization and Cookie headers through the configured logger to a stream and assert the output contains neither value.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:A-08",
+        "draft:B-10"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W2",
+      "sequence": 14
+    },
+    {
+      "id": "SEC-011",
+      "title": "No `trust proxy` setting, so the login rate limit sees only the proxy address",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "High",
+      "impact": "Medium",
+      "confidence": "likely",
+      "urgency": "U2",
+      "urgency_reason": "Login throttling sees only the proxy address.",
+      "evidence": "grep for 'trust proxy' in backend/src finds nothing; app.ts does not set it. The only app-level limiter is the login limiter (auth.router.ts:11-17), keyed by default on req.ip. nginx forwards X-Forwarded-For (nginx.conf:129-137), so behind nginx req.ip is the proxy container address for every user. All users then share one bucket of 10 logins per minute, so one client can lock everyone out of login, and per-IP limiting is useless on the app tier. express-rate-limit 7 also logs a validation error when X-Forwarded-For is present and trust proxy is off. Note on proxy-addr 2.0.7 (spoofing CVE): because trust proxy is NOT configured, proxy-addr is not consulted for req.ip today, so the CVE is not exploitable now; it becomes relevant if you set `trust proxy` to fix this. Set an explicit hop count (1) or the nginx subnet, never `true`. Whether production runs behind nginx was inferred from the repo's nginx/ folder.",
+      "locations": [
+        "backend/src/app.ts:20",
+        "backend/src/modules/auth/auth.router.ts:11",
+        "nginx/nginx.conf:129"
+      ],
+      "impact_text": "Login can be blocked for all staff by a handful of requests, or the limit protects nobody.",
+      "root_cause": "Proxy topology not declared to Express.",
+      "fix": "app.set('trust proxy', 1) (one nginx hop) and upgrade express / proxy-addr; keep nginx limit_req as the first layer; add a limiter to /auth/refresh and /auth/change-password.",
+      "test": "Supertest with X-Forwarded-For: two different client IPs get separate buckets; 11th request from the same IP gets 429, other IP still 200.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [
+        "DEP-001"
+      ],
+      "status": "open",
+      "references": [
+        "draft:A-09"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W2",
+      "sequence": 15
+    },
+    {
+      "id": "SEC-012",
+      "title": "nginx API rate limit is keyed on a client-supplied header",
+      "dimension": "security",
+      "repo": "backend+frontend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "An attacker can dodge the API rate limit by changing a header.",
+      "evidence": "nginx.conf:42 `limit_req_zone $http_x_forwarded_for zone=api_limit:10m rate=500r/m;` keys on the request's own X-Forwarded-For header. A client that omits the header gets an empty key, and nginx does not count requests with an empty key; a client that sends a random value per request gets a fresh bucket each time. The zone is applied to all of /api/ (line 130), which includes /auth/refresh and the whole data API. Only /auth/login uses $binary_remote_addr (line 41).",
+      "locations": [
+        "nginx/nginx.conf:42",
+        "nginx/nginx.conf:130",
+        "nginx/nginx.conf:118",
+        "nginx/nginx.conf:127"
+      ],
+      "impact_text": "The general API rate limit can be bypassed by anyone, so scraping or brute-force against non-login endpoints is not slowed.",
+      "root_cause": "Wrong variable used as the limit key.",
+      "fix": "Use `$binary_remote_addr` (or the real-IP module result) as the key for api_limit.",
+      "test": "Send 600 requests/min with no XFF and with random XFF from one source; expect 503/429 after the burst in both cases.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:A-10",
+        "draft:C-09"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W2",
+      "sequence": 16
+    },
+    {
+      "id": "SEC-013",
+      "title": "Account lockout can be triggered by anyone, and it re-locks after one wrong try",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Anyone can lock a known user out, and login reveals which users exist.",
+      "evidence": "login() increments login_attempts per failed password and sets locked_until = now+15 min at >=5 (auth.service.ts:103-118). The lock is per username, not per IP, so five bad guesses against a known username lock that user out; the lock check precedes the password check (line 96), so even the right password is refused. login_attempts is reset only on success (lines 123-130), so after the lock expires the counter is still >=5 and the next single wrong attempt immediately locks again. Usernames are guessable (employee-based). Also found separately: Unknown user returns 'Invalid username or password' (auth.service.ts:87-89), but an inactive/deleted user returns a different message and code USER_NOT_FOUND (line 91-93), and a locked user returns ACCOUNT_LOCKED (line 97). Unknown usernames return before any bcrypt compare, so response time also differs from a known user with a wrong password. Combined with A-11 this lets an attacker list valid and former staff accounts.",
+      "locations": [
+        "backend/src/modules/auth/auth.service.ts:96",
+        "backend/src/modules/auth/auth.service.ts:103",
+        "backend/src/modules/auth/auth.service.ts:87",
+        "backend/src/modules/auth/auth.service.ts:91",
+        "backend/src/modules/auth/auth.service.ts:97"
+      ],
+      "impact_text": "A colleague or outsider can keep a named user (for example a manager during appraisal week) locked out with a few requests.",
+      "root_cause": "Lockout keyed only on the account, with no reset on expiry and no IP component.",
+      "fix": "Reset login_attempts when a lock has expired; count failures per (username, IP) or use progressive delay instead of a hard lock; keep the generic message. Also: Return the same 401 INVALID_CREDENTIALS for unknown, inactive and wrong-password cases; compare against a dummy bcrypt hash when the user is missing; report the lock only after a correct password.",
+      "test": "Five failures -> locked; advance time 16 min; one wrong try -> 401 INVALID_CREDENTIALS, not locked; fifth consecutive wrong try -> locked. Unknown, inactive and wrong-password logins return identical status, code and message.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": "CHAIN-1",
+      "status": "open",
+      "references": [
+        "draft:A-11",
+        "draft:A-12"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W2",
+      "sequence": 17
+    },
+    {
+      "id": "SEC-016",
+      "title": "User, role-change and password operations are not written to the audit log",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "User, role and password changes leave no trace.",
+      "evidence": "createUser, updateUser (role, is_active, password, employee link) and deleteUser (config.service.ts:1020-1090) and their controller methods (config.controller.ts:256-296) never call createAccessAuditLog; only role/permission and assignment changes do (e.g. lines 378, 441, 518-840). Skill approval/self-approval attempts are logged only to pino. There is also no guard against an admin changing their own role or deactivating the last ADMIN.",
+      "locations": [
+        "backend/src/modules/config/config.service.ts:1020",
+        "backend/src/modules/config/config.controller.ts:266",
+        "backend/src/modules/config/config.service.ts:1029-1087",
+        "backend/src/modules/config/config.controller.ts:266-295"
+      ],
+      "impact_text": "Privilege grants, deactivations and admin password resets leave no trail for investigation.",
+      "root_cause": "Audit calls were added per feature and the user module was missed.",
+      "fix": "Audit CREATE_USER, UPDATE_USER (field names changed, never values of secrets), DEACTIVATE_USER with actor id; refuse removing the last active ADMIN.",
+      "test": "Updating a user's role inserts an access_audit_logs row with actor, target, old and new role and no password fields.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": "CHAIN-2",
+      "status": "open",
+      "references": [
+        "draft:A-16",
+        "draft:B-08"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W2",
+      "sequence": 18
+    },
+    {
+      "id": "SEC-006",
+      "title": "ADMIN and TOP_MANAGEMENT can approve their own skills and CEFR results",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Policy decision needed first; the written rule covers only LINE_MANAGER and MANAGER.",
+      "evidence": "Verified: the self-approval guard only tests for LINE_MANAGER or MANAGER (assessment.controller.ts actsOnOwnRecord, communication.controller.ts isSelfApproval). Rated Medium (downgraded from the reviewer's High) because LINE_MANAGER_SELF_ASSESMENT_RULE.md only covers those two roles; who approves senior roles is a business decision (D1).",
+      "locations": [
+        "backend/src/modules/assessment/assessment.controller.ts:18",
+        "backend/src/modules/assessment/assessment.controller.ts:135",
+        "backend/src/modules/communication/communication.controller.ts:119",
+        "backend/src/modules/communication/communication.controller.ts:235",
+        "backend/src/modules/behavioral/behavioral.controller.ts:69"
+      ],
+      "impact_text": "The people with the widest access can sign off their own skills and ratings, which defeats the independent-approval promise for appraisal data.",
+      "root_cause": "The guard was written for the two roles that raised the issue, and is duplicated three times instead of being one shared rule.",
+      "fix": "Create one `isOwnRecord(req, employeeId)` helper with no role filter and use it in all three controllers for create, update and approve. Decide what ADMIN/TOP_MANAGEMENT self-assessment should do (draft, approved by another admin, or blocked).",
+      "test": "For each of ADMIN, TOP_MANAGEMENT, MANAGER, LINE_MANAGER: approve own skill, own CEFR status, create own behavioral -> 403 or draft/pending; plus a matrix test over all three modules.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [
+        "TST-001"
+      ],
+      "chain_id": "CHAIN-2",
+      "needs_decision": true,
+      "decision_id": "D1",
+      "status": "open",
+      "references": [
+        "draft:A-04"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W2",
+      "sequence": 19
+    },
+    {
+      "id": "SEC-007",
+      "title": "Peer managers can approve each other's skills; the 'own Line Manager approves' rule is not enforced",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "likely",
+      "urgency": "U2",
+      "urgency_reason": "Needs the scope test from TST-http first.",
+      "evidence": "canAccessEmployee gives role MANAGER access to every active employee in the manager's own department (access-scope.service.ts:163-175), with no 'must be a superior' test, and getAccessibleEmployeeIds does the same (lines 104-117). The approve handler only checks scope plus 'not my own record' (assessment.controller.ts:117-148). So a MANAGER can approve the skills of another MANAGER or LINE_MANAGER in the same department; two managers can approve each other. LINE_MANAGER_SELF_ASSESMENT_RULE.md says a manager's own skills must be approved by their designated Line Manager. Also department-assignment holders with can_manage can approve LMs in that department. The assessment is likely intended behaviour for plain engineers; the gap is for approvals of managerial staff.",
+      "locations": [
+        "backend/src/modules/access/access-scope.service.ts:163",
+        "backend/src/modules/assessment/assessment.controller.ts:117"
+      ],
+      "impact_text": "Two managers can sign off each other's assessments, which defeats the independent-approval design.",
+      "root_cause": "Approval authority is derived from read/assess scope, not from the reporting line.",
+      "fix": "On approve, when the subject's own role is MANAGER or LINE_MANAGER, require an active employee_line_manager_assignment (can_assess) from the approver to that subject; add a test that mutual approval is rejected.",
+      "test": "MANAGER A approves a pending skill of MANAGER B in the same department with no line-manager assignment -> 403; with A as B's assigned Line Manager -> 200.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [
+        "TST-001"
+      ],
+      "status": "open",
+      "references": [
+        "draft:A-14"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W2",
+      "sequence": 20
+    },
+    {
+      "id": "SEC-014",
+      "title": "Behavioral assessments are written with no period window, no approval state and no existence check on the subject",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Behavioral ratings skip the period and approval checks that skills have.",
+      "evidence": "createAssessment in behavioral.service.ts:109-163 never calls assertActiveSubmissionWindow and the BehavAssessment model has no appraisal_period_id or status (schema.prisma:765-779), so a LOCKED or closed period does not stop new rows. The controller skips the scope check when the subject cannot be resolved (`if (subject && !canAccessEmployee...)`, behavioral.controller.ts:93) and the service then stores the raw string in subject_id (line 127), a column with no foreign key. Technical and CEFR both enforce the window. subject_id resolution uses findFirst OR (emp_code, numeric id), so a numeric emp_code can resolve to a different employee whose internal id equals it (behavioral.service.ts:98-106; the same pattern is in communication.service.ts:103-118).",
+      "locations": [
+        "backend/src/modules/behavioral/behavioral.service.ts:109",
+        "backend/src/modules/behavioral/behavioral.controller.ts:93",
+        "backend/src/modules/behavioral/behavioral.service.ts:98",
+        "backend/src/modules/communication/communication.service.ts:103"
+      ],
+      "impact_text": "Behavioral ratings can be added after a period closes or for the wrong or non-existent person, and the history cannot be locked.",
+      "root_cause": "Behavioral was built before the period and approval model and was not brought in line.",
+      "fix": "Reject unknown subjects with 404 before the scope check; add assertActiveSubmissionWindow and a period id; resolve subjects by emp_code only (accept internal ids nowhere on public input).",
+      "test": "POST with unknown subjectId -> 404; POST while no OPEN period -> 403; numeric emp_code that equals another employee's internal id resolves to the emp_code owner.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [
+        "TST-001"
+      ],
+      "status": "open",
+      "references": [
+        "draft:A-13"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W2",
+      "sequence": 21
+    },
+    {
+      "id": "SEC-015",
+      "title": "Skill assessments can be deleted with no status, period or audit check",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Assessment deletion has no status, period or audit check.",
+      "evidence": "DELETE /assessments/skill-assessments/:id allows ENGINEER, LINE_MANAGER, MANAGER and ADMIN (assessment.router.ts:52-56). The controller checks scope only (assessment.controller.ts:88-107). deleteSkillAssessment hard-deletes the row regardless of status or period and does not use the requester id (assessment.service.ts:202-217, parameter unused). An engineer can therefore delete their own approved skill (and a manager their own), outside the submission window, with no trace. There is no validate() on this route and no audit row.",
+      "locations": [
+        "backend/src/modules/assessment/assessment.router.ts:52",
+        "backend/src/modules/assessment/assessment.controller.ts:88",
+        "backend/src/modules/assessment/assessment.service.ts:202"
+      ],
+      "impact_text": "Approved assessment history can disappear without any record of who removed it.",
+      "root_cause": "Delete treated as a simple CRUD action instead of a state change in an approval workflow.",
+      "fix": "Block delete of approved/pending rows for ENGINEER and own-record managers; call assertActiveSubmissionWindow; write an audit row (actor, assessment snapshot); consider soft delete.",
+      "test": "Engineer DELETE of an approved row -> 403; manager DELETE inside window writes an audit entry.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [
+        "TST-001"
+      ],
+      "status": "open",
+      "references": [
+        "draft:A-15"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W2",
+      "sequence": 22
+    },
+    {
+      "id": "REL-001",
+      "title": "Assessment write and score recompute are not one transaction, and recompute errors are swallowed",
+      "dimension": "reliability",
+      "repo": "backend",
+      "severity": "High",
+      "likelihood": "Medium",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "A failed recompute is swallowed, so saved assessments can leave scores stale with no signal.",
+      "evidence": "createSkillAssessment, updateSkillAssessment and approveSkillAssessment write via db.skillAssessment.upsert/update (no $transaction anywhere in assessment.service.ts; grep for $transaction in src finds none in assessment or scoring), then call recomputeScoresForEmployee. The service is built with swallowErrors:true, so on failure it logs and returns {failed:true}; the API still returns 200 with the new assessment. competency_scores then stay stale until some later write for that employee. The only trigger for recompute is another assessment write (no job, no config-change hook).",
+      "locations": [
+        "backend/src/modules/assessment/assessment.service.ts:20-24",
+        "backend/src/modules/assessment/assessment.service.ts:201",
+        "backend/src/modules/assessment/assessment.service.ts:238",
+        "backend/src/modules/assessment/assessment.service.ts:325",
+        "backend/src/modules/assessment/assessment.service.ts:397",
+        "backend/src/scoring/score-recalculation.service.ts:207-211"
+      ],
+      "impact_text": "A transient DB error leaves an approved assessment whose score never reaches reports, and nobody is told; readiness numbers silently disagree with the underlying assessments.",
+      "root_cause": "Write and derived-score refresh are separate auto-commit statements; failure policy chosen as swallow.",
+      "fix": "Run the assessment write and the affected-competency recompute inside one db.$transaction (pass the tx client to createScoreRecalculationService); stop swallowing errors on the request path (fail the request, or record a 'scores_stale' flag and retry). Add an admin 'recompute all' endpoint that uses the existing backfill logic.",
+      "test": "Unit test with a recompute that throws: assert the assessment row is rolled back (or request returns 5xx), never 200 with stale score.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "chain_id": "CHAIN-3",
+      "status": "open",
+      "references": [
+        "draft:B-02"
+      ],
+      "unblocks": [
+        "REL-002",
+        "PRF-001",
+        "DAT-005"
+      ],
+      "quick_win": false,
+      "wave": "W3",
+      "sequence": 23
+    },
+    {
+      "id": "DAT-001",
+      "title": "AI Insights KPI bars draw invented widths: 'Ready People' fills 3% for 3/12 and zero-valued tiles show an 18% bar",
+      "dimension": "data",
+      "repo": "frontend",
+      "severity": "Medium",
+      "likelihood": "High",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Breaks the no-invented-numbers rule on an executive screen; small fix.",
+      "evidence": "components/dashboard/tabs/AIInsightsTab.tsx:984 sets bar width to `clampPct(Number.parseInt(String(kpi.value), 10) || 18)`. For the tile built at lines 942-948 the value is the string `3/12` style (readyResources/totalResources), so parseInt returns the ready COUNT and the bar fills that many percent, not readinessPct (shown in the text on line 945). For 'Critical Gaps' (line 949-951) the value is a count, so 40 gaps draw a 40% bar (clamped). When the parsed value is 0 or NaN the code substitutes 18, so the bar looks 18% full when the true value is zero or missing. Violates project-standards section 1 (no invented numbers).",
+      "locations": [
+        "frontend/src/components/dashboard/tabs/AIInsightsTab.tsx:984",
+        "frontend/src/components/dashboard/tabs/AIInsightsTab.tsx:942",
+        "frontend/src/components/dashboard/tabs/AIInsightsTab.tsx:949"
+      ],
+      "impact_text": "Managers read a bar that does not match the number beside it, and an empty result looks partly full.",
+      "root_cause": "The bar width is guessed by parsing the display string instead of carrying a numeric fill per KPI.",
+      "fix": "Give each KPI an explicit `fillPct: number | null` (readinessPct, avg achieved/required, null for counts) and render no bar when null; remove the `|| 18`.",
+      "test": "Unit test: ready 3/12 draws 25%; zero critical gaps draws no filled bar; missing value draws no bar.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-15"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W3",
+      "sequence": 24
+    },
+    {
+      "id": "DAT-002",
+      "title": "Executive summary shows 0 where there is no data, and a third copy of the overall-score computation sits in the YoY report",
+      "dimension": "data",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "A third copy of the overall score and zeros where data is absent.",
+      "evidence": "buildDepartmentBreakdownRow returns cefrReadyRate 0, avgBehavScore 0 and expectedBehavScore 0 (and behavGap 0) when nobody is assessed, and techScore divides by (techTargetedCount || 1) giving 0; the standards say unassessed is never zero. Separately getMultiYearYoYGrowthReport re-derives each period's competency score by summing assessment.score and clamping, filters status === 'approved' as a literal (ignoring configurable scoredStatuses used by score-recalculation), and builds domain/overall again via buildDomainScores/weightedOverall, a third path next to stored competency_scores and recomputeOneCompetency. Rounding also varies: scoring.engine roundScore uses Math.round(x*100)/100 while reports use Number(x.toFixed(1)) (binary-float rounding, not half-up on exact ties such as 0.25 values).",
+      "locations": [
+        "backend/src/modules/reports/reports.service.ts:773-795",
+        "backend/src/modules/reports/reports.service.ts:927-975",
+        "backend/src/scoring/scoring.engine.ts:84",
+        "backend/src/scoring/score-recalculation.service.ts:97-103"
+      ],
+      "impact_text": "A department with no behavioural reviews looks like it scored 0, and the YoY chart can disagree with the competency screen for the same person.",
+      "root_cause": "Report code grew its own aggregation instead of reusing the scoring engine; a shared half-up helper is not used.",
+      "fix": "Return null (and an assessed count) when the denominator is 0; make YoY read the same per-competency scoring function with scoredStatuses; add one roundHalfUp(value, decimals) helper in scoring and use it for every report figure.",
+      "test": "Test: dept with no behavioural data returns null, not 0; YoY current-period score equals promotion-readiness overall for same employee; roundHalfUp(1.005,2)=1.01.",
+      "effort": "M",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:B-15"
+      ],
+      "unblocks": [
+        "DAT-003"
+      ],
+      "quick_win": false,
+      "wave": "W3",
+      "sequence": 25
+    },
+    {
+      "id": "DAT-003",
+      "title": "Readiness is decided in the frontend in several places, with different rules and a hard-coded 75% 'near ready' threshold",
+      "dimension": "data",
+      "repo": "frontend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "likely",
+      "urgency": "U2",
+      "urgency_reason": "Several readiness rules in the frontend; needs one rule from the backend.",
+      "evidence": "Second computations: lib/reportGroups.ts:104-105 builds meetsAllChecks from three client-side tests; reportGroups.ts:121-122 meetsBehavioral compares behav_score >= behav_expected_score on the client; lib/formatters.ts:252-253 isNearReady hard-codes 0.75 (used at GapAnalysisTab.tsx:84 and reportGroups.ts:115); components/reports/tabs/cefrBenchmarksData.ts:27-31 re-derives the CEFR state when cefr_state is absent (a fallback that can mislabel 'incomplete' as 'below'). Inconsistent counting of 'ready': GapAnalysisTab.tsx:88-90 and 100, OverviewTab.tsx:124-125, TeamHealthCharts.tsx:76 and TeamRoster.tsx:249 count promotion_ready (technical only), while ExecutiveSummaryTab.tsx:148-150, promotionReadinessData.ts:54,234 and ExecutiveDataTable.tsx:22 use meetsAllChecks (three checks), so two screens can show a different ready count for the same people. Also frontend recomputes averages and overall values: BehavioralAssessmentView.tsx:199-200 (overall CW), AssessmentsTab.tsx:183-184, domainScoresData.ts:60-61, promotionReadinessData.ts:114. Rounding: 58 Math.round calls versus 12 uses of lib/roundHalfUp across src (non-test), for example BehavioralAssessmentView.tsx:199, domainScoresData.ts:60, pillarAttainment.ts:28, StarRatingsTab.tsx:80.",
+      "locations": [
+        "frontend/src/lib/reportGroups.ts:104",
+        "frontend/src/lib/formatters.ts:252",
+        "frontend/src/components/reports/tabs/GapAnalysisTab.tsx:88",
+        "frontend/src/components/dashboard/tabs/OverviewTab.tsx:124",
+        "frontend/src/components/reports/tabs/ExecutiveSummaryTab.tsx:148",
+        "frontend/src/components/reports/tabs/cefrBenchmarksData.ts:27",
+        "frontend/src/components/behavioral/BehavioralAssessmentView.tsx:199"
+      ],
+      "impact_text": "The same person can be counted ready on one dashboard and not ready on another, which undermines trust in promotion numbers.",
+      "root_cause": "Readiness rules grew screen by screen; backend sends promotion_ready and cefr_state but not a single all-checks flag or the near-ready band.",
+      "fix": "Have the backend send one `ready_all_checks` and `near_ready` field per person and make every screen read them; delete meetsAllChecks/isNearReady/cefrState fallback logic from the client; route all rounding through roundHalfUp (add a lint rule against Math.round in lib and report data files).",
+      "test": "Contract test: for one fixture of people, every screen's ready count equals the backend field count; lint rule fails on Math.round.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [
+        "DAT-002"
+      ],
+      "needs_decision": true,
+      "decision_id": "D4",
+      "status": "open",
+      "references": [
+        "draft:C-17"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W3",
+      "sequence": 26
+    },
+    {
+      "id": "PRF-001",
+      "title": "Each assessment save recomputes every competency for the person, one by one",
+      "dimension": "performance",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "High",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Cost per save grows with the person's competency count.",
+      "evidence": "recomputeScoresForEmployee loads all of the employee's assessments plus all competency_scores, then loops sequentially (await in for-loop) calling recomputeOneCompetency, which runs 3 reads (competency, technologies, skillAssessments) plus 1 upsert per competency. Cost per save is about 4 x (number of assessed competencies) queries, though only one technology changed. Approvals of a batch multiply it. Technology lookups are per competency, not batched.",
+      "locations": [
+        "backend/src/scoring/score-recalculation.service.ts:161-205",
+        "backend/src/scoring/score-recalculation.service.ts:96-107"
+      ],
+      "impact_text": "Save latency grows with the number of skills a person has and holds a DB connection while it runs; bulk approval days will feel slow.",
+      "root_cause": "Full-employee recompute for a one-competency change, with N+1 queries inside.",
+      "fix": "Recompute only the competency touched by the write (recomputeOneCompetency already exists); fetch technologies and assessments for all competencies in two queries and compute in memory; skip upsert when unchanged.",
+      "test": "Test with a prisma spy: saving one assessment for a person with 20 competencies issues a constant number of queries (< 6), independent of competency count.",
+      "effort": "M",
+      "fix_risk": "low",
+      "blocked_by": [
+        "REL-001"
+      ],
+      "status": "open",
+      "references": [
+        "draft:B-03"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W3",
+      "sequence": 27
+    },
+    {
+      "id": "REL-002",
+      "title": "Two simultaneous saves for one person can overwrite each other's score",
+      "dimension": "reliability",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Low",
+      "impact": "Medium",
+      "confidence": "likely",
+      "urgency": "U2",
+      "urgency_reason": "Needs the transaction from REL-atomic first.",
+      "evidence": "Recompute is read-all-assessments then upsert per competency without a transaction, row lock or version check. Two approvals for the same employee at the same moment each read the other's pre-write state; the later upsert wins and can store a score missing the other assessment. DB-level assessment unique keys protect the assessments, not the derived score.",
+      "locations": [
+        "backend/src/scoring/score-recalculation.service.ts:96-142",
+        "backend/prisma/schema.prisma:595-613"
+      ],
+      "impact_text": "Rare, but the wrong stored score is silent and stays until the next save.",
+      "root_cause": "No serialisation of recompute per employee.",
+      "fix": "Do write + recompute in one transaction with SELECT ... FOR UPDATE on the employee row (or pg_advisory_xact_lock(employee_id)).",
+      "test": "Concurrency test: fire two approve calls via Promise.all against a test DB; assert the final competency score equals the sum of both.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [
+        "REL-001"
+      ],
+      "chain_id": "CHAIN-3",
+      "status": "open",
+      "references": [
+        "draft:B-04"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W3",
+      "sequence": 28
+    },
+    {
+      "id": "DAT-004",
+      "title": "A database number is shown on screen in the manager picker in Setup > Employees",
+      "dimension": "data",
+      "repo": "frontend",
+      "severity": "Low",
+      "likelihood": "High",
+      "impact": "Low",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "A database number is visible in one picker.",
+      "evidence": "components/config/organization/EmployeesSection.tsx:304-308 `formatUserLabel` returns `${user.employee_id} - ${name} - ${dept}`, where user.employee_id is the numeric primary key (ConfigUser.employee_id: number, hooks/useConfig.ts:13) not emp_code (user.employee.emp_code is available, hooks/useConfig.ts:15). Line 314 uses it for every manager option label. The same row's option value is also the user id, which is fine as an internal value. Other sites checked and clean: PendingApprovalsPanel.tsx:430 (employee_id there is compared to empCode at line 127, so it is the business code); gapReportCsv.ts:41 exports emp_code.",
+      "locations": [
+        "frontend/src/components/config/organization/EmployeesSection.tsx:308",
+        "frontend/src/hooks/useConfig.ts:13"
+      ],
+      "impact_text": "Admins see a meaningless number next to each manager, breaking the rule that screens show employee codes only.",
+      "root_cause": "Label helper typed `any` and uses the wrong field.",
+      "fix": "Use user.employee?.emp_code in the label and type the helper as ConfigUser.",
+      "test": "Unit test: manager option label starts with the emp_code, not the numeric id.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-16"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W3",
+      "sequence": 29
+    },
+    {
+      "id": "DAT-005",
+      "title": "Appraisal history is not real: assessments are one row per person per skill and are moved into the current period",
+      "dimension": "data",
+      "repo": "backend",
+      "severity": "High",
+      "likelihood": "High",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "Past appraisal results are overwritten; high fix risk, so it follows the tests and the atomic write.",
+      "evidence": "skill_assessments has @@unique([employee_id, technology_id]), so a person has one assessment per technology across all time. createSkillAssessment upserts on that key and the update branch sets appraisal_period_id to the active period; update and approve paths also set appraisal_period_id: activePeriodId. Re-assessing in 2027 overwrites the 2026 row and re-tags it as 2027. competency_scores (unique employee_id+competency_id) and domain_scores (unique employee_id+domain_id) have no period column at all. getMultiYearYoYGrowthReport groups skill_assessments by appraisal_period_id, so earlier-year columns can only show skills not yet re-assessed, and approving an old assessment pulls it into the new period.",
+      "locations": [
+        "backend/prisma/schema.prisma:554-593",
+        "backend/prisma/schema.prisma:595-613",
+        "backend/prisma/schema.prisma:618-632",
+        "backend/src/modules/assessment/assessment.service.ts:201-236",
+        "backend/src/modules/assessment/assessment.service.ts:320",
+        "backend/src/modules/reports/reports.service.ts:927-955"
+      ],
+      "impact_text": "The year-on-year growth report and any 'what was Ravi's level in 2025' question cannot be answered truthfully; history is lost the moment someone re-assesses.",
+      "root_cause": "Assessments and derived scores are keyed to the person and skill only; period is just a mutable tag.",
+      "fix": "Make period part of the key: unique (employee_id, technology_id, appraisal_period_id) and add appraisal_period_id to competency_scores/domain_scores (or snapshot scores at period lock). Stop rewriting appraisal_period_id on update/approve; new period = new row (honour auto_rollover_skills by copying). Migrate existing rows with the period they carry.",
+      "test": "Integration test: assess skill in period A, open period B, re-assess; assert two rows exist and the YoY report shows both values.",
+      "effort": "L",
+      "fix_risk": "high",
+      "blocked_by": [
+        "REL-001",
+        "TST-001"
+      ],
+      "chain_id": "CHAIN-3",
+      "needs_decision": true,
+      "decision_id": "D6",
+      "status": "open",
+      "references": [
+        "draft:B-05"
+      ],
+      "unblocks": [
+        "DAT-006",
+        "DAT-007"
+      ],
+      "quick_win": false,
+      "wave": "W4",
+      "sequence": 30
+    },
+    {
+      "id": "DAT-008",
+      "title": "Deleting config rows cascades or nulls history with no guard",
+      "dimension": "data",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Low",
+      "impact": "High",
+      "confidence": "likely",
+      "urgency": "U2",
+      "urgency_reason": "Deleting a config row can erase or null history.",
+      "evidence": "deleteCompetency, deleteTechnology and deleteAppraisalPeriod call prisma delete directly. Schema: SkillAssessment.technology onDelete Cascade (deleting a technology deletes every employee's assessment on it), CompetencyScore.competency Cascade, DomainScore.domain Cascade, Employee deletes cascade to assessments and scores, and period/domain/competency FKs on assessments are SetNull (history rows lose context). Only config.manage permission is needed; there is no soft-delete check or 'in use' count.",
+      "locations": [
+        "backend/src/modules/config/config.service.ts:1520-1522",
+        "backend/src/modules/config/config.service.ts:1599-1601",
+        "backend/src/modules/config/config.service.ts:1655-1657",
+        "backend/prisma/schema.prisma:569-574",
+        "backend/prisma/schema.prisma:604-606"
+      ],
+      "impact_text": "One misclick in setup can erase appraisal evidence for many employees.",
+      "root_cause": "Hard delete exposed on referenced reference data.",
+      "fix": "Replace with is_active=false (fields already exist) and block hard delete when child rows exist; change assessment FK to Restrict.",
+      "test": "Test: DELETE a technology with assessments returns 409 and rows remain.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:B-18"
+      ],
+      "unblocks": [],
+      "quick_win": true,
+      "wave": "W4",
+      "sequence": 31
+    },
+    {
+      "id": "DAT-006",
+      "title": "A LOCKED period is only locked in application code; it can be reopened, deleted or orphaned",
+      "dimension": "data",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "A locked period is only locked in application code.",
+      "evidence": "Locking is enforced only by assertActiveSubmissionWindow (filters is_active and status OPEN) in the three assessment write paths. No DB trigger or constraint exists on skill_assessments or appraisal_periods (the only trigger in migrations is cefr_levels_scale_lock). updateAppraisalPeriod spreads any status (LOCKED to OPEN or DRAFT) with no transition rule; deleteAppraisalPeriod hard-deletes with no status check and the FK is onDelete:SetNull, so assessments silently lose their period. Several periods can be is_active at once (index only, no partial unique). Other writers (behavioral, communication, improvement plans, scripts, direct SQL) bypass the check unless they call it.",
+      "locations": [
+        "backend/src/modules/config/period-validation.service.ts:23-75",
+        "backend/src/modules/config/config.service.ts:1641-1657",
+        "backend/prisma/schema.prisma:640-662",
+        "backend/prisma/schema.prisma:571"
+      ],
+      "impact_text": "Closed-period results, which managers rely on as final, can be changed or detached by one config click or a missed code path.",
+      "root_cause": "Immutability is a convention in one service function.",
+      "fix": "Refuse delete when assessments exist; add a state-machine guard (LOCKED/ARCHIVED cannot go back); add a Postgres trigger rejecting INSERT/UPDATE on skill_assessments (and comm/behav assessments) whose period is LOCKED/ARCHIVED; partial unique index on appraisal_periods(is_active) WHERE is_active.",
+      "test": "Test: PATCH a LOCKED period to OPEN is 409; DELETE a period that has assessments is 409; raw UPDATE of an assessment in a LOCKED period is rejected by the trigger.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [
+        "DAT-005"
+      ],
+      "status": "open",
+      "references": [
+        "draft:B-06"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W4",
+      "sequence": 32
+    },
+    {
+      "id": "DAT-007",
+      "title": "Changing scoring weights, targets or levels silently changes old results and does not refresh stored scores",
+      "dimension": "data",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Editing weights or targets silently changes old results.",
+      "evidence": "Weights live in single-row-per-code config tables (assessment_type_configs.weight, level configs, SkillDomainGradeWeight, CefrPolicy id=1 with no version) edited in place; there is no effective-date or version column and no period link. Per-assessment score is stored at write time, so existing rows keep the old coefficients, but computeCompetencyScore falls back to live config whenever storedScore is 0 (line 197), and reports use live domain weights/thresholds for every period (loadDomainWeights in yoy report). config.service.ts contains no call to the recompute service, so a weight edit leaves competency_scores stale until each person is next assessed. Result: stored scores mix old and new rules.",
+      "locations": [
+        "backend/prisma/schema.prisma:62-75",
+        "backend/prisma/schema.prisma:167-178",
+        "backend/prisma/schema.prisma:874-881",
+        "backend/src/scoring/scoring.engine.ts:195-199",
+        "backend/src/modules/reports/reports.service.ts:947-950"
+      ],
+      "impact_text": "Two people assessed under different rule sets are compared as if equal, and a past period's score changes retroactively when a policy is edited.",
+      "root_cause": "Config is mutable global state; no snapshot per period.",
+      "fix": "Snapshot the scoring config (weights, thresholds, CEFR policy) into the period at open/lock (a scoring_config_snapshot JSON or versioned tables) and have reports read the period's snapshot; after a config edit, either block it while a period is OPEN or trigger a full recompute job.",
+      "test": "Test: lock a period, change a type weight, fetch the period report; values equal pre-change values.",
+      "effort": "L",
+      "fix_risk": "medium",
+      "blocked_by": [
+        "DAT-005"
+      ],
+      "chain_id": "CHAIN-3",
+      "status": "open",
+      "references": [
+        "draft:B-07"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W4",
+      "sequence": 33
+    },
+    {
+      "id": "DAT-009",
+      "title": "Destructive and non-repeatable migration statements without safeguards",
+      "dimension": "data",
+      "repo": "backend",
+      "severity": "Low",
+      "likelihood": "Low",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "Old migrations are not safe to repeat.",
+      "evidence": "20260909000000_industry_description_instead_of_external_ref runs ALTER TABLE linked_industries DROP COLUMN external_ref then ADD COLUMN description, with no data copy or IF EXISTS; 20260908010000_rename_industries_tables renames tables and constraints in sequence (a re-run or partial failure leaves a half-renamed state, and 'industries' changes meaning from child to sector table). 20260924020000_cefr_policy_and_scale_lock uses CREATE OR REPLACE FUNCTION plus CREATE TRIGGER (checked only by migration order). Prisma runs each migration in one transaction on PostgreSQL, which limits the partial-failure risk. Not reviewed: earlier migrations beyond the latest 8.",
+      "locations": [
+        "backend/prisma/migrations/20260909000000_industry_description_instead_of_external_ref/migration.sql:5",
+        "backend/prisma/migrations/20260908010000_rename_industries_tables/migration.sql:9-19"
+      ],
+      "impact_text": "Low: data in external_ref is gone for good on a production deploy; table rename reuses a name with new meaning, which is a trap for rollback.",
+      "root_cause": "Schema churn handled by direct DDL without expand/contract.",
+      "fix": "Prefer expand/contract (add column, copy, drop in a later release) and take a backup/snapshot gate before destructive migrations; avoid reusing old table names.",
+      "test": "Staging rehearsal: apply migrations to a restored copy and compare row counts before/after.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:B-17"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W4",
+      "sequence": 34
+    },
+    {
+      "id": "REL-004",
+      "title": "Deploy scripts run database migrations on production with no backup step and no health gate",
+      "dimension": "reliability",
+      "repo": "workspace",
+      "severity": "Medium",
+      "likelihood": "Low",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Production migrations run with no backup step or health gate.",
+      "evidence": "scripts/deploy-prod.sh:25-31 and deployments/deploy.sh:22-24 run `docker compose pull`, then `docker compose run --rm api npx prisma migrate deploy`, then `up -d --force-recreate`. No pg_dump or backup check precedes the migration, no post-deploy health/smoke check follows (only `docker compose ps`), and both scripts say a migrated release cannot be rolled back (deploy-prod.sh:12-13). The migration runs against the old image's schema while the old containers are still serving. No pipeline step runs migrations (grep migrate in both pipelines: none), so this manual step is the only gate.",
+      "locations": [
+        "scripts/deploy-prod.sh:28",
+        "deployments/deploy.sh:23",
+        "scripts/deploy-prod.sh:12"
+      ],
+      "impact_text": "A bad migration on production employee data has no fresh restore point and may be noticed only by users.",
+      "root_cause": "Deploy script was built for speed; backups are a separate manual job.",
+      "fix": "Call the backup script and confirm the upload before migrate deploy; after up -d poll /health and fail loudly; document expand/contract migration rules.",
+      "test": "Dry run on staging: script aborts when backup fails; script prints health OK after deploy.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": "CHAIN-4",
+      "status": "open",
+      "references": [
+        "draft:C-10"
+      ],
+      "unblocks": [],
+      "quick_win": true,
+      "wave": "W5",
+      "sequence": 35
+    },
+    {
+      "id": "SEC-017",
+      "title": "Server errors return raw messages (including database errors) to clients and the logged error is lost",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "High",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Raw database errors reach clients.",
+      "evidence": "errorHandler sends error.message as the JSON error for every status, including 500s, plus the request path. Prisma errors (unique constraint, foreign key, column names, query text fragments) pass through untouched because services throw them directly. Separately, logger.error('Server error', { error, ... }) uses the wrong pino argument order (message first), so the error object and stack are not emitted; only the string is logged. Only 5xx reach this path in logs, so production 500s have no stack.",
+      "locations": [
+        "backend/src/middleware/errorHandler.ts:15-37"
+      ],
+      "impact_text": "Internal schema details leak to any caller, and on-call cannot see why a 500 happened.",
+      "root_cause": "Handler does not distinguish operational from unexpected errors; pino call signature misused (also in validate.ts:46).",
+      "fix": "For statusCode>=500 or non-ApiError, return a generic message plus request id; map known Prisma codes (P2002 to 409, P2025 to 404, P2003 to 409); log with logger.error({ err: error, reqId: req.id, path }, 'Server error').",
+      "test": "Test: throw a PrismaClientKnownRequestError in a route; response body has no table/column text and the logger spy receives an err object.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:B-09"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W5",
+      "sequence": 36
+    },
+    {
+      "id": "SEC-019",
+      "title": "Production API port 4000 is published on the host, bypassing nginx TLS, headers and rate limits",
+      "dimension": "security",
+      "repo": "workspace",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "likely",
+      "urgency": "U2",
+      "urgency_reason": "Port 4000 may bypass nginx protections.",
+      "evidence": "deployments/docker-compose.prod.yml:13-14 and docker-compose.yml:11-12 publish `4000:4000` (and frontend 3001:80 / 3000:80). Docker publishes on 0.0.0.0 and bypasses ufw/iptables INPUT rules by default, so unless a cloud firewall blocks 4000 the API is reachable without going through nginx. deployments/docker-compose.dev.yml:9-10 correctly uses `expose` only, showing the safer pattern is already known. Host firewall and security group were not inspected.",
+      "locations": [
+        "deployments/docker-compose.prod.yml:13",
+        "docker-compose.yml:11",
+        "deployments/docker-compose.dev.yml:9"
+      ],
+      "impact_text": "Attackers can hit the API directly, skipping the rate limit on login and the security headers.",
+      "root_cause": "Ports published for convenience; nginx is on the host/another container.",
+      "fix": "Bind to loopback (`127.0.0.1:4000:4000`, `127.0.0.1:3001:80`) since the VM nginx proxies to 127.0.0.1 (deployments/vm-nginx.conf:7,20).",
+      "test": "From another host, `curl http://<server>:4000/health` is refused; the site still works through nginx.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-07"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W5",
+      "sequence": 37
+    },
+    {
+      "id": "DAT-010",
+      "title": "Backup scripts leave database dumps in world-readable /tmp, have no retention or encryption setting, and the dev restore pulls from the prod prefix",
+      "dimension": "data",
+      "repo": "workspace",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Backups sit in a world-readable folder with no retention.",
+      "evidence": "scripts/backup.sh:34 and scripts/rct-backup-prod.sh:40 use BACKUP_DIR=/tmp/postgres-backup-rct; the dump is created with default umask (mkdir -p line 44, pg_dump --file line 69), and the cleanup `rm -f` on line 101 runs only on success, with no `trap`, so a failed upload leaves a full employee-data dump in /tmp. The aws s3 cp calls (lines 86-95) set no --sse option and the script has no retention/prune logic (grep for retention/-mtime/delete: none); whether the bucket has lifecycle rules was not checked. Credentials rely on an AWS profile (good, no keys in file). scripts/restore-script-dev.sh:52 sets S3_PREFIX=\"postgres/prod\", so the dev restore is designed to load production data into a development database. No scheduled-restore test is documented in the repo.",
+      "locations": [
+        "scripts/backup.sh:34",
+        "scripts/backup.sh:101",
+        "scripts/rct-backup-prod.sh:40",
+        "scripts/restore-script-dev.sh:52"
+      ],
+      "impact_text": "Personal appraisal data can sit unprotected on the server after a failure, and copies of production data end up in less protected dev environments.",
+      "root_cause": "Scripts were written for convenience; no cleanup trap, permissions or lifecycle.",
+      "fix": "Use `umask 077` and mktemp -d with a `trap` cleanup, add --sse AES256 (or KMS), add an S3 lifecycle rule plus a documented retention, run a monthly automated restore test, and mask or anonymise data before restoring to dev.",
+      "test": "Kill the script mid-upload: no dump remains in /tmp; ls -l shows 600 permissions; restore test job passes monthly.",
+      "effort": "M",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": "CHAIN-4",
+      "needs_decision": true,
+      "decision_id": "D3",
+      "status": "open",
+      "references": [
+        "draft:C-11"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W5",
+      "sequence": 38
+    },
+    {
+      "id": "OPS-004",
+      "title": "Both production images run as root and install Node with a curl-to-bash script on an unpinned full Ubuntu base",
+      "dimension": "cicd-supply-chain",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "A container escape starts as root; unpinned base and curl-to-bash install.",
+      "evidence": "backend/Dockerfile has no USER instruction (53 lines; trivy already confirmed root). Lines 9, 20, 37 run `curl -fsSL https://deb.nodesource.com/setup_24.x | bash -` three times (once per stage, including the runtime stage), and all three stages use `ubuntu:24.04` with no digest (lines 4, 15, 32). The runtime image therefore also contains curl, apt and a shell. Dockerfile.dev:9 repeats the pattern. frontend/Dockerfile:5 uses `nginx:alpine` (floating tag, no USER, runs master as root). No `docker-compose` hardening keys (read_only, no-new-privileges, cap_drop, mem_limit) found in docker-compose.yml or deployments/docker-compose.prod.yml (grep returned nothing).",
+      "locations": [
+        "backend/Dockerfile:4",
+        "backend/Dockerfile:9",
+        "backend/Dockerfile:37",
+        "backend/Dockerfile:53",
+        "backend/Dockerfile.dev:9",
+        "frontend/Dockerfile:5"
+      ],
+      "impact_text": "A single bug in the API or a poisoned NodeSource script would give an attacker root inside a container that holds the database password and OpenAI key.",
+      "root_cause": "Node is installed on a general-purpose OS image by piping a remote script to a shell, and no non-root user was ever created.",
+      "fix": "Use node:24-bookworm-slim (or node:24-alpine) pinned by digest, drop the NodeSource step, add `USER node` in the runner stage, use nginxinc/nginx-unprivileged for the frontend, and add read_only/cap_drop/no-new-privileges and memory limits in compose.",
+      "test": "docker run --rm image id -u returns non-zero; trivy config reports no DS-0002; CI image build still passes healthcheck.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-02"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W5",
+      "sequence": 39
+    },
+    {
+      "id": "OPS-005",
+      "title": "Images are published under a personal Docker Hub account (tariqsulehri/rct-*)",
+      "dimension": "cicd-supply-chain",
+      "repo": "workspace",
+      "severity": "Medium",
+      "likelihood": "Low",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Production images depend on one person's account.",
+      "evidence": "Namespace tariqsulehri/rct-backend and rct-frontend appears in docker-compose.yml:5,17, docker-compose.dev.yml:3,15, deployments/docker-compose.prod.yml:7,19, deployments/docker-compose.dev.yml:3,15, and 20+ push/build lines in both pipeline files (e.g. backend/bitbucket-pipelines.yml:54-56, 76-81).",
+      "locations": [
+        "docker-compose.yml:5",
+        "deployments/docker-compose.prod.yml:7",
+        "backend/bitbucket-pipelines.yml:54",
+        "frontend/bitbucket-pipelines.yml:58"
+      ],
+      "impact_text": "The company's production images depend on one person's personal account, so leaving, losing the account, or hitting personal-plan pull limits stops deployments.",
+      "root_cause": "Started as a personal project; the registry was never moved to an organisation.",
+      "fix": "Create an organisation registry namespace (Docker Hub org, ECR or Bitbucket) and make the namespace a single variable used by compose and pipelines; use an org-owned service token.",
+      "test": "grep for the personal namespace returns 0; a fresh deploy pulls from the org registry.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "needs_decision": true,
+      "decision_id": "D2",
+      "status": "open",
+      "references": [
+        "draft:C-06"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W5",
+      "sequence": 40
+    },
+    {
+      "id": "PRF-002",
+      "title": "Report endpoints compute everything on every read with no pagination or cache",
+      "dimension": "performance",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "likely",
+      "urgency": "U2",
+      "urgency_reason": "Reports compute everything on every read.",
+      "evidence": "Reports (promotion-readiness, competency-scores, competency-matrix, gap-matrix, skills-summary, executive-summary, yoy-growth) load all in-scope employees, all stored scores, all thresholds and assessments for them in one request and compute per employee in memory (e.g. getMultiYearYoYGrowthReport loads every approved skill_assessment of every employee, then does periodAssessments.some(...) per period, an O(periods x rows) scan). Only assessment-history paginates (skip/take). AI dashboard calls three of these reports in parallel per request. loadReportSkillContext re-reads competencies, groupBy score counts and matrix counts each call. Cost grows with headcount x skills.",
+      "locations": [
+        "backend/src/modules/reports/reports.service.ts:905-1012",
+        "backend/src/modules/reports/report-data.service.ts:24-70",
+        "backend/src/modules/ai/ai.service.ts:798-803",
+        "backend/src/modules/reports/reports.service.ts:402-418"
+      ],
+      "impact_text": "Fine for today's team, but report pages and the AI dashboard will slow and the payload grows linearly as the organisation grows.",
+      "root_cause": "No aggregation layer; all rollups done in Node per request.",
+      "fix": "Cache reference data (competencies, weights) with short TTL; add server-side pagination or limit/offset for per-person lists; push groupings to SQL; replace the some() scan with a Set of period ids.",
+      "test": "Load test with 2,000 employees: p95 of /reports/promotion-readiness under target and response size bounded.",
+      "effort": "M",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:B-14"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W5",
+      "sequence": 41
+    },
+    {
+      "id": "SEC-018",
+      "title": "AI calls send named employee data to OpenAI with no timeout, no cost cap and up to four sequential model attempts",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "Medium",
+      "likelihood": "High",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Named employee data is sent to OpenAI with no timeout or cost cap.",
+      "evidence": "buildAiPayload sends name (full_name), empCode, grades, achieved and required percent and ready flag for 12 employees, plus riskPeople and blockers (names again) to https://api.openai.com/v1/responses; not pseudonymised. The request body does not set store:false, so the Responses API default retention applies. fetch has no AbortSignal/timeout; callOpenAi loops over [OPENAI_MODEL, gpt-5.4-mini, gpt-4o-mini, gpt-4o], each sequentially, so one hung upstream blocks the request indefinitely and a failing key can trigger 4 calls per click. No max_output_tokens, no caching of dashboard output, no per-user rate limit on /ai/dashboard and /ai/chat (GET dashboard fires OpenAI every load). Question is clamped to 600 chars; focus is allow-listed. Positive: failures fall back to a deterministic answer. Also found separately: The payload sent to OpenAI includes employee full_name, competency and domain names (admin-editable config text) as JSON values inside the user message; the manager's free-text question is also embedded. The system prompt says 'use only supplied data' but nothing strips instructions in names/competency labels; a crafted competency name could steer the narrative shown to executives. Output is JSON-shape coerced and clamped (clampText, coerceAiResponse) which limits impact to misleading text, not data access.",
+      "locations": [
+        "backend/src/modules/ai/ai.service.ts:317-342",
+        "backend/src/modules/ai/ai.service.ts:410-440",
+        "backend/src/modules/ai/ai.service.ts:722-745",
+        "backend/src/modules/ai/ai.service.ts:795-832",
+        "backend/src/modules/ai/ai.router.ts:12-20",
+        "backend/src/modules/ai/ai.service.ts:329-341",
+        "backend/src/modules/ai/ai.service.ts:446-470",
+        "backend/src/modules/ai/ai.service.ts:352-380"
+      ],
+      "impact_text": "Appraisal data on named people leaves the company without a documented basis, and a slow OpenAI response can hang requests and run up cost.",
+      "root_cause": "Pragmatic integration; payload built from report rows incl. identity fields.",
+      "fix": "Replace names/emp_codes with per-request aliases (map back server-side) or drop them; set store:false, max_output_tokens, AbortSignal.timeout(15000); cache dashboard per user+focus for several minutes; add express-rate-limit on /ai/*; cap model fallback to 1 retry. Also: Length-limit and strip control/markup from names before sending; wrap data in a delimited block and tell the model it is data only; render AI output as plain text in the UI.",
+      "test": "Test: payload passed to fetch contains no full_name/emp_code; fetch mock that never resolves leads to fallback within the timeout. Test with a competency named 'Ignore previous instructions...'; output is still schema-valid and the name is passed as an escaped value.",
+      "effort": "M",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:B-12",
+        "draft:B-13"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W5",
+      "sequence": 42
+    },
+    {
+      "id": "SEC-020",
+      "title": "No Content-Security-Policy anywhere; the VM nginx config has no TLS, no security headers and no rate limiting",
+      "dimension": "security",
+      "repo": "workspace",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "No Content-Security-Policy anywhere.",
+      "evidence": "grep for Content-Security-Policy / Permissions-Policy in frontend/nginx.conf, nginx/nginx.conf, deployments/vm-nginx.conf finds none. nginx/nginx.conf:89-93 sets HSTS, nosniff, X-Frame-Options, Referrer-Policy (and the obsolete X-XSS-Protection). deployments/vm-nginx.conf is `listen 80` only (line 2), proxies / and /api/ with no add_header at all and no limit_req (lines 5-31) and sets Upgrade/Connection upgrade headers for plain HTTP APIs (lines 9-10). frontend/nginx.conf (the image config) sends no security headers. Which file is live on the VM was not verified. The backend sets helmet (backend/src/app.ts:33) which covers API responses only, not the HTML.",
+      "locations": [
+        "nginx/nginx.conf:89",
+        "deployments/vm-nginx.conf:2",
+        "frontend/nginx.conf:11"
+      ],
+      "impact_text": "Any future XSS has no browser-side brake and the app can be framed or downgraded depending on which proxy config is actually live.",
+      "root_cause": "Three overlapping nginx configs; headers were added to only one.",
+      "fix": "Add security headers (CSP `default-src 'self'` with the needed img/style rules, Permissions-Policy, frame-ancestors) to frontend/nginx.conf so they ship with the image regardless of the front proxy; keep a single documented proxy config and add TLS/redirect and rate limits to the VM config (or retire it).",
+      "test": "curl -I https://careeros.tkxel-team.com shows CSP, HSTS and nosniff; CSP report-only run shows no violations in the e2e flow.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-08"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W5",
+      "sequence": 43
+    },
+    {
+      "id": "REL-003",
+      "title": "Shutdown exits before in-flight requests finish, and signals are handled twice",
+      "dimension": "reliability",
+      "repo": "backend",
+      "severity": "Low",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "Requests in flight can be cut on deploy.",
+      "evidence": "server.ts gracefulShutdown calls server.close(cb) without waiting, then immediately awaits prisma.$disconnect() and process.exit(0), cutting active requests (including a mid-way assessment write plus recompute). config/database.ts also registers its own SIGINT/SIGTERM handlers that disconnect and process.exit(0), racing with the server one. No shutdown timeout. /health returns static ok without checking the database, so an orchestrator keeps routing to an instance with a dead DB connection.",
+      "locations": [
+        "backend/src/server.ts:21-36",
+        "backend/src/config/database.ts:30-38",
+        "backend/src/app.ts:72-78"
+      ],
+      "impact_text": "Deploys can abort writes half-way (compounded by B-02) and failing instances look healthy.",
+      "root_cause": "Shutdown logic duplicated and not awaiting close; health check is a liveness stub.",
+      "fix": "Single shutdown handler: stop accepting, await server.close with a 10-30s timeout, then disconnect; remove handlers from database.ts. Add /ready doing SELECT 1.",
+      "test": "Test: start server, begin a slow request, send SIGTERM; request completes before exit. /ready returns 503 when DB is down.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:B-11"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W5",
+      "sequence": 44
+    },
+    {
+      "id": "SEC-021",
+      "title": "All nine reports routes and one improvement-plan route have no role or permission guard in the router",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "Low",
+      "likelihood": "Low",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "Reports routes rely on scope checks inside the service instead of a route guard.",
+      "evidence": "reports.router.ts uses only authenticate plus a stub requireReportsAccess that merely checks req.user exists (lines 8-14), with no requireRole or requirePermission; scoping is delegated to services by role (reports.service.ts getAccessibleReportEmployeeIds). GET /improvement-plans/:empCode has no role guard (improvement-plan.router.ts:28) but does scope in the controller. GET /behav/config is public with no authenticate (behavioral.router.ts:11), though it only returns reference data. The project rule requires authenticate -> requireRole/requirePermission -> validate -> controller on every route. The 'reports.view' permission exists in the permission list but is not enforced on these routes.",
+      "locations": [
+        "backend/src/modules/reports/reports.router.ts:8",
+        "backend/src/modules/improvement-plan/improvement-plan.router.ts:28",
+        "backend/src/modules/behavioral/behavioral.router.ts:11"
+      ],
+      "impact_text": "Revoking reports.view in the role table has no effect, and one wrong service change would open data to every signed-in user.",
+      "root_cause": "Authorization was left to service-layer scoping rather than the standard chain.",
+      "fix": "Replace requireReportsAccess with requirePermission('reports.view') (and role/self for gap-analysis); add requireRole to improvement-plan GET; require authenticate on /behav/config or document it as public.",
+      "test": "Authorization matrix test: a role without reports.view gets 403 on every /reports route.",
+      "effort": "S",
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:A-17"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W5",
+      "sequence": 45
+    },
+    {
+      "id": "DEP-003",
+      "title": "Development tools have known vulnerabilities (jest chain, vitest, tailwind chain)",
+      "dimension": "dependencies",
+      "repo": "workspace",
+      "severity": "Low",
+      "likelihood": "Low",
+      "impact": "Low",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "Dev-only tools; no production exposure.",
+      "evidence": "npm audit (all dependencies) reports 39 issues in the backend (1 critical, 32 high) and 17 in the frontend (2 critical, 10 high). Counting production dependencies only, the totals drop to 8 and 11, so most of the rest are dev-only: the jest chain (about 30 packages) in the backend, and vitest/tinypool (critical) and vite in the frontend. They run on developer machines and in CI, not in production.",
+      "locations": [
+        "backend/package.json:11",
+        "frontend/package.json:13"
+      ],
+      "impact_text": "A malicious test or build input could affect developer machines and CI.",
+      "root_cause": "Dev tooling not updated.",
+      "fix": "Update jest, vitest and vite to the versions npm audit suggests, in a separate pull request, and run both suites.",
+      "test": "npm audit (all dependencies) shows no critical; both suites pass.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "status": "open",
+      "references": [],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W5",
+      "sequence": 46
+    },
+    {
+      "id": "SEC-022",
+      "title": "validate() merges query string over route params and body, enabling parameter pollution",
+      "dimension": "security",
+      "repo": "backend",
+      "severity": "Low",
+      "likelihood": "Medium",
+      "impact": "Low",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "Input handling hardening.",
+      "evidence": "validate.ts:13-17 parses `{ ...req.body, ...req.params, ...req.query }` and then replaces req.body with the result (line 34), so a query value overrides the body and the route param in the validated object. In assessment.router.ts:18 the ENGINEER ownership check on req.body.employee_id runs BEFORE validate, so `?employee_id=<other>` changes the value the controller uses after the check. Today the controller's canAccessEmployee call still blocks the engineer (it is scoped), so no bypass was found; it remains a fragile pattern. Same for status/level fields sent as query strings. Also found separately: reports.controller.ts:99-107 parses page and limit with parseInt and no clamp or validation; the service passes `take: limit` and `skip` straight to Prisma (reports.service.ts:408-419) with `include` of technology/competency/domain trees. limit=1000000 loads all rows for the caller's scope in one response; a non-numeric value produces NaN and a 500.",
+      "locations": [
+        "backend/src/middleware/validate.ts:13",
+        "backend/src/modules/assessment/assessment.router.ts:18",
+        "backend/src/modules/reports/reports.controller.ts:99",
+        "backend/src/modules/reports/reports.service.ts:408"
+      ],
+      "impact_text": "A future handler that trusts a router-level check could be bypassed with a query string.",
+      "root_cause": "Single merged object for three input sources, with query last.",
+      "fix": "Validate body, params and query as separate schemas (z.object({body, params, query})); never merge; move the ENGINEER ownership check after validation or into the controller. Also: Validate with Zod: page >=1, limit 1..100 with defaults; reject NaN with 400.",
+      "test": "PATCH with body {level:'Beginner'} and ?level=Expert: validated level is the body value (or request is rejected). GET ?limit=100000 returns 400 or at most 100 rows; ?limit=abc returns 400.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:A-18",
+        "draft:A-19"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W5",
+      "sequence": 47
+    },
+    {
+      "id": "A11-001",
+      "title": "Confirm dialog executes on any Enter key press and has no dialog role or focus handling",
+      "dimension": "accessibility",
+      "repo": "frontend",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "A stray Enter key can confirm a destructive action; small fix.",
+      "evidence": "components/ui/ConfirmDialog.tsx:40-44 attaches a window keydown listener where `Enter` calls onConfirm (danger variant is the default, line 32), regardless of which element has focus. A keyboard user who tabs to Cancel and presses Enter triggers both the Cancel click and the global confirm. The overlay div (line 54 onwards) has no role=\"dialog\"/alertdialog and no aria-modal, no aria-labelledby; grep -c focus returns 0 in ConfirmDialog.tsx. The dialog is used for delete confirmations through useConfirmDialog.",
+      "locations": [
+        "frontend/src/components/ui/ConfirmDialog.tsx:43",
+        "frontend/src/components/ui/ConfirmDialog.tsx:32",
+        "frontend/src/components/ui/useConfirmDialog.tsx:1"
+      ],
+      "impact_text": "A keyboard user can delete data by pressing Enter on the Cancel button.",
+      "root_cause": "Global shortcut instead of a default button with focus.",
+      "fix": "Remove the global Enter handler; render role=\"alertdialog\" aria-modal aria-labelledby, autofocus the safe button (Cancel for danger), and trap Tab inside.",
+      "test": "RTL test: focus Cancel, press Enter, onConfirm not called; role alertdialog queried by name.",
+      "effort": "S",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-23"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W6",
+      "sequence": 48
+    },
+    {
+      "id": "A11-002",
+      "title": "Modals and side panels do not move, trap or restore keyboard focus, and about 7 hand-built overlays have no dialog role; many form labels are not linked",
+      "dimension": "accessibility",
+      "repo": "frontend",
+      "severity": "Medium",
+      "likelihood": "High",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Keyboard users lose their place in dialogs.",
+      "evidence": "components/ui/Modal.tsx has role=\"dialog\" and aria-modal (lines 41-42) and Escape-to-close (lines 25-30) but grep -c focus gives 0 in Modal.tsx, SidePanel.tsx and ConfirmDialog.tsx, so focus stays on the page behind and returns nowhere on close. role=\"dialog\" appears only in Modal.tsx; files that draw their own `fixed inset-0` overlay: BulkAddDialog.tsx, TeamRoster.tsx, CloneColleagueDialog.tsx, AssessmentForm.tsx, BehavioralAssessmentModal.tsx, CefrAssessmentModal.tsx, AssessmentsTab.tsx, DashboardPage.tsx (8 files minus Modal). SidePanel.tsx:45-46 has aria-modal and aria-label but no role. Forms: 153 <label> tags and 185 input/select/textarea against only 20 htmlFor attributes and 50 aria-label in src (non-test), so many fields rely on visual proximity. Positive: 0 clickable <div onClick> without role/keyboard handler (all 20 divs with onClick have role or onKeyDown).",
+      "locations": [
+        "frontend/src/components/ui/Modal.tsx:41",
+        "frontend/src/components/ui/SidePanel.tsx:45",
+        "frontend/src/components/BulkAddDialog.tsx:1",
+        "frontend/src/components/CloneColleagueDialog.tsx:1",
+        "frontend/src/components/AssessmentForm.tsx:1"
+      ],
+      "impact_text": "Keyboard and screen-reader users lose their place in every dialog, and form fields may be announced with no name.",
+      "root_cause": "Each overlay is custom; no shared accessible dialog primitive.",
+      "fix": "Rebuild Modal/SidePanel on a focus-trap (e.g. focus-trap-react or Radix Dialog), move all hand-built overlays onto it, restore focus to the trigger on close, and add htmlFor/id pairs or wrap inputs in labels (lint rule jsx-a11y/label-has-associated-control).",
+      "test": "RTL: open dialog, Tab cycles inside, close returns focus to the trigger; axe check in e2e finds no unlabeled form control.",
+      "effort": "M",
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-24"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W6",
+      "sequence": 49
+    },
+    {
+      "id": "CDH-001",
+      "title": "Five files hold about 6,800 lines of tangled logic",
+      "dimension": "code-health",
+      "repo": "backend+frontend",
+      "severity": "Medium",
+      "likelihood": "High",
+      "impact": "Low",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "No active exposure; slows every change.",
+      "evidence": "config.service.ts is 1739 lines, config.controller.ts 939, config.router.ts 191, config.schema.ts 338 (wc -l), covering roles/permissions, access assignments, users, employees, grades, skills, thresholds, periods, industries in one object literal. Every write route in config.router.ts carries validate(schema) (grep of post/put/patch lines without validate returned none; GET/DELETE only lack it, DELETE on :id uses unvalidated parseInt so a non-numeric id yields NaN to Prisma and a 500). Domain logic such as user management, audit logging and access rules shares one file, which is why the user-hash and audit gaps (B-01, B-08) went unnoticed. Also found separately: Measured: hooks/useConfig.ts 1622 lines, 116 exports, about 143 hook calls (useQuery/useMutation/useState/useEffect), one file for every Setup entity; components/BulkAssessmentTable.tsx 1616 lines, 56 hook calls, 211 lines with conditionals or ternaries, with Math.random id generation (line 106) and progress math at lines 751, 790, 813, 1033; components/dashboard/tabs/AIInsightsTab.tsx 1613 lines, 95 conditional lines, contains the KPI bar defect. All three are in the Sonar coverage set (frontend 83% overall) but changes to them are high risk and slow to review.",
+      "locations": [
+        "backend/src/modules/config/config.service.ts:1",
+        "backend/src/modules/config/config.controller.ts:1",
+        "backend/src/modules/config/config.router.ts:55-191",
+        "frontend/src/hooks/useConfig.ts:1",
+        "frontend/src/components/BulkAssessmentTable.tsx:1",
+        "frontend/src/components/dashboard/tabs/AIInsightsTab.tsx:1"
+      ],
+      "impact_text": "Hard to review and change safely; one edit risks unrelated areas.",
+      "root_cause": "Config became the catch-all module.",
+      "fix": "Split into per-feature modules (users, access, taxonomy, periods, industries) and validate :id params with a shared zod int schema. Also: Split useConfig.ts by entity (useDepartments, useSkills, useScoring...), split BulkAssessmentTable into data hook + row + toolbar + progress parts, split AIInsightsTab into KPI strip, gaps list and narrative panels; keep tests green at each step.",
+      "test": "Existing config tests pass unchanged after split; DELETE /config/users/abc returns 400. No file over 500 lines in a lint check; existing tests pass; coverage does not fall.",
+      "effort": "L",
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:B-16",
+        "draft:C-21"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W6",
+      "sequence": 50
+    },
+    {
+      "id": "UXD-002",
+      "title": "The whole app is one URL: only 3 routes, tab and screen state live in memory, so no deep links, bookmarks or browser Back",
+      "dimension": "ux-design",
+      "repo": "frontend",
+      "severity": "Medium",
+      "likelihood": "High",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "No deep links or Back button; needs a routing decision.",
+      "evidence": "routes.tsx has 4 entries: `/` and `*` redirect to /login, `/login`, `/dashboard`. DashboardPage.tsx:62-65 holds activeTab, activeConfigTab and activeReportTab in useState; only reports are synced to the address (reportFromUrl/syncReportUrl, `?report=`). Dashboard tabs, Setup sections, selected employee, filters and open modals cannot be linked or restored; browser Back leaves the app instead of the previous screen. A 401 refresh failure sends to /login with no return-to target (lib/api.ts:77-79), and a role change forces `window.location.href = '/login'` (DashboardPage.tsx:156).",
+      "locations": [
+        "frontend/src/routes.tsx:6",
+        "frontend/src/pages/DashboardPage.tsx:62",
+        "frontend/src/lib/api.ts:77"
+      ],
+      "impact_text": "Managers cannot share a link to a person or report, and the Back button loses their place, which hurts daily use.",
+      "root_cause": "Navigation was built as in-page tabs rather than routes.",
+      "fix": "Introduce nested routes (/dashboard/:tab, /setup/:section, /reports/:id, /people/:empCode) driven by react-router, keep guards on each, and return to the requested URL after login.",
+      "test": "e2e: open /dashboard/reports/gap-analysis directly after login lands there; Back returns to the previous tab.",
+      "effort": "L",
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "needs_decision": true,
+      "decision_id": "D5",
+      "status": "open",
+      "references": [
+        "draft:C-20"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W6",
+      "sequence": 51
+    },
+    {
+      "id": "CDH-002",
+      "title": "Hard-coded colours are widespread: 197 hex literals, 76 rgb literals and 415 raw Tailwind palette classes",
+      "dimension": "code-health",
+      "repo": "frontend",
+      "severity": "Low",
+      "likelihood": "High",
+      "impact": "Low",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "Hard-coded colours break theming.",
+      "evidence": "Measured in frontend/src, non-test .ts/.tsx: hex colours 197 (top files hooks/useChartTheme.ts 55, components/ui/charts/StandardRadarChart.tsx 32, lib/chartColors.ts 27, pdfGenerator.ts 23, config/taxonomy/SkillDomainsSection.tsx 18); rgb(a) numeric literals 76; raw palette classes such as bg-red-500, text-green-600 etc. 415 (lib/designSystem.ts 77, StandardRadarChart.tsx 40, config/communication/CefrDocumentationTab.tsx 39, types/communication.ts 36, types/behavioral.ts 30, ActionableGapsTable.tsx 16, BehavioralPillarsCard.tsx 13, CefrPromotionGatingTab.tsx 13). Part of this is legitimate (chart theme files and the print window in pdfGenerator.ts must use literals), but types/*.ts and designSystem.ts holding palette classes means colours are decided in data types. Theme switching is only reliable where rgb(var(--token)) is used.",
+      "locations": [
+        "frontend/src/hooks/useChartTheme.ts:1",
+        "frontend/src/lib/designSystem.ts:1",
+        "frontend/src/components/ui/charts/StandardRadarChart.tsx:1",
+        "frontend/src/types/communication.ts:1",
+        "frontend/src/components/config/communication/CefrDocumentationTab.tsx:1"
+      ],
+      "impact_text": "Dark mode and rebranding will leave some screens with wrong or unreadable colours.",
+      "root_cause": "Token rule is enforced by review only; no lint rule for palette classes outside the theme files.",
+      "fix": "Move colours in types/*.ts and designSystem.ts to semantic token classes, route chart literals through one theme file, and add an eslint/CI check that lists new raw colours (allowlist the theme files and pdfGenerator).",
+      "test": "CI audit count of raw colours outside the allowlist trends to 0.",
+      "effort": "M",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-18"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W6",
+      "sequence": 52
+    },
+    {
+      "id": "PRF-003",
+      "title": "No code splitting: one 931 KB main script plus a 437 KB chart chunk are loaded before the login screen",
+      "dimension": "performance",
+      "repo": "frontend",
+      "severity": "Low",
+      "likelihood": "Medium",
+      "impact": "Low",
+      "confidence": "likely",
+      "urgency": "U3",
+      "urgency_reason": "One 931 KB script loads before the first screen.",
+      "evidence": "grep for lazy( / React.lazy in src (non-test) returns nothing, so every screen is imported statically (routes.tsx:2-3 imports LoginPage and DashboardPage directly). The latest dist (dated 2026-09-23, so figures may be slightly out of date) has index-92f26164.js 931,581 bytes, ui-5b5d8462.js 437,612, react-vendor 201,048, query 41,247. vite.config.ts:54-58 manualChunks only separates vendors and lists `tailwindcss` (a build tool, not a runtime library) in the 'ui' chunk; d3 is a dependency (package.json:29) but no import of d3 exists in src (grep). Source maps are off (no build.sourcemap, no .map files in dist), which is good.",
+      "locations": [
+        "frontend/vite.config.ts:54",
+        "frontend/src/routes.tsx:2",
+        "frontend/package.json:29"
+      ],
+      "impact_text": "Login and first dashboard load download more than 1.5 MB of script, slow on office VPN or mobile.",
+      "root_cause": "Everything is statically imported; chunking is by vendor only.",
+      "fix": "Wrap Reports, Setup, AI Insights and Bulk Assessment in React.lazy with Suspense, put recharts in its own lazy chunk, remove tailwindcss from manualChunks and the unused d3 dependency.",
+      "test": "vite build output shows main chunk under 400 KB; Lighthouse JS transfer for /login drops accordingly.",
+      "effort": "M",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-22"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W6",
+      "sequence": 53
+    },
+    {
+      "id": "TST-002",
+      "title": "Several important backend files are poorly covered (overall 66% lines, below the 80% gate)",
+      "dimension": "testing",
+      "repo": "backend",
+      "severity": "Low",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "Backend coverage is below the 80% gate.",
+      "evidence": "From coverage/lcov.info (61 source files, 3585 lines, 2369 covered = 66%): communication.service.ts 26% (74 lines missed), reports.controller.ts 29% (48 missed), ai.service.ts 54% (82 missed), report-data.service.ts 51% (54 missed), communication.controller.ts 50%, behavioral.service.ts 40%, scoring-config.service.ts 45%, config.controller.ts 69% (153 missed), config.service.ts 68% (120 missed). Scripts under src/scripts have 0% (seed/backfill, 4 files) and are not important. coverage/coverage-summary.json is stale (3 files, 2026-09-24) and should not be used.",
+      "locations": [
+        "backend/src/modules/communication/communication.service.ts:1",
+        "backend/src/modules/reports/reports.controller.ts:1",
+        "backend/src/modules/ai/ai.service.ts:1",
+        "backend/src/modules/reports/report-data.service.ts:1",
+        "backend/src/modules/config/config.controller.ts:1"
+      ],
+      "impact_text": "The reporting and CEFR code that drives promotion decisions is the least tested part of the backend.",
+      "root_cause": "Coverage rule applies to new code only, so older modules were never brought up.",
+      "fix": "Add tests for communication.service, reports.controller and report-data.service first (they feed promotion readiness), then ai.service fallback path.",
+      "test": "Per-file coverage >= 80% for those five files in the next lcov.",
+      "effort": "M",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-13"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W6",
+      "sequence": 54
+    },
+    {
+      "id": "UXD-001",
+      "title": "Help modals are missing on all 6 dashboard tabs, all 42 Setup screens and 4 report tabs",
+      "dimension": "ux-design",
+      "repo": "frontend",
+      "severity": "Low",
+      "likelihood": "High",
+      "impact": "Low",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "Breaks the help-on-every-screen standard.",
+      "evidence": "<HelpButton is used in 14 non-test files, all under components/reports (CefrAnalyticsTab, CompetencyScoresTab, DomainScoresTab, ExecutiveLeaderboardTab, ExecutiveSummaryTab, PromotionReadinessTab/Detail, plus shared parts). Zero uses under components/dashboard (tabs: OverviewTab, ResourceOverviewDashboard, TeamHealthCharts, AssessmentsTab, AIInsightsTab, AdminDashboardTab) and zero under components/config (42 .tsx files). Report tabs without it: GapAnalysisTab, StarRatingsTab, YoYGrowthTab, EmployeeResultSheetTab. Only 6 *Help.ts data files exist (all in reports/tabs). Violates the help-on-screens rule (STANDARDS section 5e).",
+      "locations": [
+        "frontend/src/components/dashboard/tabs/OverviewTab.tsx:1",
+        "frontend/src/components/dashboard/tabs/AIInsightsTab.tsx:1",
+        "frontend/src/components/config/ConfigSection.tsx:1",
+        "frontend/src/components/reports/tabs/GapAnalysisTab.tsx:1",
+        "frontend/src/components/reports/tabs/StarRatingsTab.tsx:1"
+      ],
+      "impact_text": "Users get no in-app explanation of metrics on the screens they open first, so they ask the owner.",
+      "root_cause": "Help was added report by report and never extended to dashboard and setup.",
+      "fix": "Add a *Help.ts per dashboard tab and Setup section and render HelpButton in the shared tile/section header; add a CI check that every tab file imports HelpButton.",
+      "test": "Unit test or script listing tab components without HelpButton returns empty.",
+      "effort": "M",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-19"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W6",
+      "sequence": 55
+    },
+    {
+      "id": "TST-003",
+      "title": "Frontend end-to-end tests only prove screens render against a mocked API; no real login-to-approval flow",
+      "dimension": "testing",
+      "repo": "frontend",
+      "severity": "Low",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "End-to-end tests run against a mocked API.",
+      "evidence": "e2e has 5 specs, 462 lines in total: smoke.spec.ts (login page, dashboard 'renders with an empty API', Setup screens, themes), screens.spec.ts (every top tab/report renders), session-reload.spec.ts (3 reload/new-tab cases), cefr-modal.spec.ts (1), skill-run.spec.ts (2: create skill, empty name refused). harness.ts:52-57 intercepts every `**/api/v1/**` request with page.route and fulfills 200 JSON; login is also faked (line 70). No spec uses a real backend, no assessment-to-approval-to-report path, no role-restricted behaviour. Positive: 0 skipped or disabled tests found in e2e or src (grep test.skip/it.skip/xdescribe/fixme), and 2,334 unit tests pass.",
+      "locations": [
+        "frontend/e2e/harness.ts:52",
+        "frontend/e2e/smoke.spec.ts:20",
+        "frontend/e2e/screens.spec.ts:23"
+      ],
+      "impact_text": "A break between frontend and backend (field rename, permission change) is found by users, not by the test run.",
+      "root_cause": "e2e was added as a render-crash safety net, not as an integration suite.",
+      "fix": "Add 3 contract-style flows against a seeded test backend in CI: engineer saves a skill, line manager approves, report shows the result; plus one 403 check per restricted tab.",
+      "test": "The new flows in CI on every master push.",
+      "effort": "L",
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "open",
+      "references": [
+        "draft:C-14"
+      ],
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "W6",
+      "sequence": 56
+    }
+  ],
+  "chains": [
+    {
+      "id": "CHAIN-1",
+      "title": "A leaked hash becomes a lasting account takeover",
+      "steps": [
+        "An admin or any caller of the assignment endpoints reads password hashes from API responses.",
+        "The same hashes are stored in the audit log and persist.",
+        "Login lockout and username leaks help an attacker pick targets.",
+        "A password reset does not end existing sessions."
+      ],
+      "ids": [
+        "SEC-001",
+        "SEC-002",
+        "SEC-013",
+        "SEC-009"
+      ],
+      "break_at": "SEC-001"
+    },
+    {
+      "id": "CHAIN-2",
+      "title": "Approvals can be bypassed and nobody can tell",
+      "steps": [
+        "Any manager can set a CEFR result for anyone.",
+        "An engineer can change an approved skill through the create route.",
+        "Senior roles can approve themselves.",
+        "User and role changes are not logged."
+      ],
+      "ids": [
+        "SEC-003",
+        "SEC-005",
+        "SEC-006",
+        "SEC-016"
+      ],
+      "break_at": "SEC-003"
+    },
+    {
+      "id": "CHAIN-3",
+      "title": "Scores can be wrong or lost without any signal",
+      "steps": [
+        "A recompute error is swallowed after the assessment is saved.",
+        "Two simultaneous saves can overwrite each other.",
+        "Re-assessment overwrites past periods.",
+        "Editing weights changes old results."
+      ],
+      "ids": [
+        "REL-001",
+        "REL-002",
+        "DAT-005",
+        "DAT-007"
+      ],
+      "break_at": "REL-001"
+    },
+    {
+      "id": "CHAIN-4",
+      "title": "A bad release reaches production with no way back",
+      "steps": [
+        "A stale main branch can publish production images.",
+        "Deploys default to the moving latest tag.",
+        "Production migrations run with no backup step.",
+        "Backups sit unprotected with no retention."
+      ],
+      "ids": [
+        "OPS-001",
+        "OPS-002",
+        "REL-004",
+        "DAT-010"
+      ],
+      "break_at": "OPS-001"
+    }
+  ],
+  "waves": [
+    {
+      "id": "W0",
+      "name": "Stop the exposure",
+      "track": "Engineering",
+      "goal": "Contain credential exposure and close the CEFR approval hole.",
+      "ids": [
+        "SEC-001",
+        "SEC-002",
+        "SEC-003",
+        "SEC-004"
+      ],
+      "effort": "about 2 dev-days (rough, from S/M/L sizes)",
+      "exit_criteria": [
+        "Hashes cannot appear in any API response or new audit-log row (HTTP tests prove it).",
+        "A manager cannot change a CEFR result outside their scope (test).",
+        "The owner has scrubbed existing audit-log rows and rotated affected passwords (done by hand).",
+        "The owner has confirmed whether the demo logins exist in production, and removed them from the build."
+      ],
+      "checkpoint": true,
+      "why_order": "These four are U0: active exposure or a one-line fix. Everything else depends on trusting these basics."
+    },
+    {
+      "id": "W1",
+      "name": "Trust the pipeline and the tests",
+      "track": "Engineering",
+      "goal": "Make delivery safe and add the HTTP role tests every later fix needs.",
+      "ids": [
+        "TST-001",
+        "OPS-001",
+        "OPS-002",
+        "OPS-003",
+        "DEP-001",
+        "DEP-002"
+      ],
+      "effort": "about 6 dev-days (rough, from S/M/L sizes)",
+      "exit_criteria": [
+        "Only master publishes production images, and images are pinned by version.",
+        "An HTTP role-by-route test runs in CI against the real route chain.",
+        "The pipeline runs a dependency and image scan; npm audit --omit=dev shows no high or critical on backend."
+      ],
+      "checkpoint": true,
+      "why_order": "The tests and the pipeline are prerequisites: access and history fixes need them to be provable and safe to ship."
+    },
+    {
+      "id": "W2",
+      "name": "Access control and sessions",
+      "track": "Engineering",
+      "goal": "Close the remaining approval, session and audit-trail gaps.",
+      "ids": [
+        "SEC-005",
+        "SEC-006",
+        "SEC-007",
+        "SEC-008",
+        "SEC-009",
+        "SEC-010",
+        "SEC-011",
+        "SEC-012",
+        "SEC-013",
+        "SEC-014",
+        "SEC-015",
+        "SEC-016"
+      ],
+      "effort": "about 13.5 dev-days (rough, from S/M/L sizes)",
+      "exit_criteria": [
+        "An approved skill cannot change without re-approval (test).",
+        "Logout and password change end refresh tokens (test).",
+        "User, role and password changes appear in the audit log.",
+        "Self-approval policy for senior roles is decided (D1) and enforced."
+      ],
+      "checkpoint": true,
+      "why_order": "These changes alter who can do what, so they follow the role tests from W1."
+    },
+    {
+      "id": "W3",
+      "name": "Make scores trustworthy",
+      "track": "Engineering",
+      "goal": "Make the assessment write atomic and remove invented or duplicated numbers.",
+      "ids": [
+        "REL-001",
+        "REL-002",
+        "PRF-001",
+        "DAT-001",
+        "DAT-002",
+        "DAT-003",
+        "DAT-004"
+      ],
+      "effort": "about 11 dev-days (rough, from S/M/L sizes)",
+      "exit_criteria": [
+        "Assessment write and score recompute succeed or fail together (test).",
+        "No screen shows an invented width or a recomputed readiness rule.",
+        "Absent data shows as absent, never as zero."
+      ],
+      "checkpoint": true,
+      "why_order": "Atomicity must exist before the history change (W4). The data-truth fixes are small and visible."
+    },
+    {
+      "id": "W4",
+      "name": "Appraisal history",
+      "track": "Engineering",
+      "goal": "Keep results per period and make locked periods and scoring config truly immutable.",
+      "ids": [
+        "DAT-005",
+        "DAT-006",
+        "DAT-007",
+        "DAT-008",
+        "DAT-009"
+      ],
+      "effort": "about 13 dev-days (rough, from S/M/L sizes)",
+      "exit_criteria": [
+        "Re-assessing in period 2 leaves period 1 untouched (test).",
+        "A locked period cannot be changed even by direct database writes.",
+        "Editing weights does not change a locked period's results (test).",
+        "Migration proven on a local disposable database with before/after counts."
+      ],
+      "checkpoint": true,
+      "why_order": "Highest fix risk and a data migration: it goes after tests and the atomic write, and starts with a plan you approve."
+    },
+    {
+      "id": "W5",
+      "name": "Platform hardening",
+      "track": "Engineering",
+      "goal": "Harden containers, headers, backups, errors and the AI integration.",
+      "ids": [
+        "OPS-004",
+        "OPS-005",
+        "SEC-017",
+        "SEC-018",
+        "SEC-019",
+        "SEC-020",
+        "REL-003",
+        "REL-004",
+        "DAT-010",
+        "PRF-002",
+        "DEP-003",
+        "SEC-021",
+        "SEC-022"
+      ],
+      "effort": "about 18.5 dev-days (rough, from S/M/L sizes)",
+      "exit_criteria": [
+        "Both images run as non-root on pinned bases.",
+        "CSP and security headers are in place; port 4000 is not public.",
+        "Backups are protected and have retention.",
+        "Errors returned to clients carry no internal detail."
+      ],
+      "checkpoint": false,
+      "why_order": "Real but not urgent; can be done in parallel by a second person once W1 is in."
+    },
+    {
+      "id": "W6",
+      "name": "UI quality and maintainability",
+      "track": "UI/UX",
+      "goal": "Fix dialog accessibility, help coverage, routing and the largest files.",
+      "ids": [
+        "A11-001",
+        "A11-002",
+        "UXD-001",
+        "UXD-002",
+        "CDH-001",
+        "CDH-002",
+        "PRF-003",
+        "TST-002",
+        "TST-003"
+      ],
+      "effort": "about 25.5 dev-days (rough, from S/M/L sizes)",
+      "exit_criteria": [
+        "Confirm dialog ignores stray Enter; focus is trapped and restored.",
+        "Every screen has its Help button.",
+        "Initial JavaScript is split."
+      ],
+      "checkpoint": false,
+      "why_order": "Lowest exposure. The routing decision (D5) may change the scope, so it comes last."
+    }
+  ],
+  "decisions": [
+    {
+      "id": "D0",
+      "question": "Do the five demo logins (one per role, including an Admin; see DemoAccounts.tsx lines 7 to 11) exist in production with the shared test password? Only you can check.",
+      "options": [
+        "Yes: change those passwords and remove the demo list from the build.",
+        "No: remove the demo list from the build anyway."
+      ],
+      "recommended": "Check production now; remove the list from production builds either way.",
+      "blocks": [
+        "SEC-004"
+      ],
+      "needed_by": "W0"
+    },
+    {
+      "id": "D1",
+      "question": "Who approves the self-assessments of ADMIN and TOP_MANAGEMENT users?",
+      "options": [
+        "Another admin or top manager (four-eyes).",
+        "They may self-approve, but it is logged and reported.",
+        "A named approver role."
+      ],
+      "recommended": "Four-eyes: another admin or top manager approves.",
+      "blocks": [
+        "SEC-006"
+      ],
+      "needed_by": "W2"
+    },
+    {
+      "id": "D2",
+      "question": "Which registry replaces the personal Docker Hub namespace for production images?",
+      "options": [
+        "Bitbucket registry",
+        "AWS ECR",
+        "GitHub Container Registry",
+        "A company Docker Hub organization"
+      ],
+      "recommended": "A company-owned registry that your CI already authenticates to.",
+      "blocks": [
+        "OPS-005"
+      ],
+      "needed_by": "W5"
+    },
+    {
+      "id": "D3",
+      "question": "How should database backups be stored, encrypted and retained?",
+      "options": [
+        "Encrypted object storage with 30 day retention",
+        "Encrypted VM disk with 14 day retention",
+        "Another policy"
+      ],
+      "recommended": "Encrypted, off-host, with a tested restore and a stated retention period.",
+      "blocks": [
+        "DAT-010"
+      ],
+      "needed_by": "W5"
+    },
+    {
+      "id": "D4",
+      "question": "Which rule defines \"ready\" on screen?",
+      "options": [
+        "The backend field (promotion_ready / meetsAllChecks) everywhere; screens never recompute."
+      ],
+      "recommended": "The backend field, as your metric rules already say.",
+      "blocks": [
+        "DAT-003"
+      ],
+      "needed_by": "W3"
+    },
+    {
+      "id": "D5",
+      "question": "Should the app get real URLs per screen (deep links, Back button)?",
+      "options": [
+        "Yes: one route per tab and Setup section.",
+        "No: keep the single-page tab model."
+      ],
+      "recommended": "Yes, in a later wave; it also simplifies access checks.",
+      "blocks": [
+        "UXD-002"
+      ],
+      "needed_by": "W6"
+    },
+    {
+      "id": "D6",
+      "question": "For appraisal history: should a new period start with a copy of the last period's assessments, and how many periods are kept?",
+      "options": [
+        "Copy forward and keep all periods.",
+        "Start empty each period."
+      ],
+      "recommended": "Copy forward and keep all periods; show the migration plan first.",
+      "blocks": [
+        "DAT-005"
+      ],
+      "needed_by": "W4"
+    }
+  ],
+  "strengths": [
+    {
+      "title": "Access token is re-validated against the database on every request",
+      "detail": "authenticate() verifies the JWT, then loads the user and rejects inactive users, and takes role and employee id from the database, not from the token. A deactivated or re-roled user is cut off within one request. Access token lifetime is 15 minutes.",
+      "locations": [
+        "backend/src/middleware/authenticate.ts:37",
+        "backend/src/middleware/authenticate.ts:47"
+      ]
+    },
+    {
+      "title": "Refresh token is stored hashed, lives in an httpOnly strict cookie, and is not returned in the body",
+      "detail": "Refresh tokens are SHA-256 hashed in refresh_tokens, cookie has httpOnly, sameSite strict, secure in production; the access token is held in memory only (Zustand, no localStorage), and the session flag in sessionStorage holds no secret. Refresh checks signature, stored hash, revoked flag, expiry and user is_active.",
+      "locations": [
+        "backend/src/modules/auth/auth.controller.ts:54",
+        "backend/src/modules/auth/auth.service.ts:144",
+        "backend/src/modules/auth/auth.service.ts:184",
+        "frontend/src/store/authStore.ts:29"
+      ]
+    },
+    {
+      "title": "Passwords are hashed with bcrypt cost 12 and the login response carries no hash",
+      "detail": "bcryptjs with cost 12 for create, update and change-password; login and /auth/me return an explicit field list, not the user row. JWT secrets must be at least 32 characters (env schema).",
+      "locations": [
+        "backend/src/modules/auth/auth.service.ts:54",
+        "backend/src/modules/auth/auth.service.ts:244",
+        "backend/src/config/env.ts:9"
+      ]
+    },
+    {
+      "title": "CORS is a single configured origin and helmet is enabled with HSTS",
+      "detail": "cors uses env.FRONTEND_URL (no wildcard) with credentials, explicit methods and headers; helmet is on with a CSP and a one-year HSTS. nginx also sets HSTS, nosniff, frame deny and referrer policy, and rate limits login by real remote address.",
+      "locations": [
+        "backend/src/app.ts:30",
+        "backend/src/app.ts:45",
+        "nginx/nginx.conf:41"
+      ]
+    },
+    {
+      "title": "Login has app-level and edge rate limiting plus account lockout",
+      "detail": "express-rate-limit 10 per minute on /auth/login, nginx limit_req on login keyed by $binary_remote_addr, and 5-failure account lock. (See findings for the proxy and lockout gaps.)",
+      "locations": [
+        "backend/src/modules/auth/auth.router.ts:11",
+        "backend/src/modules/auth/auth.service.ts:103"
+      ]
+    },
+    {
+      "title": "Technical skill write routes are scope-checked per object and strip engineer-set levels",
+      "detail": "create, update, delete, approve, submit-drafts and read all resolve the target employee and call canAccessEmployee with forAssessment; ENGINEER and managers on their own record cannot set level and get draft status on update; approve refuses LM/MANAGER on their own record with 403 SELF_APPROVAL_PROHIBITED. Pending queue excludes the manager's own rows.",
+      "locations": [
+        "backend/src/modules/assessment/assessment.controller.ts:24",
+        "backend/src/modules/assessment/assessment.controller.ts:59",
+        "backend/src/modules/assessment/assessment.controller.ts:109",
+        "backend/src/modules/assessment/assessment.controller.ts:159"
+      ]
+    },
+    {
+      "title": "Mass assignment is prevented by Zod schemas that strip unknown keys",
+      "detail": "Assessment, CEFR, behavioral and user schemas are plain z.object (not passthrough) and the validated data replaces req.body; services build prisma data from named fields, not spread of the body. updateRole is the one with passthrough only on config policy (admin only).",
+      "locations": [
+        "backend/src/modules/assessment/assessment.schema.ts:3",
+        "backend/src/modules/communication/communication.schema.ts:32",
+        "backend/src/modules/behavioral/behavioral.schema.ts:11",
+        "backend/src/middleware/validate.ts:34"
+      ]
+    },
+    {
+      "title": "Behavioral and CEFR read paths and CEFR create are scope-checked; improvement plans block self-authoring",
+      "detail": "Behavioral reads return 404 for out-of-scope ids so ids cannot be probed; CEFR create, latest, history and expectation call canAccessEmployee; CEFR create demotes LM/MANAGER self-assessment to pending; improvement plans refuse self-authoring and check forAssessment scope.",
+      "locations": [
+        "backend/src/modules/behavioral/behavioral.controller.ts:128",
+        "backend/src/modules/communication/communication.controller.ts:108",
+        "backend/src/modules/improvement-plan/improvement-plan.controller.ts:26"
+      ]
+    },
+    {
+      "title": "Role hierarchy permission codes match between backend and frontend",
+      "detail": "PERMISSION_CODES (11 codes) are identical in backend/src/types/rbac.ts and frontend/src/types/rbac.ts. The only difference is the two extra frontend roles, which is the accepted mapping. Permissions are looked up from the database (role_permissions) on each requirePermission call and a deactivated role passes nothing.",
+      "locations": [
+        "backend/src/types/rbac.ts:3",
+        "frontend/src/types/rbac.ts:12",
+        "backend/src/middleware/authorize.ts:41"
+      ]
+    },
+    {
+      "title": "Config and admin routes all use requirePermission or requireRole",
+      "detail": "All 86 routes in config.router.ts are behind authenticate plus requirePermission, requirePermissionOrRole or requireRole; every write is permission-gated and validate(schema) is present on every POST/PUT/PATCH.",
+      "locations": [
+        "backend/src/modules/config/config.router.ts:55"
+      ]
+    },
+    {
+      "title": "Scoring stores a per-assessment score snapshot",
+      "detail": "skill_assessments.score is stored at write time and preferred by computeCompetencyScore, so old weights do not rewrite existing assessment rows (except zero scores).",
+      "locations": [
+        "backend/src/scoring/scoring.engine.ts:174-203"
+      ]
+    },
+    {
+      "title": "Login and refresh path uses bcrypt cost 12 and a login rate limiter",
+      "detail": "Passwords hashed with bcryptjs cost 12; express-rate-limit on login.",
+      "locations": [
+        "backend/src/modules/config/config.service.ts:1032",
+        "backend/src/modules/auth/auth.router.ts:11"
+      ]
+    },
+    {
+      "title": "Validation on every config write route",
+      "detail": "All post/put/patch routes in config.router.ts use validate(zod schema), with parsed data replacing req.body.",
+      "locations": [
+        "backend/src/modules/config/config.router.ts:55-191",
+        "backend/src/middleware/validate.ts:33-36"
+      ]
+    },
+    {
+      "title": "AI has deterministic fallback and bounded inputs",
+      "detail": "Failures fall back to a deterministic answer; question clamped to 600 chars; focus allow-listed; output coerced to a fixed shape.",
+      "locations": [
+        "backend/src/modules/ai/ai.service.ts:795-832"
+      ]
+    },
+    {
+      "title": "Multi-step config writes use transactions with audit rows",
+      "detail": "createEmployee and line-manager flows use db.$transaction with tx.accessAuditLog.",
+      "locations": [
+        "backend/src/modules/config/config.service.ts:1240-1310"
+      ]
+    },
+    {
+      "title": "DB-level guard on CEFR scale",
+      "detail": "Trigger cefr_levels_scale_lock protects the scale in the database.",
+      "locations": [
+        "backend/prisma/migrations/20260924020000_cefr_policy_and_scale_lock/migration.sql:28-47"
+      ]
+    },
+    {
+      "title": "Security headers, CORS pinned, body limit",
+      "detail": "helmet with HSTS, CORS restricted to FRONTEND_URL, 1mb JSON limit.",
+      "locations": [
+        "backend/src/app.ts:31-67"
+      ]
+    },
+    {
+      "title": "Tokens are not stored in the browser; a reload restores the session from an httpOnly cookie",
+      "detail": "authStore keeps the access token in memory only (no persist, no localStorage); sessionStorage holds only a flag with no token, and lib/session.ts restores via the refresh cookie. Refresh requests are de-duplicated and a failed refresh clears state and the query cache. Access is also checked on the server; tab guards in the UI are display only.",
+      "locations": [
+        "frontend/src/store/authStore.ts:26",
+        "frontend/src/lib/session.ts:10",
+        "frontend/src/lib/api.ts:20",
+        "frontend/src/lib/api.ts:56"
+      ]
+    },
+    {
+      "title": "The one XSS-prone sink is escaped",
+      "detail": "The only window.open / document.write is the result-sheet print window; every data value in its HTML goes through esc() (employee name, code, department, domains, competencies). No dangerouslySetInnerHTML or innerHTML anywhere in src. Source maps are not shipped.",
+      "locations": [
+        "frontend/src/components/reports/tabs/components/result-sheet/pdfGenerator.ts:40",
+        "frontend/src/components/reports/tabs/components/result-sheet/pdfGenerator.ts:218"
+      ]
+    },
+    {
+      "title": "CI order is safe: scan, quality gate, Sonar gate, then image build",
+      "detail": "Both pipelines run gitleaks, lint, type-check, tests with coverage, build, Sonar with qualitygate.wait before any docker push. The frontend also runs check:css and the project's own defect-class audit. Login uses --password-stdin. Dated and short-sha tags are pushed for every production image.",
+      "locations": [
+        "backend/bitbucket-pipelines.yml:83",
+        "frontend/bitbucket-pipelines.yml:17",
+        "frontend/bitbucket-pipelines.yml:29"
+      ]
+    },
+    {
+      "title": "Cache headers and API proxy in the frontend nginx are well thought out",
+      "detail": "index.html is no-store, /assets/ is immutable for a year, unhashed files revalidate; nginx/nginx.conf has TLS 1.2+, HSTS, a 10 req/min login limit zone and a 1 MB body cap.",
+      "locations": [
+        "frontend/nginx.conf:20",
+        "frontend/nginx.conf:29",
+        "nginx/nginx.conf:80",
+        "nginx/nginx.conf:89"
+      ]
+    },
+    {
+      "title": "Backups and restores avoid hard-coded secrets and verify integrity",
+      "detail": "backup and restore scripts use an AWS profile, a SHA-256 checksum uploaded beside the dump, set -euo pipefail and clear failure messages. No curl-to-shell or chmod 777 in the scripts. Deploy scripts pin tags by argument and run prisma migrate deploy (not db push).",
+      "locations": [
+        "scripts/backup.sh:4",
+        "scripts/backup.sh:73",
+        "scripts/restore-script-prod.sh:62",
+        "scripts/deploy-prod.sh:28"
+      ]
+    },
+    {
+      "title": "Clean test hygiene",
+      "detail": "No skipped or disabled tests in frontend src, e2e or backend src (0 matches for skip/fixme/xdescribe/it.todo). Frontend has 136 test files; vitest is configured with all:true so untested files count in coverage. Playwright specs are kept out of vitest.",
+      "locations": [
+        "frontend/vite.config.ts:20",
+        "frontend/e2e/screens.spec.ts:1"
+      ]
+    },
+    {
+      "title": "Data-truth rules are mostly followed in the frontend",
+      "detail": "Math.random is used only for row/toast keys, not figures. Only 6 numeric fallbacks (`?? n` / `|| n`) exist outside tests and only one (AIInsightsTab:984) is a display fallback. CSV export uses emp_code. Keyboard: 0 clickable divs without role or key handler. Modal has role=dialog and Escape.",
+      "locations": [
+        "frontend/src/lib/roundHalfUp.ts:10",
+        "frontend/src/components/reports/tabs/gapReportCsv.ts:41",
+        "frontend/src/components/ui/Modal.tsx:41"
+      ]
+    },
+    {
+      "title": "Dev compose does not publish the API port",
+      "detail": "deployments/docker-compose.dev.yml uses expose instead of ports for the API, and image healthchecks exist in both Dockerfiles (Node fetch, wget).",
+      "locations": [
+        "deployments/docker-compose.dev.yml:9",
+        "backend/Dockerfile:50",
+        "frontend/Dockerfile:16"
+      ]
+    }
+  ],
+  "coverage": {
+    "reviewed": [
+      {
+        "area": "Project checks (type-check, lint, tests with coverage), both repos",
+        "depth": "run"
+      },
+      {
+        "area": "gitleaks (history), npm audit, trivy fs, both repos",
+        "depth": "run"
+      },
+      {
+        "area": "backend auth module (router, controller, service, schema), middleware authenticate/authorize/validate/errorHandler",
+        "depth": "full read"
+      },
+      {
+        "area": "backend app.ts (helmet, cors, trust proxy, body limits, logging)",
+        "depth": "full read"
+      },
+      {
+        "area": "assessment router/controller/schema, service create/update/approve/delete/submit",
+        "depth": "full read"
+      },
+      {
+        "area": "communication router/controller/schema, service create/status/get",
+        "depth": "read of controller and key service methods"
+      },
+      {
+        "area": "behavioral router/controller/schema, service create/get",
+        "depth": "read of controller and key service methods"
+      },
+      {
+        "area": "access-scope.service.ts (scope rules)",
+        "depth": "full read"
+      },
+      {
+        "area": "config router (all 86 routes), user and audit-log service functions, audit write path",
+        "depth": "router full read; service user/audit/assignment sections read"
+      },
+      {
+        "area": "reports, ai, improvement-plan routers and controllers",
+        "depth": "routers full; reports/improvement controllers full; ai controller only"
+      },
+      {
+        "area": "frontend authStore, session.ts, ProtectedRoute, api.ts interceptor, logout/change-password callers",
+        "depth": "full read"
+      },
+      {
+        "area": "role and permission code comparison backend vs frontend rbac.ts",
+        "depth": "full read"
+      },
+      {
+        "area": "nginx.conf rate limiting and proxy headers",
+        "depth": "partial read (limit zones, login and api locations)"
+      },
+      {
+        "area": "prisma schema for User, RefreshToken, SkillAssessment, BehavAssessment, AccessAuditLog",
+        "depth": "read of model definitions"
+      },
+      {
+        "area": "scoring/score-recalculation + assessment.service write paths",
+        "depth": "read in full"
+      },
+      {
+        "area": "schema.prisma assessments, scores, periods, config tables",
+        "depth": "read relevant models"
+      },
+      {
+        "area": "config module (router, user/employee/period services, controller user handlers)",
+        "depth": "targeted"
+      },
+      {
+        "area": "ai.service (payload, fetch calls, fallback)",
+        "depth": "targeted"
+      },
+      {
+        "area": "reports.service (exec summary, yoy), report-data.service",
+        "depth": "targeted"
+      },
+      {
+        "area": "errorHandler, logger, server.ts, database.ts, app.ts",
+        "depth": "read in full"
+      },
+      {
+        "area": "latest 8 migrations",
+        "depth": "grep for destructive statements"
+      },
+      {
+        "area": "Frontend data truth: numeric fallbacks, Math.random, DB ids on screen/CSV, readiness/CEFR recomputation, rounding, colours, HelpButton coverage",
+        "depth": "grep-measured over all non-test src, key lines opened"
+      },
+      {
+        "area": "Frontend security: authStore, session.ts, ProtectedRoute, api.ts interceptor, XSS sinks, VITE_* vars, vite.config, routing",
+        "depth": "full read of those files"
+      },
+      {
+        "area": "Dockerfiles (3), frontend/nginx.conf, nginx/nginx.conf, deployments/vm-nginx.conf, three compose files",
+        "depth": "full read"
+      },
+      {
+        "area": "Both bitbucket-pipelines.yml",
+        "depth": "full read"
+      },
+      {
+        "area": "deployments/deploy.sh, scripts/deploy-prod.sh, scripts/backup.sh",
+        "depth": "full read; rct-backup-prod, restore-script-*, init-letsencrypt, tkxel-rct-backup-dev only grepped"
+      },
+      {
+        "area": "Backend tests: HTTP-level/RBAC presence, lcov per-file coverage, skipped tests",
+        "depth": "grep plus lcov.info parsed (61 files)"
+      },
+      {
+        "area": "Frontend e2e specs, sonar-project.properties",
+        "depth": "harness and spec titles read; sonar file read in full"
+      },
+      {
+        "area": "Accessibility quick check: Modal, ConfirmDialog, SidePanel, clickable div count, label/htmlFor counts",
+        "depth": "code read plus grep counts"
+      },
+      {
+        "area": "Large files (useConfig.ts, BulkAssessmentTable.tsx, AIInsightsTab.tsx)",
+        "depth": "size and grep complexity indicators only, not line-by-line"
+      }
+    ],
+    "skipped": [
+      {
+        "area": "Cost",
+        "reason": "Only OpenAI usage; folded into the AI finding."
+      },
+      {
+        "area": "Compliance",
+        "reason": "No framework declared; employee data treated as personal."
+      },
+      {
+        "area": "Tools not installed",
+        "reason": "semgrep, osv-scanner, hadolint, jscpd, madge, cloc, syft, checkov, trufflehog were not run; duplication, import cycles and licences were not measured."
+      },
+      {
+        "area": "Depth",
+        "reason": "Quick depth: the five critical flows were traced; the other modules were sampled, not read line by line."
+      },
+      {
+        "area": "Production environment",
+        "reason": "No access by design: live nginx, firewall, production data and backups were not examined."
+      }
+    ],
+    "gaps": "Not verified: No code was run, so the pino-http default of logging request headers is from library knowledge, not observed output. | Whether production sits behind nginx with one hop, and the real NODE_ENV and cookie secure flag in deployment (config is outside the repo). | Reports service scoping per role (getAccessibleReportEmployeeIds and each report query) was only sampled, not read end to end. | OpenAI/AI service data handling was not reviewed (out of scope). | Frontend query hooks use of useProtectedQueryEnabled and UI hiding of approval buttons were not checked. | Existing contents of access_audit_logs in the database were not inspected (production rule), so whether hashes are already stored is inferred from code. | Frontend 7-role mapping for COMMUNICATION_EXPERT and LANGUAGE_EXPERT was only grepped, not verified end to end. | Dependency versions (express, proxy-addr 2.0.7 in package-lock) were checked by grep only; no advisory lookup (no network). | DATABASE_READ_URL: only declared in env.ts; no read-replica client found in src, so read-after-write risk not applicable | Refresh token revocation on role change/deactivation (auth module) | Index fit vs report query patterns beyond schema @@index review | Frontend use of fields; behavioral/communication write paths for period lock | Jira: no code usage found in backend/src (only seed text mentioning Jira); JIRA_API_TOKEN var not seen in code | Migrations older than the latest 8 | Whether the demo accounts (<employee code>, <employee code>, <employee code>, <employee code>, <employee code>) exist in production with the seed password (no DB access; owner should check read-only). | Which nginx config is actually live on the VM (nginx/nginx.conf vs deployments/vm-nginx.conf) and whether a cloud firewall blocks host port 4000/3001. | Whether the S3 backup bucket has encryption, versioning or lifecycle rules, and whether backups are scheduled by cron. | Frontend bundle sizes come from dist built 2026-09-23, not a fresh build (build not allowed). | Whether the 400-line-plus panels in components/config and dashboard recompute scores beyond the places listed (grep for Math.round only; no data-flow tracing). | Contrast, screen-reader behaviour and real focus order were not tested in a browser (code check only). | Duplicate-code and import-cycle checks (jscpd, madge) not run. | Trivy details for the Dockerfiles were taken from tool-summary, not re-run; frontend Dockerfile.dev does not exist as listed. | Backend routes' individual authorize guards were not audited (belongs to the backend security pass); only the absence of HTTP-level tests was verified."
+  },
+  "tools": [
+    {
+      "name": "gitleaks",
+      "version": "8.30.1",
+      "purpose": "Secrets in code and history",
+      "result": "0 leaks in both repos"
+    },
+    {
+      "name": "trivy fs",
+      "version": "0.69.3",
+      "purpose": "Dependency vulnerabilities and misconfiguration",
+      "result": "Backend 1 critical, 8 high; frontend 0 critical, 9 high; both Dockerfiles run as root"
+    },
+    {
+      "name": "npm audit",
+      "version": "11.10.1",
+      "purpose": "Dependency vulnerabilities (read-only)",
+      "result": "Production deps: backend 1 critical, 3 high; frontend 0 critical, 7 high"
+    },
+    {
+      "name": "tsc / eslint / jest / vitest",
+      "version": "project-pinned",
+      "purpose": "Project checks",
+      "result": "Type-check and lint pass; 548 and 2,334 tests pass"
+    }
+  ],
+  "baselines": {
+    "backend_tests": "548 passed, 37 suites, 0 failed",
+    "backend_line_coverage_percent": 66.08,
+    "backend_branch_coverage_percent": 55.14,
+    "frontend_tests": "2,334 passed, 136 files, 0 failed",
+    "frontend_line_coverage_percent": 83.42,
+    "frontend_lint": "0 errors, 91 warnings",
+    "type_errors": "0 in both repos",
+    "gitleaks_leaks": 0,
+    "npm_audit_production": "backend 8 (1 critical, 3 high); frontend 11 (0 critical, 7 high)"
+  }
+}

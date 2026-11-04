@@ -1,0 +1,87 @@
+{
+  "previous": "/Users/tk-lpt-1088/development/react/erp/ERP/audit/results/2026-10-07_erp_quick",
+  "new": [
+    "ARC-001",
+    "DOC-001",
+    "OBS-001"
+  ],
+  "fixed": [
+    "SEC-002",
+    "SEC-003",
+    "SEC-004",
+    "OPS-002",
+    "DEP-001",
+    "OPS-001",
+    "OPS-003",
+    "TST-001",
+    "DEP-002",
+    "SEC-005",
+    "SEC-008",
+    "SEC-009",
+    "SEC-010",
+    "SEC-011",
+    "SEC-012",
+    "SEC-013",
+    "SEC-016",
+    "SEC-006",
+    "SEC-007",
+    "SEC-014",
+    "SEC-015",
+    "REL-001",
+    "DAT-001",
+    "DAT-002",
+    "DAT-003",
+    "PRF-001",
+    "REL-002",
+    "DAT-004",
+    "DAT-005",
+    "DAT-008",
+    "DAT-006",
+    "DAT-007",
+    "DAT-009",
+    "REL-004",
+    "SEC-017",
+    "SEC-019",
+    "DAT-010",
+    "OPS-004",
+    "OPS-005",
+    "PRF-002",
+    "SEC-018",
+    "SEC-020",
+    "REL-003",
+    "SEC-021",
+    "DEP-003",
+    "SEC-022",
+    "A11-001",
+    "A11-002",
+    "CDH-001",
+    "UXD-002",
+    "CDH-002",
+    "PRF-003",
+    "TST-002",
+    "UXD-001",
+    "TST-003"
+  ],
+  "regressed": [],
+  "severity_changed": [
+    {
+      "id": "SEC-001",
+      "from": "High",
+      "to": "Critical"
+    },
+    {
+      "id": "SEC-002",
+      "from": "High",
+      "to": "Medium"
+    },
+    {
+      "id": "DEP-001",
+      "from": "Medium",
+      "to": "Low"
+    }
+  ],
+  "unchanged": [
+    "PRF-001",
+    "DAT-001"
+  ]
+}

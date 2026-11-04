@@ -1,0 +1,53 @@
+diff -ruN a/scripts/deploy-prod.sh b/scripts/deploy-prod.sh
+--- a/scripts/deploy-prod.sh	2026-10-12 19:19:07
++++ b/scripts/deploy-prod.sh	2026-10-12 19:19:07
+@@ -33,16 +33,45 @@
+ echo " Deploying backend: ${BACKEND_TAG}  frontend: ${FRONTEND_TAG}"
+ echo "========================================="
+ 
+-echo "==> [1/4] Pulling images..."
++echo "==> [1/6] Pulling images..."
+ docker compose pull
+ 
+-echo "==> [2/4] Applying database migrations..."
++echo "==> [2/6] Backing up the database before any migration..."
++# The backup must succeed before the database is touched. If it fails, nothing has been migrated or restarted.
++# BACKUP_SCRIPT overrides the path. SKIP_BACKUP=1 skips it (only if you took a backup by hand just now).
++BACKUP_SCRIPT="${BACKUP_SCRIPT:-$(pwd)/rct-backup-prod.sh}"
++if [ "${SKIP_BACKUP:-0}" = "1" ]; then
++  echo "WARNING: SKIP_BACKUP=1, no backup was taken by this script." >&2
++elif [ -x "$BACKUP_SCRIPT" ]; then
++  "$BACKUP_SCRIPT" || { echo "Backup FAILED. Nothing was migrated and nothing was restarted." >&2; exit 1; }
++else
++  echo "Backup script not found or not executable: ${BACKUP_SCRIPT}" >&2
++  echo "Set BACKUP_SCRIPT=/path/to/rct-backup-prod.sh, or SKIP_BACKUP=1 if you took a backup by hand just now." >&2
++  exit 1
++fi
++
++echo "==> [3/6] Applying database migrations..."
+ docker compose run --rm api npx prisma migrate deploy
+ 
+-echo "==> [3/4] Recreating containers..."
++echo "==> [4/6] Recreating containers..."
+ docker compose up -d --force-recreate
+ 
+-echo "==> [4/4] Cleaning up unused images..."
++echo "==> [5/6] Waiting for the API to answer (${HEALTH_URL:=http://127.0.0.1:4000/ready})..."
++HEALTHY=0
++for _ in $(seq 1 30); do
++  if curl -fsS -m 5 "$HEALTH_URL" >/dev/null 2>&1; then HEALTHY=1; break; fi
++  sleep 2
++done
++if [ "$HEALTHY" != "1" ]; then
++  echo "HEALTH CHECK FAILED: ${HEALTH_URL} did not answer within 60 seconds." >&2
++  docker compose ps >&2 || true
++  docker compose logs --tail=50 api >&2 || true
++  echo "The database was already migrated. Fix forward, or restore the backup taken in step 2." >&2
++  exit 1
++fi
++echo "API is ready."
++
++echo "==> [6/6] Cleaning up unused images..."
+ docker image prune -f
+ 
+ echo "========================================="

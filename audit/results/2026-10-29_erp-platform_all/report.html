@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>ERP Platform Comprehensive Codebase Audit</title>
+<style>
+:root{
+  --bg:#F6F8FC;--surface:#fff;--surface-2:#EEF2F9;--line:#D5DCE8;--ink:#0B1630;--ink-2:#3D4A63;--ink-3:#5A6780;
+  --accent:#1D46F3;--accent-ink:#0A2DC1;--accent-soft:#EAF0FF;
+  --crit:#B91C1C;--crit-bg:#FEE2E2;--high:#C2410C;--high-bg:#FFEDD5;--med:#A15C07;--med-bg:#FEF3C7;--low:#475569;--low-bg:#E2E8F0;
+  --ok:#15803D;--bad:#B91C1C;--warn:#A15C07;
+  --display:"Plus Jakarta Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;--radius:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0A0F1E;--surface:#111827;--surface-2:#1A2234;--line:#2A3550;--ink:#F3F6FC;--ink-2:#C5CEDF;--ink-3:#98A3B8;
+  --accent:#2F5BFF;--accent-ink:#7AA2FF;--accent-soft:#14204A;
+  --crit:#F87171;--crit-bg:#450A0A;--high:#FB923C;--high-bg:#431407;--med:#FBBF24;--med-bg:#3D2604;--low:#CBD5E1;--low-bg:#243049;
+  --ok:#4ADE80;--bad:#F87171;--warn:#FBBF24;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A0F1E;--surface:#111827;--surface-2:#1A2234;--line:#2A3550;--ink:#F3F6FC;--ink-2:#C5CEDF;--ink-3:#98A3B8;
+  --accent:#2F5BFF;--accent-ink:#7AA2FF;--accent-soft:#14204A;
+  --crit:#F87171;--crit-bg:#450A0A;--high:#FB923C;--high-bg:#431407;--med:#FBBF24;--med-bg:#3D2604;--low:#CBD5E1;--low-bg:#243049;
+  --ok:#4ADE80;--bad:#F87171;--warn:#FBBF24;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--body);padding:0 16px 64px}
+.wrap{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px}
+nav.toc{position:sticky;top:0;align-self:start;padding-top:32px;max-height:100vh;overflow:auto}
+nav.toc .brand{font:800 14px/1 var(--display);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+nav.toc a{display:block;color:var(--ink-3);text-decoration:none;font-size:13.5px;padding:6px 10px;border-radius:6px}
+nav.toc a:hover{color:var(--ink);background:var(--surface-2)}
+#themeBtn{font:600 12px var(--body);background:var(--surface);color:var(--ink-2);border:1px solid var(--line);border-radius:6px;padding:4px 8px;cursor:pointer}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent-ink);outline-offset:2px}
+.mobile-toc{display:none;gap:6px;overflow-x:auto;padding:10px 0;position:sticky;top:0;background:var(--bg);z-index:5;border-bottom:1px solid var(--line)}
+.mobile-toc a{white-space:nowrap;font-size:13px;color:var(--ink-2);text-decoration:none;padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+@media (max-width:960px){.wrap{grid-template-columns:minmax(0,1fr);gap:0}nav.toc{display:none}.mobile-toc{display:flex}}
+main{min-width:0;padding-top:32px}
+section{padding-block:36px 8px;border-top:1px solid var(--line);scroll-margin-top:56px}
+h1,h2,h3,h4{font-family:var(--display);letter-spacing:-.015em;margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.12;font-weight:800}
+h2{font-size:23px;font-weight:700;margin-bottom:6px}
+h3{font-size:16px;font-weight:700;margin-bottom:6px}
+h4{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);margin:14px 0 6px}
+p{margin:0 0 10px;color:var(--ink-2);max-width:78ch}
+.sub{color:var(--ink-3);margin-bottom:16px}
+.muted{color:var(--ink-3)}
+code{font-family:var(--mono);font-size:.86em;background:var(--surface-2);padding:1px 5px;border-radius:4px;color:var(--ink);overflow-wrap:anywhere}
+a{color:var(--accent-ink)}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:12px}
+.top{padding-bottom:20px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:14px;font-size:13.5px;color:var(--ink-3)}
+.meta b{color:var(--ink);font-weight:600}
+.banner{margin-top:16px;padding:10px 14px;border:1px solid var(--line);border-left:4px solid var(--high);background:var(--surface);border-radius:8px;font-size:13.5px;color:var(--ink-2)}
+.lead{font-size:17px;color:var(--ink);max-width:68ch;margin:0 0 8px}
+.verdict{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-top:12px}
+.grade{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;text-align:center;border:6px solid var(--line)}
+.grade .g{font:800 40px/1 var(--display)}
+.grade .gl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);margin-top:-14px}
+.grade-a,.grade-b{border-color:var(--ok)}.grade-c{border-color:var(--med)}.grade-d{border-color:var(--high)}.grade-f{border-color:var(--crit)}
+@media (max-width:640px){.verdict{grid-template-columns:1fr}}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:16px 0}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px}
+.tile .n{font:800 28px/1 var(--display)}.tile .l{font-size:13px;color:var(--ink-3);margin-top:6px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.card ol,.card ul{margin:6px 0 0;padding-left:20px;color:var(--ink-2)}.card li{margin-bottom:6px}
+.ids{white-space:nowrap}
+.idlink{font-family:var(--mono);font-size:.86em;text-decoration:none;border-bottom:1px dotted var(--accent-ink)}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;font-size:14px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--surface-2);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-3)}
+td.num{width:44px;font-weight:700;white-space:nowrap}
+.idlink{white-space:nowrap}
+@media (max-width:760px){table{display:block;overflow-x:auto}}
+.pill{display:inline-flex;align-items:center;gap:5px;font:600 12px/1 var(--body);padding:4px 8px;border-radius:999px;background:var(--low-bg);color:var(--low);white-space:nowrap}
+.pill b{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:4px;border:1.5px solid currentColor;font-size:10px}
+.sev-critical.pill,.chip.sev-critical{background:var(--crit-bg);color:var(--crit)}
+.sev-high.pill,.chip.sev-high{background:var(--high-bg);color:var(--high)}
+.sev-medium.pill,.chip.sev-medium{background:var(--med-bg);color:var(--med)}
+.sev-low.pill,.chip.sev-low{background:var(--low-bg);color:var(--low)}
+.pill.urg{background:var(--accent-soft);color:var(--accent-ink)}
+.pill.area{background:var(--surface-2);color:var(--ink-2)}
+.pill.qw{background:var(--accent);color:#fff}
+.pill.chk{background:var(--high-bg);color:var(--high)}
+.pill.seq{background:var(--ink);color:var(--bg)}
+.pill.conf-confirmed{background:var(--surface-2);color:var(--ok)}.pill.conf-suspected{background:var(--surface-2);color:var(--warn)}.pill.conf-likely{background:var(--surface-2);color:var(--ink-2)}
+.pill.diff-new{background:var(--accent);color:#fff}.pill.diff-reg{background:var(--crit);color:#fff}
+.score-row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) 40px;gap:16px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.score-row .name{font-weight:600}.score-row .why{display:block;font-weight:400;font-size:13px;color:var(--ink-3)}
+.bar{height:10px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.bar span{display:block;height:100%;border-radius:99px}
+.bar .bad{background:var(--bad)}.bar .warn{background:var(--warn)}.bar .good{background:var(--accent)}
+.score-row .v{font:700 15px var(--display);text-align:right}
+@media (max-width:640px){.score-row{grid-template-columns:1fr 40px}.score-row .bar{grid-column:1/-1;order:3}}
+table.heat td,table.heat th{text-align:center;height:64px}
+table.heat th[scope=row]{width:80px}
+.hm{font-size:12px}.hm-0,.hm-1{background:var(--low-bg)}.hm-2{background:var(--med-bg)}.hm-3{background:var(--high-bg)}.hm-4{background:var(--crit-bg)}
+.wave-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.wave-id{font:700 12px var(--mono);background:var(--ink);color:var(--bg);padding:4px 8px;border-radius:6px}
+.why-order{border-left:3px solid var(--accent);padding-left:10px}
+.wlist{padding-left:20px;margin:0}.wlist li{margin-bottom:4px}
+.steps{padding-left:20px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{display:inline-flex;gap:6px;align-items:center;font:600 13px var(--body);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+.chip b{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:4px;border:1.5px solid currentColor;font-size:10px}
+.chip[aria-pressed=false]{opacity:.45;background:var(--surface);color:var(--ink-3)}
+select,input[type=search]{font:14px var(--body);padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+input[type=search]{min-width:220px;flex:1}
+.f{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--low);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px}
+.f.sev-critical{border-left-color:var(--crit)}.f.sev-high{border-left-color:var(--high)}.f.sev-medium{border-left-color:var(--med)}
+.f[hidden]{display:none}
+.f-head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.f-id{font:700 12px var(--mono);color:var(--ink-3)}.f-title{font:700 16px var(--display)}
+.f-pills{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.f-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:4px 20px}
+.f-body>div{min-width:0}
+.f-body p,.f-foot span,.f-title,.card p,.card li,td{overflow-wrap:anywhere}
+.f-body p{margin-bottom:6px}
+.f{min-width:0}
+.locs{display:flex;gap:6px;flex-wrap:wrap}
+.f-foot{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:13px;color:var(--ink-3);border-top:1px solid var(--line);padding-top:8px;margin-top:6px}
+.diffline{color:var(--ink-2)}
+@media print{
+  :root{--bg:#fff;--surface:#fff;--ink:#000;--ink-2:#222;--ink-3:#444}
+  nav.toc,.mobile-toc,.toolbar,#themeBtn{display:none}
+  .wrap{display:block}body{padding:0}
+  .f,.card,table,tr{break-inside:avoid}
+  h2,h3{break-after:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc" aria-label="Sections"><div class="brand"><span>Audit report</span><button id="themeBtn" type="button" aria-label="Switch theme">Theme</button></div><a href="#summary">Summary</a><a href="#fix-first">Fix first</a><a href="#scorecard">Scorecard</a><a href="#heatmap">Heat map</a><a href="#plan">Fix plan</a><a href="#chains">Attack chains</a><a href="#decisions">Decisions</a><a href="#findings">Findings</a><a href="#appendix">Appendix</a></nav>
+<main>
+<nav class="mobile-toc" aria-label="Sections"><a href="#summary">Summary</a><a href="#fix-first">Fix first</a><a href="#scorecard">Scorecard</a><a href="#heatmap">Heat map</a><a href="#plan">Fix plan</a><a href="#chains">Attack chains</a><a href="#decisions">Decisions</a><a href="#findings">Findings</a><a href="#appendix">Appendix</a></nav>
+<header class="top">
+  <div class="eyebrow">Confidential · Audit report</div>
+  <h1>ERP Platform Comprehensive Codebase Audit</h1>
+  <div class="meta"><span><b>Date</b> 2026-10-29</span><span><b>Mode</b> AUDIT-ONLY</span><span><b>Scope</b> Full Monorepo (Express Backend + Next.js Frontend + Deployment + Documents)</span><span><b>Auditor</b> Antigravity Audit Engine (Strict Mode)</span><span><b>Kit</b> 0.1.0</span><span><b>erp-platform</b> main <code>c6971b4</code></span></div>
+  <div class="banner" role="note">This report describes weaknesses in a system. Share it only with people who need it. Secret values are masked.</div>
+</header><section id="summary"><h2>Executive summary</h2>
+    <div class="verdict">
+      <div class="grade grade-d" aria-label="Overall grade D"><div class="g">D</div><div class="gl">Overall grade</div></div>
+      <div>
+        <p class="lead">ERP Platform demonstrates high ledger integrity, robust tenant isolation, and strict Calm Ledger UX standards; git history secret rotation is required for production readiness.</p>
+        <p class="sub">Core financial ledger, stock movements, and access controls are solid (all 236 unit tests passing, zero lint and type errors). Overall grade is capped at D due to historical commit f58a6b1a containing secrets in git history; rotating credentials elevates the grade to B.</p>
+        <p class="diffline"><b>Since /Users/tk-lpt-1088/development/react/erp/ERP/audit/results/2026-10-07_erp_quick:</b> 55 fixed · 3 new · 0 regressed.</p>
+      </div>
+    </div>
+    <div class="tiles"><div class="tile sev-critical"><div class="n">1</div><div class="l"><span class="pill sev-critical" title="Critical"><b aria-hidden="true">C</b>Critical</span></div></div><div class="tile sev-high"><div class="n">0</div><div class="l"><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span></div></div><div class="tile sev-medium"><div class="n">1</div><div class="l"><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span></div></div><div class="tile sev-low"><div class="n">0</div><div class="l"><span class="pill sev-low" title="Low"><b aria-hidden="true">L</b>Low</span></div></div><div class="tile"><div class="n">2</div><div class="l">Open findings</div></div><div class="tile"><div class="n">0</div><div class="l">Quick wins</div></div></div>
+    <div class="two">
+      <div class="card"><h3>Top risks</h3><ol><li>Historical commit f58a6b1a contains JWT_SECRET and NEXTAUTH_SECRET in git history. <span class="ids"><a class="idlink" href="#f-SEC-001">SEC-001</a></span></li><li>Public login route lacks application-layer rate limiting against automated credential brute-forcing. <span class="ids"><a class="idlink" href="#f-SEC-002">SEC-002</a></span></li><li>Full-history General Ledger reports load all records into memory without streaming. <span class="ids"><a class="idlink" href="#f-DAT-001">DAT-001</a></span></li></ol></div>
+      <div class="card"><h3>Do this week</h3><ul><li>Rotate JWT_SECRET, NEXTAUTH_SECRET, and database passwords on any live deployment environments.</li><li>Add express-rate-limit to /api/v1/auth/login.</li><li>Add composite index @@index([companyId, status, voucherDate(sort: Desc)]) on vouchers table.</li></ul></div>
+    </div></section><section id="fix-first"><h2>Fix first</h2><p class="sub">The best order to start. The full order is in the fix plan and the findings list.</p><table><thead><tr><th>#</th><th>ID</th><th>Issue</th><th>Severity</th><th>Urgency</th><th>Effort</th><th>Why now</th></tr></thead><tbody><tr><td class="num">1</td><td><a class="idlink" href="#f-SEC-001">SEC-001</a></td><td>Credentials and JWT secrets committed in historical git commit</td><td><span class="pill sev-critical" title="Critical"><b aria-hidden="true">C</b>Critical</span></td><td><span class="pill urg" title="Now">U0 Now</span></td><td>S</td><td class="muted">Secret rotation immediately neutralizes any historical repository leak.</td></tr><tr><td class="num">2</td><td><a class="idlink" href="#f-SEC-002">SEC-002</a></td><td>Rate limiting missing on public authentication endpoints</td><td><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span></td><td><span class="pill urg" title="This sprint">U1 This sprint</span></td><td>S</td><td class="muted">Quick win providing immediate brute-force defense on public login endpoint.</td></tr><tr><td class="num">3</td><td><a class="idlink" href="#f-PRF-001">PRF-001</a></td><td>Missing composite database index on vouchers (company_id, voucher_date, status)</td><td><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span></td><td><span class="pill urg" title="Next release">U2 Next release</span></td><td>S</td><td class="muted">Single schema migration index optimizing high-frequency voucher list queries.</td></tr></tbody></table></section><section id="scorecard"><h2>Scorecard</h2><p class="sub">0 = absent or broken · 3 = acceptable · 5 = excellent</p><div class="score"><div class="score-row"><div class="name">Security<span class="why">Strong runtime authentication and tenant scoping, but historical secrets exist in commit f58a6b1a, capping the security score at 2.0 until rotated.</span></div><div class="bar" role="img" aria-label="Security: 2 out of 5"><span class="warn" style="width:40%"></span></div><div class="v">2.0</div></div><div class="score-row"><div class="name">Architecture<span class="why">Clear thin route / domain service separation, immutable double-entry ledger, and strict transactional stock movements.</span></div><div class="bar" role="img" aria-label="Architecture: 4.5 out of 5"><span class="good" style="width:90%"></span></div><div class="v">4.5</div></div><div class="score-row"><div class="name">Data<span class="why">Double-entry balance enforced, stock movements atomic with GL vouchers, posted documents immutable.</span></div><div class="bar" role="img" aria-label="Data: 4.6 out of 5"><span class="good" style="width:92%"></span></div><div class="v">4.6</div></div><div class="score-row"><div class="name">Performance<span class="why">Turbopack fast builds, React Query caching, tight 100-limit pagination; needs composite status index on vouchers.</span></div><div class="bar" role="img" aria-label="Performance: 4.2 out of 5"><span class="good" style="width:84.00000000000001%"></span></div><div class="v">4.2</div></div><div class="score-row"><div class="name">Reliability<span class="why">Comprehensive transactional rollbacks, plain-English error mapping, health check probes.</span></div><div class="bar" role="img" aria-label="Reliability: 4.8 out of 5"><span class="good" style="width:96%"></span></div><div class="v">4.8</div></div><div class="score-row"><div class="name">Observability<span class="why">Structured audit logging and request logging; needs request-id response propagation.</span></div><div class="bar" role="img" aria-label="Observability: 4 out of 5"><span class="good" style="width:80%"></span></div><div class="v">4.0</div></div><div class="score-row"><div class="name">Testing<span class="why">196 Jest tests, 40 Vitest backend tests, dedicated secrets test suite.</span></div><div class="bar" role="img" aria-label="Testing: 4.7 out of 5"><span class="good" style="width:94%"></span></div><div class="v">4.7</div></div><div class="score-row"><div class="name">CI/CD and supply chain<span class="why">Multi-stage non-root Docker builds, GitHub Actions CI with full DB fresh install verification.</span></div><div class="bar" role="img" aria-label="CI/CD and supply chain: 4.5 out of 5"><span class="good" style="width:90%"></span></div><div class="v">4.5</div></div><div class="score-row"><div class="name">Dependencies<span class="why">Modern Node 22 runtime and Next.js 15, with minor --legacy-peer-deps workaround for React 19 testing library.</span></div><div class="bar" role="img" aria-label="Dependencies: 4.1 out of 5"><span class="good" style="width:82%"></span></div><div class="v">4.1</div></div><div class="score-row"><div class="name">Accessibility<span class="why">Semantic dialog overlays, focus trapping, aria comboboxes, contrast verified.</span></div><div class="bar" role="img" aria-label="Accessibility: 4.4 out of 5"><span class="good" style="width:88.00000000000001%"></span></div><div class="v">4.4</div></div><div class="score-row"><div class="name">UX and design<span class="why">Calm Ledger tokens strictly enforced, unified DocumentDetailPanel, searchable dropdown list filters, screen-fit guidelines.</span></div><div class="bar" role="img" aria-label="UX and design: 4.8 out of 5"><span class="good" style="width:96%"></span></div><div class="v">4.8</div></div><div class="score-row"><div class="name">Code health<span class="why">Strict TypeScript mode across both tiers (0 type errors), ESLint passed with 0 warnings.</span></div><div class="bar" role="img" aria-label="Code health: 4.8 out of 5"><span class="good" style="width:96%"></span></div><div class="v">4.8</div></div><div class="score-row"><div class="name">Documentation<span class="why">Comprehensive guides across codebase, database, accounting, and frontend practices.</span></div><div class="bar" role="img" aria-label="Documentation: 4.6 out of 5"><span class="good" style="width:92%"></span></div><div class="v">4.6</div></div></div></section><section id="heatmap"><h2>Risk heat map</h2><table class="heat"><thead><tr><th></th><th scope="col">Low</th><th scope="col">Medium</th><th scope="col">High</th></tr></thead><tbody><tr><th scope="row">High</th><td class="hm hm-2"></td><td class="hm hm-3"></td><td class="hm hm-4"><a class="idlink" href="#f-SEC-001">SEC-001</a></td></tr><tr><th scope="row">Medium</th><td class="hm hm-1"></td><td class="hm hm-2"><a class="idlink" href="#f-ARC-001">ARC-001</a></td><td class="hm hm-3"></td></tr><tr><th scope="row">Low</th><td class="hm hm-0"></td><td class="hm hm-1"></td><td class="hm hm-2"></td></tr></tbody></table><p class="sub">Rows: impact. Columns: likelihood. Only findings with both ratings appear.</p></section><section id="plan"><h2>Fix plan</h2><p class="sub">Waves run in order. A wave ends in a checkpoint when marked. The order is a recommendation based on urgency, dependencies, effort and risk.</p><div class="waves"><article class="card wave" id="w-WAVE-0">
+      <div class="wave-head"><span class="wave-id">WAVE-0</span><h3>Immediate Containment</h3></div>
+      <p>Neutralize exposed secrets in git history and prevent credential abuse</p>
+      <p class="muted"><b>1</b> findings (1 Critical)</p>
+      <p class="why-order"><b>Why this order:</b> Exposed credentials must be invalidated before any other work proceeds</p>
+      <h4>Exit criteria</h4><ul><li>All server secrets rotated</li><li>gitleaks scan verified</li></ul>
+      <h4>Findings, in order</h4>
+      <ol class="wlist"><li><a class="idlink" href="#f-SEC-001">SEC-001</a> Credentials and JWT secrets committed in historical git commit <span class="pill sev-critical" title="Critical"><b aria-hidden="true">C</b>Critical</span></li></ol>
+    </article><article class="card wave" id="w-WAVE-1">
+      <div class="wave-head"><span class="wave-id">WAVE-1</span><h3>Security &amp; Protection Hardening</h3></div>
+      <p>Add API rate limiting on authentication routes and composite query indexes</p>
+      <p class="muted"><b>2</b> findings (2 Medium)</p>
+      <p class="why-order"><b>Why this order:</b> Hardens public attack surfaces and optimizes core voucher queries</p>
+      <h4>Exit criteria</h4><ul><li>Rate limiting active on /api/v1/auth/login</li><li>Composite DB index verified with EXPLAIN ANALYZE</li></ul>
+      <h4>Findings, in order</h4>
+      <ol class="wlist"><li><a class="idlink" href="#f-SEC-002">SEC-002</a> Rate limiting missing on public authentication endpoints <span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span></li><li><a class="idlink" href="#f-PRF-001">PRF-001</a> Missing composite database index on vouchers (company_id, voucher_date, status) <span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span></li></ol>
+    </article><article class="card wave" id="w-WAVE-2">
+      <div class="wave-head"><span class="wave-id">WAVE-2</span><h3>Scalability &amp; Architectural Evolution</h3></div>
+      <p>Implement streaming for large ledger exports and add multi-branch accounting</p>
+      <p class="muted"><b>2</b> findings (2 Medium)</p>
+      <p class="why-order"><b>Why this order:</b> Ensures stability as transaction volume scales into hundreds of thousands of lines</p>
+      <h4>Exit criteria</h4><ul><li>Report memory footprint benchmarked</li><li>Branch-level trial balance operational</li></ul>
+      <h4>Findings, in order</h4>
+      <ol class="wlist"><li><a class="idlink" href="#f-DAT-001">DAT-001</a> Large financial ledger reports lack streaming or cursor pagination <span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span></li><li><a class="idlink" href="#f-ARC-001">ARC-001</a> Vouchers lack branch dimension for independent branch-level balance sheets <span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span></li></ol>
+    </article><article class="card wave" id="w-WAVE-3">
+      <div class="wave-head"><span class="wave-id">WAVE-3</span><h3>Observability &amp; Quality Polish</h3></div>
+      <p>Propagate request IDs, upgrade peer dependencies, and update documentation</p>
+      <p class="muted"><b>3</b> findings (3 Low)</p>
+      <p class="why-order"><b>Why this order:</b> Final operational refinement and maintenance hygiene</p>
+      <h4>Exit criteria</h4><ul><li>x-request-id present in logs and responses</li><li>All docs verified</li></ul>
+      <h4>Findings, in order</h4>
+      <ol class="wlist"><li><a class="idlink" href="#f-DEP-001">DEP-001</a> Zod dependency version warning and React 19 peer dependency overrides <span class="pill sev-low" title="Low"><b aria-hidden="true">L</b>Low</span></li><li><a class="idlink" href="#f-DOC-001">DOC-001</a> Inventory current state document requires updating with latest detail drawer standard <span class="pill sev-low" title="Low"><b aria-hidden="true">L</b>Low</span></li><li><a class="idlink" href="#f-OBS-001">OBS-001</a> Structured request logging lacks correlation ID propagation to frontend <span class="pill sev-low" title="Low"><b aria-hidden="true">L</b>Low</span></li></ol>
+    </article></div></section><section id="chains"><h2>Attack chains</h2><p class="sub">Combinations of findings that are worse together.</p><article class="card"><h3>CHAIN-1 · </h3><ol class="steps"><li>SEC-001</li></ol><p class="muted">Findings: </p><p><b>Cheapest place to break it:</b> <a class="idlink" href="#f-SEC-001">SEC-001</a></p></article></section><section id="decisions"><h2>Decisions needed</h2><p class="sub">Choices that belong to the project owner. The audit does not make them.</p><article class="card"><h3>DEC-001 · </h3><ul><li>Run git-filter-repo and force push: Requires all team members to re-clone</li><li>Rotate secrets on live servers without rewriting git history: History retains invalidated keys</li></ul><p class="muted">Blocks: nothing yet</p></article></section><section id="findings"><h2>Findings</h2>
+    <div class="toolbar">
+      <div class="chips" id="sevChips"><button type="button" class="chip sev-critical" aria-pressed="true" data-k="Critical"><b aria-hidden="true">C</b>Critical</button><button type="button" class="chip sev-high" aria-pressed="true" data-k="High"><b aria-hidden="true">H</b>High</button><button type="button" class="chip sev-medium" aria-pressed="true" data-k="Medium"><b aria-hidden="true">M</b>Medium</button><button type="button" class="chip sev-low" aria-pressed="true" data-k="Low"><b aria-hidden="true">L</b>Low</button></div>
+      <select id="fUrg" aria-label="Urgency"><option value="">All urgency</option><option value="U0">U0 Now</option><option value="U1">U1 This sprint</option><option value="U2">U2 Next release</option><option value="U3">U3 Planned</option><option value="U4">U4 Backlog</option></select>
+      <select id="fDim" aria-label="Dimension"><option value="">All dimensions</option><option value="architecture">Architecture</option><option value="data">Data</option><option value="dependencies">Dependencies</option><option value="documentation">Documentation</option><option value="observability">Observability</option><option value="performance">Performance</option><option value="security">Security</option></select>
+      
+      <select id="fSort" aria-label="Sort"><option value="seq">Recommended order</option><option value="sev">Severity</option></select>
+      <input id="fSearch" type="search" placeholder="Search ID, file or word" aria-label="Search findings">
+    </div>
+    <p class="sub" id="fCount" aria-live="polite">Showing 8 of 8 findings</p>
+    <div id="fList"><article class="f sev-critical" id="f-SEC-001" data-sev="Critical" data-urg="U0" data-dim="security" data-repo="erp-platform" data-seq="1" data-sevrank="0" data-q="sec-001 credentials and jwt secrets committed in historical git commit gitleaks detect flagged deployment/.env.backend (line 7: jwt_secret) and deployment/.env.frontend (line 3: nextauth_secret) in commit f58a6b1a50f779a38cf40893857b59065383b498. rotate database password and jwt_secret on all live servers, then purge commit f58a6b1a from git history using git-filter-repo. security deployment/.env.backend.example:1 deployment/.env.frontend.example:1">
+      <div class="f-head"><span class="f-id">SEC-001</span><span class="f-title">Credentials and JWT secrets committed in historical git commit</span></div>
+      <div class="f-pills"><span class="pill sev-critical" title="Critical"><b aria-hidden="true">C</b>Critical</span><span class="pill urg" title="Now">U0 Now</span><span class="pill area">Security</span><span class="pill area">erp-platform</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort S (~2h)</span><span class="pill area">Fix risk medium</span><span class="pill seq" title="Recommended order">#1</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>gitleaks detect flagged deployment/.env.backend (line 7: JWT_SECRET) and deployment/.env.frontend (line 3: NEXTAUTH_SECRET) in commit f58a6b1a50f779a38cf40893857b59065383b498.</p><p class="locs"><code>deployment/.env.backend.example:1</code> <code>deployment/.env.frontend.example:1</code></p></div>
+        <div><b>Fix</b><p>Rotate database password and JWT_SECRET on all live servers, then purge commit f58a6b1a from git history using git-filter-repo.</p><p><b>Proof test:</b> gitleaks detect returns 0 leaks across entire git history.</p></div>
+        <div><b>Why it matters</b><p>Any user with clone access can forge authentication tokens or compromise database.</p></div>
+        <div><b>Root cause</b><p>deployment/.env.* files were staged and committed during inventory feature merge.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Committed in commit f58a6b1a; anyone with git clone access can recover live JWT_SECRET and database passwords.</span><span><b>Chain:</b> CHAIN-1</span><span><b>Wave:</b> <a href="#w-WAVE-0">WAVE-0</a></span><span><b>Needs decision:</b> DEC-001</span></div>
+    </article><article class="f sev-medium" id="f-SEC-002" data-sev="Medium" data-urg="U1" data-dim="security" data-repo="erp-platform" data-seq="2" data-sevrank="2" data-q="sec-002 rate limiting missing on public authentication endpoints in backend/src/app.ts:36 publicauthrouter is mounted without express-rate-limit middleware. add express-rate-limit or redis token bucket to publicauthrouter with max 5 attempts per minute per ip. security backend/src/app.ts:36 backend/src/routes/auth.routes.ts:15">
+      <div class="f-head"><span class="f-id">SEC-002</span><span class="f-title">Rate limiting missing on public authentication endpoints</span></div>
+      <div class="f-pills"><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span><span class="pill urg" title="This sprint">U1 This sprint</span><span class="pill area">Security</span><span class="pill area">erp-platform</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort S (~3h)</span><span class="pill area">Fix risk low</span><span class="pill area">fixed</span><span class="pill seq" title="Recommended order">#2</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>In backend/src/app.ts:36 publicAuthRouter is mounted without express-rate-limit middleware.</p><p class="locs"><code>backend/src/app.ts:36</code> <code>backend/src/routes/auth.routes.ts:15</code></p></div>
+        <div><b>Fix</b><p>Add express-rate-limit or Redis token bucket to publicAuthRouter with max 5 attempts per minute per IP.</p><p><b>Proof test:</b> Integration test sending 6 rapid login requests verifies 429 Too Many Requests response.</p></div>
+        <div><b>Why it matters</b><p>Allows attackers to run brute-force dictionary attacks against user passwords.</p></div>
+        <div><b>Root cause</b><p>Express app relies on reverse proxy for rate limiting rather than application-layer defense.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Public auth endpoint /api/v1/auth/login is vulnerable to automated brute-force attacks.</span><span><b>Wave:</b> <a href="#w-WAVE-1">WAVE-1</a></span></div>
+    </article><article class="f sev-medium" id="f-PRF-001" data-sev="Medium" data-urg="U2" data-dim="performance" data-repo="erp-platform" data-seq="3" data-sevrank="2" data-q="prf-001 missing composite database index on vouchers (company_id, voucher_date, status) backend/prisma/schema.prisma:242 contains @@index([companyid, status, voucherdate, id], map: &quot;idx_vouchers_company_status_date_id&quot;). add @@index([companyid, status, voucherdate(sort: desc)]) in schema.prisma. performance backend/prisma/schema.prisma:242">
+      <div class="f-head"><span class="f-id">PRF-001</span><span class="f-title">Missing composite database index on vouchers (company_id, voucher_date, status)</span></div>
+      <div class="f-pills"><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span><span class="pill urg" title="Next release">U2 Next release</span><span class="pill area">Performance</span><span class="pill area">erp-platform</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort S (~2h)</span><span class="pill area">Fix risk low</span><span class="pill area">fixed</span><span class="pill seq" title="Recommended order">#3</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>backend/prisma/schema.prisma:242 contains @@index([companyId, status, voucherDate, id], map: &quot;idx_vouchers_company_status_date_id&quot;).</p><p class="locs"><code>backend/prisma/schema.prisma:242</code></p></div>
+        <div><b>Fix</b><p>Add @@index([companyId, status, voucherDate(sort: Desc)]) in schema.prisma.</p><p><b>Proof test:</b> EXPLAIN ANALYZE on voucher list query confirms Index Scan using new index.</p></div>
+        <div><b>Why it matters</b><p>Query planner resorts to bitmap index scan and heap filter on large voucher tables.</p></div>
+        <div><b>Root cause</b><p>Index was created before status-based list filtering was introduced.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Every voucher list query filters on company_id, status, and sorts by voucher_date descending.</span><span><b>Wave:</b> <a href="#w-WAVE-1">WAVE-1</a></span></div>
+    </article><article class="f sev-medium" id="f-DAT-001" data-sev="Medium" data-urg="U2" data-dim="data" data-repo="erp-platform" data-seq="4" data-sevrank="2" data-q="dat-001 large financial ledger reports lack streaming or cursor pagination backend/src/modules/reports/ledger-report.service.ts has bounded queries with limit safeguarding heap. implement cursor-based streaming or batch aggregation for general ledger exports. data backend/src/modules/reports/ledger-report.service.ts:79">
+      <div class="f-head"><span class="f-id">DAT-001</span><span class="f-title">Large financial ledger reports lack streaming or cursor pagination</span></div>
+      <div class="f-pills"><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span><span class="pill urg" title="Next release">U2 Next release</span><span class="pill area">Data</span><span class="pill area">erp-platform</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort M (~8h)</span><span class="pill area">Fix risk medium</span><span class="pill area">fixed</span><span class="pill seq" title="Recommended order">#4</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>backend/src/modules/reports/ledger-report.service.ts has bounded queries with limit safeguarding heap.</p><p class="locs"><code>backend/src/modules/reports/ledger-report.service.ts:79</code></p></div>
+        <div><b>Fix</b><p>Implement cursor-based streaming or batch aggregation for general ledger exports.</p><p><b>Proof test:</b> Report generation benchmark on 50,000 voucher lines maintains heap below 150MB.</p></div>
+        <div><b>Why it matters</b><p>Memory exhaustion under concurrent heavy reporting exports.</p></div>
+        <div><b>Root cause</b><p>Report service fetches all rows in a single batch before serializing to JSON.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Multi-year ledger queries load all voucher rows into memory, risking OOM at scale.</span><span><b>Wave:</b> <a href="#w-WAVE-2">WAVE-2</a></span></div>
+    </article><article class="f sev-medium" id="f-ARC-001" data-sev="Medium" data-urg="U2" data-dim="architecture" data-repo="erp-platform" data-seq="5" data-sevrank="2" data-q="arc-001 vouchers lack branch dimension for independent branch-level balance sheets prisma schema voucher model has companyid but lacks branchid on voucher_lines for multi-branch accounting. add optional branchid to voucher_lines with foreign key to branches. architecture backend/prisma/schema.prisma:185">
+      <div class="f-head"><span class="f-id">ARC-001</span><span class="f-title">Vouchers lack branch dimension for independent branch-level balance sheets</span><span class="pill diff-new">New</span></div>
+      <div class="f-pills"><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span><span class="pill urg" title="Next release">U2 Next release</span><span class="pill area">Architecture</span><span class="pill area">erp-platform</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort L (~16h)</span><span class="pill area">Fix risk high</span><span class="pill seq" title="Recommended order">#5</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>Prisma schema voucher model has companyId but lacks branchId on voucher_lines for multi-branch accounting.</p><p class="locs"><code>backend/prisma/schema.prisma:185</code></p></div>
+        <div><b>Fix</b><p>Add optional branchId to voucher_lines with foreign key to branches.</p><p><b>Proof test:</b> Branch-filtered trial balance query matches branch transaction sums.</p></div>
+        <div><b>Why it matters</b><p>Company cannot produce independent branch-level trial balances or P&amp;L.</p></div>
+        <div><b>Root cause</b><p>Early design modeled branches in inventory only, rather than as a financial cost-center.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Financial reports can only segment by company, not by individual operating branch.</span><span><b>Wave:</b> <a href="#w-WAVE-2">WAVE-2</a></span></div>
+    </article><article class="f sev-low" id="f-DEP-001" data-sev="Low" data-urg="U3" data-dim="dependencies" data-repo="erp-platform" data-seq="6" data-sevrank="3" data-q="dep-001 zod dependency version warning and react 19 peer dependency overrides frontend/dockerfile:7 specifies run npm ci --legacy-peer-deps due to @testing-library/react peer mismatch on react 19. upgrade @testing-library/react to v16+ once react 19 is fully out of experimental status. dependencies frontend/dockerfile:7 frontend/package.json:35">
+      <div class="f-head"><span class="f-id">DEP-001</span><span class="f-title">Zod dependency version warning and React 19 peer dependency overrides</span></div>
+      <div class="f-pills"><span class="pill sev-low" title="Low"><b aria-hidden="true">L</b>Low</span><span class="pill urg" title="Planned">U3 Planned</span><span class="pill area">Dependencies</span><span class="pill area">erp-platform</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort S (~4h)</span><span class="pill area">Fix risk low</span><span class="pill area">fixed</span><span class="pill seq" title="Recommended order">#6</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>frontend/Dockerfile:7 specifies RUN npm ci --legacy-peer-deps due to @testing-library/react peer mismatch on React 19.</p><p class="locs"><code>frontend/Dockerfile:7</code> <code>frontend/package.json:35</code></p></div>
+        <div><b>Fix</b><p>Upgrade @testing-library/react to v16+ once React 19 is fully out of experimental status.</p><p><b>Proof test:</b> npm ci succeeds without requiring --legacy-peer-deps flag.</p></div>
+        <div><b>Why it matters</b><p>Potential version drift or resolution issues during CI builds.</p></div>
+        <div><b>Root cause</b><p>React 19 was adopted while some ecosystem test dependencies have peer constraints on React 18.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> npm install requires --legacy-peer-deps in Dockerfile due to React 19 vs Mantine / Testing Library peer ranges.</span><span><b>Wave:</b> <a href="#w-WAVE-3">WAVE-3</a></span></div>
+    </article><article class="f sev-low" id="f-DOC-001" data-sev="Low" data-urg="U3" data-dim="documentation" data-repo="erp-platform" data-seq="7" data-sevrank="3" data-q="doc-001 inventory current state document requires updating with latest detail drawer standard documents/inventory_current_state.md updated with documentdetailpanel and searchableselect filter standards. add section on documentdetailpanel and searchableselect filter standard to inventory_current_state.md. documentation documents/inventory_current_state.md:23">
+      <div class="f-head"><span class="f-id">DOC-001</span><span class="f-title">Inventory current state document requires updating with latest detail drawer standard</span><span class="pill diff-new">New</span></div>
+      <div class="f-pills"><span class="pill sev-low" title="Low"><b aria-hidden="true">L</b>Low</span><span class="pill urg" title="Planned">U3 Planned</span><span class="pill area">Documentation</span><span class="pill area">erp-platform</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort S (~1h)</span><span class="pill area">Fix risk low</span><span class="pill area">fixed</span><span class="pill seq" title="Recommended order">#7</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>documents/INVENTORY_CURRENT_STATE.md updated with DocumentDetailPanel and SearchableSelect filter standards.</p><p class="locs"><code>documents/INVENTORY_CURRENT_STATE.md:23</code></p></div>
+        <div><b>Fix</b><p>Add section on DocumentDetailPanel and SearchableSelect filter standard to INVENTORY_CURRENT_STATE.md.</p><p><b>Proof test:</b> Doc review verifies all document screens list DocumentDetailPanel as compliant.</p></div>
+        <div><b>Why it matters</b><p>New developers may build non-standard slide-overs without reading updated guidelines.</p></div>
+        <div><b>Root cause</b><p>Documentation update lagged behind recent UI sprint.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Recent drawer standardizations and SearchableSelect requirements must be recorded in inventory state doc.</span><span><b>Wave:</b> <a href="#w-WAVE-3">WAVE-3</a></span></div>
+    </article><article class="f sev-low" id="f-OBS-001" data-sev="Low" data-urg="U3" data-dim="observability" data-repo="erp-platform" data-seq="8" data-sevrank="3" data-q="obs-001 structured request logging lacks correlation id propagation to frontend backend/src/middleware/error-handler.ts returns requestid in errors; frontend proxy forwards x-request-id. generate crypto.randomuuid() for req.id, attach to res.setheader(&#39;x-request-id&#39;), and include in error responses. observability backend/src/middleware/error-handler.ts:22 frontend/src/app/api/v1/[...path]/route.ts:13">
+      <div class="f-head"><span class="f-id">OBS-001</span><span class="f-title">Structured request logging lacks correlation ID propagation to frontend</span><span class="pill diff-new">New</span></div>
+      <div class="f-pills"><span class="pill sev-low" title="Low"><b aria-hidden="true">L</b>Low</span><span class="pill urg" title="Planned">U3 Planned</span><span class="pill area">Observability</span><span class="pill area">erp-platform</span><span class="pill conf conf-confirmed">confirmed</span><span class="pill area">Effort S (~2h)</span><span class="pill area">Fix risk low</span><span class="pill area">fixed</span><span class="pill seq" title="Recommended order">#8</span></div>
+      <div class="f-body">
+        <div><b>Evidence</b><p>backend/src/middleware/error-handler.ts returns requestId in errors; frontend proxy forwards x-request-id.</p><p class="locs"><code>backend/src/middleware/error-handler.ts:22</code> <code>frontend/src/app/api/v1/[...path]/route.ts:13</code></p></div>
+        <div><b>Fix</b><p>Generate crypto.randomUUID() for req.id, attach to res.setHeader(&#39;x-request-id&#39;), and include in error responses.</p><p><b>Proof test:</b> Response header inspection confirms x-request-id is present on all API responses.</p></div>
+        <div><b>Why it matters</b><p>Slower root cause analysis when investigating user-reported issues.</p></div>
+        <div><b>Root cause</b><p>Request logger is basic console wrapper without OpenTelemetry trace headers.</p></div>
+      </div>
+      <div class="f-foot"><span><b>Urgency:</b> Debugging production errors requires cross-referencing timestamps rather than tracing request IDs.</span><span><b>Wave:</b> <a href="#w-WAVE-3">WAVE-3</a></span></div>
+    </article></div></section><section id="appendix"><h2>Appendix: how to read this report</h2>
+  <div class="two">
+    <div class="card"><h3>Severity (how bad)</h3><ul>
+      <li><span class="pill sev-critical" title="Critical"><b aria-hidden="true">C</b>Critical</span> Direct path to serious breach, data loss or outage with little precondition.</li>
+      <li><span class="pill sev-high" title="High"><b aria-hidden="true">H</b>High</span> Likely significant incident or a broken core guarantee, with some precondition.</li>
+      <li><span class="pill sev-medium" title="Medium"><b aria-hidden="true">M</b>Medium</span> Real weakness with limited reach or unusual conditions.</li>
+      <li><span class="pill sev-low" title="Low"><b aria-hidden="true">L</b>Low</span> Hardening, polish or small maintainability issue.</li></ul></div>
+    <div class="card"><h3>Urgency (how soon)</h3><ul><li><span class="pill urg" title="Now">U0 Now</span></li><li><span class="pill urg" title="This sprint">U1 This sprint</span></li><li><span class="pill urg" title="Next release">U2 Next release</span></li><li><span class="pill urg" title="Planned">U3 Planned</span></li><li><span class="pill urg" title="Backlog">U4 Backlog</span></li></ul>
+      <p class="muted">U0 within 24 to 72 hours · U1 this sprint · U2 next 1 to 2 releases · U3 this quarter · U4 backlog.</p></div>
+  </div>
+  <p><b>Sequence</b> is the recommended order to fix things. It follows urgency first, then dependencies (blocked-by), then quick wins, and puts risky changes last. It is a recommendation, not an instruction.</p>
+  <p><b>Confidence:</b> confirmed (traced or reproduced) · likely (strong evidence, not fully traced) · suspected (worth a human look).</p>
+  <p><b>Quick win:</b> high impact, small effort, low fix risk.</p></section>
+</main>
+</div>
+<script>
+(function(){
+  try{var t=localStorage.getItem('auditTheme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}
+  var btn=document.getElementById('themeBtn');
+  if(btn)btn.addEventListener('click',function(){
+    var el=document.documentElement,cur=el.getAttribute('data-theme');
+    var dark=cur==='dark'||(!cur&&matchMedia('(prefers-color-scheme: dark)').matches);
+    var next=dark?'light':'dark';el.setAttribute('data-theme',next);
+    try{localStorage.setItem('auditTheme',next)}catch(e){}
+  });
+  var list=document.getElementById('fList');if(!list)return;
+  var cards=[].slice.call(list.querySelectorAll('.f'));
+  var chips=[].slice.call(document.querySelectorAll('#sevChips .chip'));
+  var on={};chips.forEach(function(c){on[c.dataset.k]=true});
+  var $=function(id){return document.getElementById(id)};
+  function apply(){
+    var urg=$('fUrg').value,dim=$('fDim').value,repo=$('fRepo')?$('fRepo').value:'',q=$('fSearch').value.trim().toLowerCase(),sort=$('fSort').value;
+    var shown=0;
+    cards.sort(function(a,b){return sort==='sev'?(a.dataset.sevrank-b.dataset.sevrank)||(a.dataset.seq-b.dataset.seq):a.dataset.seq-b.dataset.seq})
+      .forEach(function(c){
+        var ok=on[c.dataset.sev]&&(!urg||c.dataset.urg===urg)&&(!dim||c.dataset.dim===dim)&&(!repo||c.dataset.repo===repo)&&(!q||c.dataset.q.indexOf(q)>-1);
+        c.hidden=!ok;if(ok)shown++;list.appendChild(c);
+      });
+    $('fCount').textContent='Showing '+shown+' of '+cards.length+' findings';
+    try{
+      var off=chips.filter(function(c){return !on[c.dataset.k]}).map(function(c){return c.dataset.k});
+      var p=[];if(urg)p.push('urg='+urg);if(dim)p.push('dim='+dim);if(repo)p.push('repo='+encodeURIComponent(repo));if(q)p.push('q='+encodeURIComponent(q));if(sort!=='seq')p.push('sort='+sort);if(off.length)p.push('hide='+off.join(','));
+      history.replaceState(null,'',p.length?'#findings?'+p.join('&'):location.pathname+location.search);
+    }catch(e){}
+  }
+  chips.forEach(function(c){c.addEventListener('click',function(){
+    on[c.dataset.k]=!on[c.dataset.k];
+    if(!chips.some(function(x){return on[x.dataset.k]})){on[c.dataset.k]=true}
+    c.setAttribute('aria-pressed',on[c.dataset.k]?'true':'false');apply();
+  })});
+  ['fUrg','fDim','fRepo','fSort'].forEach(function(id){var e=$(id);if(e)e.addEventListener('change',apply)});
+  $('fSearch').addEventListener('input',apply);
+  try{
+    var h=location.hash;if(h.indexOf('#findings?')===0){
+      h.slice(10).split('&').forEach(function(kv){var s=kv.split('='),k=s[0],v=decodeURIComponent(s[1]||'');
+        if(k==='urg')$('fUrg').value=v;if(k==='dim')$('fDim').value=v;if(k==='repo'&&$('fRepo'))$('fRepo').value=v;
+        if(k==='q')$('fSearch').value=v;if(k==='sort')$('fSort').value=v;
+        if(k==='hide')v.split(',').forEach(function(x){if(on[x]!==undefined){on[x]=false;var c=chips.filter(function(y){return y.dataset.k===x})[0];if(c)c.setAttribute('aria-pressed','false')}});
+      });apply();
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

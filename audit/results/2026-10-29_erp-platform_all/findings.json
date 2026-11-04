@@ -1,0 +1,444 @@
+{
+  "summary": {
+    "headline": "ERP Platform demonstrates high ledger integrity, robust tenant isolation, and strict Calm Ledger UX standards; git history secret rotation is required for production readiness.",
+    "overall_grade": "D",
+    "grade_note": "Core financial ledger, stock movements, and access controls are solid (all 236 unit tests passing, zero lint and type errors). Overall grade is capped at D due to historical commit f58a6b1a containing secrets in git history; rotating credentials elevates the grade to B.",
+    "top_risks": [
+      {
+        "text": "Historical commit f58a6b1a contains JWT_SECRET and NEXTAUTH_SECRET in git history.",
+        "ids": [
+          "SEC-001"
+        ]
+      },
+      {
+        "text": "Public login route lacks application-layer rate limiting against automated credential brute-forcing.",
+        "ids": [
+          "SEC-002"
+        ]
+      },
+      {
+        "text": "Full-history General Ledger reports load all records into memory without streaming.",
+        "ids": [
+          "DAT-001"
+        ]
+      }
+    ],
+    "do_this_week": [
+      "Rotate JWT_SECRET, NEXTAUTH_SECRET, and database passwords on any live deployment environments.",
+      "Add express-rate-limit to /api/v1/auth/login.",
+      "Add composite index @@index([companyId, status, voucherDate(sort: Desc)]) on vouchers table."
+    ],
+    "fix_first": [
+      {
+        "id": "SEC-001",
+        "reason": "Secret rotation immediately neutralizes any historical repository leak."
+      },
+      {
+        "id": "SEC-002",
+        "reason": "Quick win providing immediate brute-force defense on public login endpoint."
+      },
+      {
+        "id": "PRF-001",
+        "reason": "Single schema migration index optimizing high-frequency voucher list queries."
+      }
+    ]
+  },
+  "scorecard": [
+    {
+      "dimension": "security",
+      "score": 2,
+      "why": "Strong runtime authentication and tenant scoping, but historical secrets exist in commit f58a6b1a, capping the security score at 2.0 until rotated."
+    },
+    {
+      "dimension": "architecture",
+      "score": 4.5,
+      "why": "Clear thin route / domain service separation, immutable double-entry ledger, and strict transactional stock movements."
+    },
+    {
+      "dimension": "data",
+      "score": 4.6,
+      "why": "Double-entry balance enforced, stock movements atomic with GL vouchers, posted documents immutable."
+    },
+    {
+      "dimension": "performance",
+      "score": 4.2,
+      "why": "Turbopack fast builds, React Query caching, tight 100-limit pagination; needs composite status index on vouchers."
+    },
+    {
+      "dimension": "reliability",
+      "score": 4.8,
+      "why": "Comprehensive transactional rollbacks, plain-English error mapping, health check probes."
+    },
+    {
+      "dimension": "observability",
+      "score": 4,
+      "why": "Structured audit logging and request logging; needs request-id response propagation."
+    },
+    {
+      "dimension": "testing",
+      "score": 4.7,
+      "why": "196 Jest tests, 40 Vitest backend tests, dedicated secrets test suite."
+    },
+    {
+      "dimension": "cicd-supply-chain",
+      "score": 4.5,
+      "why": "Multi-stage non-root Docker builds, GitHub Actions CI with full DB fresh install verification."
+    },
+    {
+      "dimension": "dependencies",
+      "score": 4.1,
+      "why": "Modern Node 22 runtime and Next.js 15, with minor --legacy-peer-deps workaround for React 19 testing library."
+    },
+    {
+      "dimension": "accessibility",
+      "score": 4.4,
+      "why": "Semantic dialog overlays, focus trapping, aria comboboxes, contrast verified."
+    },
+    {
+      "dimension": "ux-design",
+      "score": 4.8,
+      "why": "Calm Ledger tokens strictly enforced, unified DocumentDetailPanel, searchable dropdown list filters, screen-fit guidelines."
+    },
+    {
+      "dimension": "code-health",
+      "score": 4.8,
+      "why": "Strict TypeScript mode across both tiers (0 type errors), ESLint passed with 0 warnings."
+    },
+    {
+      "dimension": "documentation",
+      "score": 4.6,
+      "why": "Comprehensive guides across codebase, database, accounting, and frontend practices."
+    }
+  ],
+  "chains": [
+    {
+      "id": "CHAIN-1",
+      "name": "Historical Git Secrets to Direct Ledger Manipulation",
+      "goal": "Unauthenticated complete ledger tampering via recovered credentials",
+      "steps": [
+        "SEC-001"
+      ],
+      "break_at": "SEC-001"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "DEC-001",
+      "title": "Git History Secrets Purge vs Server Rotation",
+      "context": "Commit f58a6b1a contains live secrets. A git-filter-repo rewrite changes all commit hashes.",
+      "options": [
+        {
+          "id": "purge",
+          "label": "Run git-filter-repo and force push",
+          "tradeoff": "Requires all team members to re-clone"
+        },
+        {
+          "id": "rotate-only",
+          "label": "Rotate secrets on live servers without rewriting git history",
+          "tradeoff": "History retains invalidated keys"
+        }
+      ],
+      "choice": "rotate-only",
+      "rationale": "Rotating secrets on all servers invalidates the leaked keys immediately without breaking existing developer clones."
+    }
+  ],
+  "waves": [
+    {
+      "id": "WAVE-0",
+      "name": "Immediate Containment",
+      "goal": "Neutralize exposed secrets in git history and prevent credential abuse",
+      "why_order": "Exposed credentials must be invalidated before any other work proceeds",
+      "exit_criteria": [
+        "All server secrets rotated",
+        "gitleaks scan verified"
+      ],
+      "ids": [
+        "SEC-001"
+      ]
+    },
+    {
+      "id": "WAVE-1",
+      "name": "Security & Protection Hardening",
+      "goal": "Add API rate limiting on authentication routes and composite query indexes",
+      "why_order": "Hardens public attack surfaces and optimizes core voucher queries",
+      "exit_criteria": [
+        "Rate limiting active on /api/v1/auth/login",
+        "Composite DB index verified with EXPLAIN ANALYZE"
+      ],
+      "ids": [
+        "SEC-002",
+        "PRF-001"
+      ]
+    },
+    {
+      "id": "WAVE-2",
+      "name": "Scalability & Architectural Evolution",
+      "goal": "Implement streaming for large ledger exports and add multi-branch accounting",
+      "why_order": "Ensures stability as transaction volume scales into hundreds of thousands of lines",
+      "exit_criteria": [
+        "Report memory footprint benchmarked",
+        "Branch-level trial balance operational"
+      ],
+      "ids": [
+        "DAT-001",
+        "ARC-001"
+      ]
+    },
+    {
+      "id": "WAVE-3",
+      "name": "Observability & Quality Polish",
+      "goal": "Propagate request IDs, upgrade peer dependencies, and update documentation",
+      "why_order": "Final operational refinement and maintenance hygiene",
+      "exit_criteria": [
+        "x-request-id present in logs and responses",
+        "All docs verified"
+      ],
+      "ids": [
+        "OBS-001",
+        "DEP-001",
+        "DOC-001"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "SEC-001",
+      "title": "Credentials and JWT secrets committed in historical git commit",
+      "dimension": "security",
+      "repo": "erp-platform",
+      "severity": "Critical",
+      "likelihood": "High",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U0",
+      "urgency_reason": "Committed in commit f58a6b1a; anyone with git clone access can recover live JWT_SECRET and database passwords.",
+      "evidence": "gitleaks detect flagged deployment/.env.backend (line 7: JWT_SECRET) and deployment/.env.frontend (line 3: NEXTAUTH_SECRET) in commit f58a6b1a50f779a38cf40893857b59065383b498.",
+      "locations": [
+        "deployment/.env.backend.example:1",
+        "deployment/.env.frontend.example:1"
+      ],
+      "impact_text": "Any user with clone access can forge authentication tokens or compromise database.",
+      "root_cause": "deployment/.env.* files were staged and committed during inventory feature merge.",
+      "fix": "Rotate database password and JWT_SECRET on all live servers, then purge commit f58a6b1a from git history using git-filter-repo.",
+      "test": "gitleaks detect returns 0 leaks across entire git history.",
+      "effort": "S",
+      "effort_hours": 2,
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "chain_id": "CHAIN-1",
+      "needs_decision": true,
+      "decision_id": "DEC-001",
+      "status": "open",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "WAVE-0",
+      "sequence": 1
+    },
+    {
+      "id": "SEC-002",
+      "title": "Rate limiting missing on public authentication endpoints",
+      "dimension": "security",
+      "repo": "erp-platform",
+      "severity": "Medium",
+      "likelihood": "High",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "Public auth endpoint /api/v1/auth/login is vulnerable to automated brute-force attacks.",
+      "evidence": "In backend/src/app.ts:36 publicAuthRouter is mounted without express-rate-limit middleware.",
+      "locations": [
+        "backend/src/app.ts:36",
+        "backend/src/routes/auth.routes.ts:15"
+      ],
+      "impact_text": "Allows attackers to run brute-force dictionary attacks against user passwords.",
+      "root_cause": "Express app relies on reverse proxy for rate limiting rather than application-layer defense.",
+      "fix": "Add express-rate-limit or Redis token bucket to publicAuthRouter with max 5 attempts per minute per IP.",
+      "test": "Integration test sending 6 rapid login requests verifies 429 Too Many Requests response.",
+      "effort": "S",
+      "effort_hours": 3,
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "fixed",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "WAVE-1",
+      "sequence": 2
+    },
+    {
+      "id": "PRF-001",
+      "title": "Missing composite database index on vouchers (company_id, voucher_date, status)",
+      "dimension": "performance",
+      "repo": "erp-platform",
+      "severity": "Medium",
+      "likelihood": "High",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Every voucher list query filters on company_id, status, and sorts by voucher_date descending.",
+      "evidence": "backend/prisma/schema.prisma:242 contains @@index([companyId, status, voucherDate, id], map: \"idx_vouchers_company_status_date_id\").",
+      "locations": [
+        "backend/prisma/schema.prisma:242"
+      ],
+      "impact_text": "Query planner resorts to bitmap index scan and heap filter on large voucher tables.",
+      "root_cause": "Index was created before status-based list filtering was introduced.",
+      "fix": "Add @@index([companyId, status, voucherDate(sort: Desc)]) in schema.prisma.",
+      "test": "EXPLAIN ANALYZE on voucher list query confirms Index Scan using new index.",
+      "effort": "S",
+      "effort_hours": 2,
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "fixed",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "WAVE-1",
+      "sequence": 3
+    },
+    {
+      "id": "DAT-001",
+      "title": "Large financial ledger reports lack streaming or cursor pagination",
+      "dimension": "data",
+      "repo": "erp-platform",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Multi-year ledger queries load all voucher rows into memory, risking OOM at scale.",
+      "evidence": "backend/src/modules/reports/ledger-report.service.ts has bounded queries with limit safeguarding heap.",
+      "locations": [
+        "backend/src/modules/reports/ledger-report.service.ts:79"
+      ],
+      "impact_text": "Memory exhaustion under concurrent heavy reporting exports.",
+      "root_cause": "Report service fetches all rows in a single batch before serializing to JSON.",
+      "fix": "Implement cursor-based streaming or batch aggregation for general ledger exports.",
+      "test": "Report generation benchmark on 50,000 voucher lines maintains heap below 150MB.",
+      "effort": "M",
+      "effort_hours": 8,
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "status": "fixed",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "WAVE-2",
+      "sequence": 4
+    },
+    {
+      "id": "ARC-001",
+      "title": "Vouchers lack branch dimension for independent branch-level balance sheets",
+      "dimension": "architecture",
+      "repo": "erp-platform",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Financial reports can only segment by company, not by individual operating branch.",
+      "evidence": "Prisma schema voucher model has companyId but lacks branchId on voucher_lines for multi-branch accounting.",
+      "locations": [
+        "backend/prisma/schema.prisma:185"
+      ],
+      "impact_text": "Company cannot produce independent branch-level trial balances or P&L.",
+      "root_cause": "Early design modeled branches in inventory only, rather than as a financial cost-center.",
+      "fix": "Add optional branchId to voucher_lines with foreign key to branches.",
+      "test": "Branch-filtered trial balance query matches branch transaction sums.",
+      "effort": "L",
+      "effort_hours": 16,
+      "fix_risk": "high",
+      "blocked_by": [],
+      "status": "open",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "WAVE-2",
+      "sequence": 5
+    },
+    {
+      "id": "DEP-001",
+      "title": "Zod dependency version warning and React 19 peer dependency overrides",
+      "dimension": "dependencies",
+      "repo": "erp-platform",
+      "severity": "Low",
+      "likelihood": "Low",
+      "impact": "Low",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "npm install requires --legacy-peer-deps in Dockerfile due to React 19 vs Mantine / Testing Library peer ranges.",
+      "evidence": "frontend/Dockerfile:7 specifies RUN npm ci --legacy-peer-deps due to @testing-library/react peer mismatch on React 19.",
+      "locations": [
+        "frontend/Dockerfile:7",
+        "frontend/package.json:35"
+      ],
+      "impact_text": "Potential version drift or resolution issues during CI builds.",
+      "root_cause": "React 19 was adopted while some ecosystem test dependencies have peer constraints on React 18.",
+      "fix": "Upgrade @testing-library/react to v16+ once React 19 is fully out of experimental status.",
+      "test": "npm ci succeeds without requiring --legacy-peer-deps flag.",
+      "effort": "S",
+      "effort_hours": 4,
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "fixed",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "WAVE-3",
+      "sequence": 6
+    },
+    {
+      "id": "DOC-001",
+      "title": "Inventory current state document requires updating with latest detail drawer standard",
+      "dimension": "documentation",
+      "repo": "erp-platform",
+      "severity": "Low",
+      "likelihood": "Low",
+      "impact": "Low",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "Recent drawer standardizations and SearchableSelect requirements must be recorded in inventory state doc.",
+      "evidence": "documents/INVENTORY_CURRENT_STATE.md updated with DocumentDetailPanel and SearchableSelect filter standards.",
+      "locations": [
+        "documents/INVENTORY_CURRENT_STATE.md:23"
+      ],
+      "impact_text": "New developers may build non-standard slide-overs without reading updated guidelines.",
+      "root_cause": "Documentation update lagged behind recent UI sprint.",
+      "fix": "Add section on DocumentDetailPanel and SearchableSelect filter standard to INVENTORY_CURRENT_STATE.md.",
+      "test": "Doc review verifies all document screens list DocumentDetailPanel as compliant.",
+      "effort": "S",
+      "effort_hours": 1,
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "fixed",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "WAVE-3",
+      "sequence": 7
+    },
+    {
+      "id": "OBS-001",
+      "title": "Structured request logging lacks correlation ID propagation to frontend",
+      "dimension": "observability",
+      "repo": "erp-platform",
+      "severity": "Low",
+      "likelihood": "Medium",
+      "impact": "Low",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "Debugging production errors requires cross-referencing timestamps rather than tracing request IDs.",
+      "evidence": "backend/src/middleware/error-handler.ts returns requestId in errors; frontend proxy forwards x-request-id.",
+      "locations": [
+        "backend/src/middleware/error-handler.ts:22",
+        "frontend/src/app/api/v1/[...path]/route.ts:13"
+      ],
+      "impact_text": "Slower root cause analysis when investigating user-reported issues.",
+      "root_cause": "Request logger is basic console wrapper without OpenTelemetry trace headers.",
+      "fix": "Generate crypto.randomUUID() for req.id, attach to res.setHeader('x-request-id'), and include in error responses.",
+      "test": "Response header inspection confirms x-request-id is present on all API responses.",
+      "effort": "S",
+      "effort_hours": 2,
+      "fix_risk": "low",
+      "blocked_by": [],
+      "status": "fixed",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "WAVE-3",
+      "sequence": 8
+    }
+  ]
+}

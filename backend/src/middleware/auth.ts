@@ -2,7 +2,16 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserRole } from '@prisma/client';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'super_secure_affiliate_jwt_token_2026';
+export function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === 'test') {
+      return 'test_jwt_secret_key_only_for_unit_tests_2026';
+    }
+    throw new Error('FATAL: JWT_SECRET environment variable is missing.');
+  }
+  return secret;
+}
 
 export interface AuthUser {
   id: number;
@@ -29,7 +38,7 @@ export function generateToken(user: AuthUser): string {
       role: user.role,
       status: user.status,
     },
-    JWT_SECRET,
+    getJwtSecret(),
     { expiresIn: '7d' }
   );
 }
@@ -37,17 +46,6 @@ export function generateToken(user: AuthUser): string {
 export function authenticate(req: Request, res: Response, next: NextFunction): void {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
-      // In development, default to active admin session for seamless local UI browsing
-      req.user = {
-        id: 1,
-        email: 'zeeshan@gmail.com',
-        name: 'adren v',
-        role: 'ADMIN',
-        status: 'ACTIVE',
-      };
-      return next();
-    }
     res.status(401).json({ error: 'Unauthorized', message: 'Missing or invalid authentication token' });
     return;
   }
@@ -59,7 +57,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as AuthUser;
+    const decoded = jwt.verify(token, getJwtSecret()) as AuthUser;
     req.user = decoded;
     next();
   } catch (err) {
@@ -73,7 +71,7 @@ export function optionalAuthenticate(req: Request, _res: Response, next: NextFun
     const token = authHeader.split(' ')[1];
     if (token) {
       try {
-        const decoded = jwt.verify(token, JWT_SECRET) as AuthUser;
+        const decoded = jwt.verify(token, getJwtSecret()) as AuthUser;
         req.user = decoded;
       } catch {
         // Ignore invalid token in optional auth

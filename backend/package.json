@@ -13,7 +13,7 @@
     "dev": "tsx watch src/index.ts",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
-    "test": "NODE_ENV=test tsx --test tests/api.test.ts",
+    "test": "NODE_ENV=test tsx --test tests/*.test.ts",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "db:seed": "tsx src/db/seed.ts"
@@ -26,6 +26,8 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.3",
+    "prisma": "^6.4.1",
+    "tsx": "^4.19.3",
     "ua-parser-js": "^2.0.0",
     "uuid": "^11.1.0",
     "zod": "^3.24.2"

@@ -1,0 +1,19 @@
+
+> erp-backend@0.1.0 test
+> vitest run test/accounting-rules.test.ts test/auth-access.test.ts test/invoice-balances.test.ts test/permissions.test.ts test/plain-error-map.test.ts test/stock-holder-access.test.ts
+
+
+ RUN  v5.0.5 /Users/tk-lpt-1088/development/react/erp/ERP/backend
+
+ ✓ test/plain-error-map.test.ts (2 tests) 5ms
+ ✓ test/permissions.test.ts (8 tests) 6ms
+ ✓ test/invoice-balances.test.ts (4 tests) 3ms
+ ✓ test/stock-holder-access.test.ts (10 tests) 5ms
+ ✓ test/accounting-rules.test.ts (7 tests) 5ms
+ ✓ test/auth-access.test.ts (9 tests) 172ms
+
+ Test Files  6 passed (6)
+      Tests  40 passed (40)
+   Start at  18:10:07
+   Duration  274ms (tests 39%, import 39%, transform 18%, worker 3%)
+

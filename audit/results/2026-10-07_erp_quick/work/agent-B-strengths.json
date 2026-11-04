@@ -1,0 +1,53 @@
+[
+ {
+  "title": "Scoring stores a per-assessment score snapshot",
+  "detail": "skill_assessments.score is stored at write time and preferred by computeCompetencyScore, so old weights do not rewrite existing assessment rows (except zero scores).",
+  "locations": [
+   "backend/src/scoring/scoring.engine.ts:174-203"
+  ]
+ },
+ {
+  "title": "Login and refresh path uses bcrypt cost 12 and a login rate limiter",
+  "detail": "Passwords hashed with bcryptjs cost 12; express-rate-limit on login.",
+  "locations": [
+   "backend/src/modules/config/config.service.ts:1032",
+   "backend/src/modules/auth/auth.router.ts:11"
+  ]
+ },
+ {
+  "title": "Validation on every config write route",
+  "detail": "All post/put/patch routes in config.router.ts use validate(zod schema), with parsed data replacing req.body.",
+  "locations": [
+   "backend/src/modules/config/config.router.ts:55-191",
+   "backend/src/middleware/validate.ts:33-36"
+  ]
+ },
+ {
+  "title": "AI has deterministic fallback and bounded inputs",
+  "detail": "Failures fall back to a deterministic answer; question clamped to 600 chars; focus allow-listed; output coerced to a fixed shape.",
+  "locations": [
+   "backend/src/modules/ai/ai.service.ts:795-832"
+  ]
+ },
+ {
+  "title": "Multi-step config writes use transactions with audit rows",
+  "detail": "createEmployee and line-manager flows use db.$transaction with tx.accessAuditLog.",
+  "locations": [
+   "backend/src/modules/config/config.service.ts:1240-1310"
+  ]
+ },
+ {
+  "title": "DB-level guard on CEFR scale",
+  "detail": "Trigger cefr_levels_scale_lock protects the scale in the database.",
+  "locations": [
+   "backend/prisma/migrations/20260924020000_cefr_policy_and_scale_lock/migration.sql:28-47"
+  ]
+ },
+ {
+  "title": "Security headers, CORS pinned, body limit",
+  "detail": "helmet with HSTS, CORS restricted to FRONTEND_URL, 1mb JSON limit.",
+  "locations": [
+   "backend/src/app.ts:31-67"
+  ]
+ }
+]

@@ -114,3 +114,13 @@ export const urlParameterTestCases = [
     },
   },
 ];
+
+import test from 'node:test';
+import assert from 'node:assert/strict';
+
+for (const tc of urlParameterTestCases) {
+  test(tc.name, () => {
+    assert.equal(tc.run(), true, tc.description);
+  });
+}
+

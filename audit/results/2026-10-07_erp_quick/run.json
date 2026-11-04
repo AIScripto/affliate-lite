@@ -1,0 +1,26 @@
+{
+  "kit_version": "0.1.0",
+  "model": "claude-sonnet-5-5 (orchestrator) with three parallel reviewer sub-agents",
+  "mode": "AUDIT-ONLY",
+  "depth": "quick",
+  "date": "2026-10-07",
+  "repos": [
+    { "name": "backend", "branch": "master", "commit": "227b698" },
+    { "name": "frontend", "branch": "master", "commit": "45ae7f7" }
+  ],
+  "tools": [
+    { "name": "gitleaks", "version": "8.30.1", "result": "0 leaks both repos" },
+    { "name": "trivy fs", "version": "0.69.3", "result": "see evidence/tool-summary.md" },
+    { "name": "npm audit", "result": "see evidence/tool-summary.md" },
+    { "name": "project checks", "result": "type-check, lint, tests with coverage, both repos, approved by user" }
+  ],
+  "not_run": ["semgrep", "osv-scanner", "hadolint", "jscpd", "madge", "cloc", "syft", "checkov", "trufflehog"],
+  "limits": [
+    "Quick depth: five critical flows traced; other modules sampled.",
+    "Draft findings came from three reviewers; all High findings (and the A-04 downgrade) were re-verified by hand against the code.",
+    "Medium and Low findings were spot-checked for file/line existence by the reviewers, not each re-opened by the orchestrator.",
+    "No access to production: live nginx, firewall, data and backups not examined.",
+    "The earlier ERP audit (erp-audit-2026-10-06.html) was not verified in this run (prompt 13)."
+  ],
+  "safety": "Read-only. No .env values read, no Prisma command, backups/ not opened, no project script other than approved type-check/lint/test run."
+}

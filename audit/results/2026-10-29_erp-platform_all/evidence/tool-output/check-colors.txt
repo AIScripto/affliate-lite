@@ -1,0 +1,5 @@
+
+> erp-financial-module@0.1.0 check:colors
+> node scripts/check-raw-colors.mjs
+
+check:colors — no raw colours outside brand-palette.css.

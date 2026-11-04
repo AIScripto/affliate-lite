@@ -37,8 +37,8 @@ docker compose logs -f backend
 ```
 
 Once started:
-- **Frontend App (Master Admin & Partner Portal)**: `http://localhost:5173`
-- **Backend API & Tracking Redirects**: `http://localhost:5000`
+- **Frontend App (Master Admin & Partner Portal)**: `http://localhost:3085`
+- **Backend API & Tracking Redirects**: `http://localhost:3086`
 - **PostgreSQL Database**: `localhost:5432`
 
 ---
@@ -48,14 +48,14 @@ Once started:
 ### 1. Test Inbound Tracking Redirect
 Visit or test a tracking link:
 ```bash
-curl -i "http://localhost:5000/go/running-shoe-123?ref=sub_ali_05&src=youtube&camp=winter_sale_26&json=true"
+curl -i "http://localhost:3086/go/running-shoe-123?ref=sub_ali_05&src=youtube&camp=winter_sale_26&json=true"
 ```
 Returns generated `click_id`, telemetry, and translated outbound brand URL.
 
 ### 2. Test S2S Postback Sale Webhook
 Simulate a brand conversion:
 ```bash
-curl -X POST http://localhost:5000/api/v1/postback \
+curl -X POST http://localhost:3086/api/v1/postback \
   -H "Content-Type: application/json" \
   -d '{
     "click_id": "clk_98412_yt01",

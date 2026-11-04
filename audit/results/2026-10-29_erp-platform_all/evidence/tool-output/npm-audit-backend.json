@@ -1,0 +1,25 @@
+{
+  "message": "403 Forbidden - POST https://registry.npmjs.org/-/npm/v1/security/advisories/bulk",
+  "method": "POST",
+  "uri": "https://registry.npmjs.org/-/npm/v1/security/advisories/bulk",
+  "headers": {
+    "connection": [
+      "close"
+    ],
+    "content-length": [
+      "95"
+    ],
+    "content-type": [
+      "text/plain; charset=utf-8"
+    ],
+    "x-fetch-attempts": [
+      "1"
+    ]
+  },
+  "statusCode": 403,
+  "body": "Request to POST /-/npm/v1/security/advisories/bulk on registry.npmjs.org not allowed by policy\n",
+  "error": {
+    "summary": "",
+    "detail": ""
+  }
+}

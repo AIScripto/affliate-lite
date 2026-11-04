@@ -183,7 +183,7 @@ export async function getOffers(req: Request, res: Response): Promise<void> {
     },
   });
 
-  const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
+  const baseUrl = process.env.BASE_URL || 'http://localhost:3086';
 
   const formatted = offers.map((o) => {
     const defaultPayout = o.payouts[0];

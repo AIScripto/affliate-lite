@@ -1,0 +1,86 @@
+diff -u -r a/deployments/docker-compose.prod.yml b/deployments/docker-compose.prod.yml
+--- a/deployments/docker-compose.prod.yml
++++ b/deployments/docker-compose.prod.yml
+@@ -4,7 +4,7 @@
+ 
+ services:
+   api:
+-    image: tariqsulehri/rct-backend:${BACKEND_TAG:-latest}
++    image: tariqsulehri/rct-backend:${BACKEND_TAG:?Set BACKEND_TAG to a release such as v1.1.0 or production-abc1234, not latest}
+     container_name: rct-backend
+     platform: linux/amd64
+     restart: unless-stopped
+@@ -16,7 +16,7 @@
+       - "host.docker.internal:host-gateway"
+ 
+   frontend:
+-    image: tariqsulehri/rct-frontend:${FRONTEND_TAG:-latest}
++    image: tariqsulehri/rct-frontend:${FRONTEND_TAG:?Set FRONTEND_TAG to a release such as v1.1.0 or production-abc1234, not latest}
+     container_name: rct-frontend
+     platform: linux/amd64
+     restart: unless-stopped
+diff -u -r a/docker-compose.yml b/docker-compose.yml
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -2,7 +2,7 @@
+ 
+ services:
+   api:
+-    image: tariqsulehri/rct-backend:${BACKEND_TAG:-latest}
++    image: tariqsulehri/rct-backend:${BACKEND_TAG:?Set BACKEND_TAG to a release such as v1.1.0 or production-abc1234, not latest}
+     container_name: rct-backend-prod
+     platform: linux/amd64
+     restart: always
+@@ -14,7 +14,7 @@
+       - "host.docker.internal:host-gateway"
+ 
+   frontend:
+-    image: tariqsulehri/rct-frontend:${FRONTEND_TAG:-latest}
++    image: tariqsulehri/rct-frontend:${FRONTEND_TAG:?Set FRONTEND_TAG to a release such as v1.1.0 or production-abc1234, not latest}
+     container_name: rct-frontend-prod
+     platform: linux/amd64
+     restart: always
+diff -u -r a/scripts/deploy-prod.sh b/scripts/deploy-prod.sh
+--- a/scripts/deploy-prod.sh
++++ b/scripts/deploy-prod.sh
+@@ -4,15 +4,27 @@
+ # Always run from the directory where the script and docker-compose file live
+ cd "$(dirname "$0")"
+ 
+-# Which releases to deploy (see documentation/deployment/release-and-versioning.md):
+-#   ./deploy.sh                       backend latest, frontend latest
+-#   ./deploy.sh v1.1.0                both v1.1.0
+-#   ./deploy.sh v1.1.0 v1.2.0         backend v1.1.0, frontend v1.2.0
+-#   BACKEND_TAG=v1.1.0 ./deploy.sh    from the environment
++# Which releases to deploy (see documentation/deployment/release-and-versioning.md).
++# A release tag is REQUIRED: the moving "latest" tag is no longer a default, because it is whatever
++# built last, from any trigger, and a migrated release cannot be rolled back.
++#   ./deploy-prod.sh v1.1.0                both v1.1.0
++#   ./deploy-prod.sh v1.1.0 v1.2.0         backend v1.1.0, frontend v1.2.0
++#   ./deploy-prod.sh production-abc1234    the image built from commit abc1234 on master
++#   BACKEND_TAG=v1.1.0 ./deploy-prod.sh    from the environment
+ # Roll back by deploying the previous release. A backend release that ran a database
+ # migration cannot be rolled back this way - fix forward with a new patch release.
+-BACKEND_TAG="${1:-${BACKEND_TAG:-${APP_TAG:-latest}}}"
++BACKEND_TAG="${1:-${BACKEND_TAG:-${APP_TAG:-}}}"
+ FRONTEND_TAG="${2:-${FRONTEND_TAG:-$BACKEND_TAG}}"
++if [ -z "$BACKEND_TAG" ]; then
++  echo "No release given. Usage: ./deploy-prod.sh <tag>   (for example v1.1.0 or production-abc1234)" >&2
++  exit 1
++fi
++for TAG in "$BACKEND_TAG" "$FRONTEND_TAG"; do
++  if [ "$TAG" = "latest" ] && [ "${ALLOW_LATEST:-0}" != "1" ]; then
++    echo "Refusing to deploy the moving tag 'latest'. Use a release tag, or set ALLOW_LATEST=1 if you really mean it." >&2
++    exit 1
++  fi
++done
+ # APP_TAG is still exported for a compose file that reads the old single tag.
+ APP_TAG="$BACKEND_TAG"
+ export BACKEND_TAG FRONTEND_TAG APP_TAG
+@@ -43,3 +55,6 @@
+ echo " at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+ echo " Deployment completed successfully! 🎉"
+ echo "========================================="
++
++# Keep a record of what is running, on the server (one line per deploy).
++echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') backend=${BACKEND_TAG} frontend=${FRONTEND_TAG} by=$(whoami)" >> deploy.log

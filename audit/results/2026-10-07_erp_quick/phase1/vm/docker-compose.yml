@@ -1,0 +1,47 @@
+# Production server stack: API + frontend. PostgreSQL runs on the host (host.docker.internal).
+# Lives next to deploy.sh on the server as docker-compose.yml. Deploy a release with
+# ./deploy.sh <backend-tag> <frontend-tag>   for example ./deploy.sh v1.2.0 v1.1.6
+# (backend and frontend have their own version numbers; with one value, both get the same tag)
+# See documentation/deployment/release-and-versioning.md
+#
+# Every docker compose command needs the tags (ps, logs, exec, down too). deploy.sh sets them for a deploy;
+# for anything else put BACKEND_TAG and FRONTEND_TAG in a .env file next to this file, or set them in the command.
+
+services:
+  api:
+    # A release tag is required: "latest" is whatever built last, from any pipeline (OPS-002).
+    image: tariqsulehri/rct-backend:${BACKEND_TAG:?Set BACKEND_TAG to a release such as v1.2.0 or production-abc1234, not latest}
+    container_name: rct-backend
+    platform: linux/amd64
+    restart: unless-stopped
+    env_file:
+      - ./backend.env
+    ports:
+      # Only the VM itself can reach the API directly (SEC-019). Users go through nginx.
+      - "127.0.0.1:4000:4000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # No healthcheck here: the backend image already defines one (/health, every 30 s). deploy.sh waits for /ready.
+    # Without a limit, container logs grow until the disk is full.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  frontend:
+    image: tariqsulehri/rct-frontend:${FRONTEND_TAG:?Set FRONTEND_TAG to a release such as v1.1.6 or production-abc1234, not latest}
+    container_name: rct-frontend
+    platform: linux/amd64
+    restart: unless-stopped
+    ports:
+      # Open on every address, as before. The VM nginx proxies to 127.0.0.1:3001. Once nobody opens <vm-ip>:3001
+      # directly, change this to "127.0.0.1:3001:80".
+      - "3001:80"
+    depends_on:
+      - api
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"

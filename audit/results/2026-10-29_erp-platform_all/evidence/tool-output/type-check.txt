@@ -1,0 +1,12 @@
+
+> erp-platform@0.1.0 type-check
+> npm --prefix frontend run type-check && npm --prefix backend run type-check
+
+
+> erp-financial-module@0.1.0 type-check
+> tsc --noEmit
+
+
+> erp-backend@0.1.0 type-check
+> tsc --noEmit
+

@@ -37,6 +37,9 @@ export default {
       boxShadow: {
         'glow-primary': '0 0 20px -3px rgba(108, 92, 231, 0.35)',
         'glow-success': '0 0 20px -3px rgba(46, 204, 113, 0.35)',
+      },
+      spacing: {
+        '4.5': '1.125rem',
       }
     },
   },

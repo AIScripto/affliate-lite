@@ -2,17 +2,28 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import apiRouter from './routes';
+import prisma from './db/prisma';
 import { handleClickRedirect, handlePostback } from './controllers/trackingController';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3086;
 
 // Middleware
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
+  : ['http://localhost:3085', 'http://161.97.110.121:3085'];
+
 app.use(
   cors({
-    origin: '*',
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(null, origin);
+    },
     credentials: true,
   })
 );
@@ -22,6 +33,15 @@ app.use(express.urlencoded({ extended: true }));
 // Health Check
 app.get('/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', service: 'affiliate-tracking-backend', timestamp: new Date().toISOString() });
+});
+
+app.get('/health/database', async (_req: Request, res: Response) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ status: 'ok', database: 'connected', timestamp: new Date().toISOString() });
+  } catch (err: any) {
+    res.status(500).json({ status: 'error', database: 'disconnected', message: err?.message || 'Database error' });
+  }
 });
 
 // Root & API Tracking Click Redirect Engines ([04:40]–[05:00])

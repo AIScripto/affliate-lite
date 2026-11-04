@@ -1,0 +1,760 @@
+{
+  "summary": {
+    "headline": "Core tracking engine and 3D UI are solid, but critical authentication bypass, postback race condition, and in-memory aggregation require urgent remediation before production scaling.",
+    "overall_grade": "D",
+    "grade_note": "Grade D assigned per kit rubric: One Critical finding (SEC-001 dev-mode admin auto-login bypass) and six High-severity findings across security, reliability, performance, and data integrity.",
+    "top_risks": [
+      {
+        "text": "Unauthenticated administrative access via dev-mode auth bypass when NODE_ENV is unset or development.",
+        "ids": [
+          "SEC-001",
+          "SEC-002",
+          "ARC-002"
+        ]
+      },
+      {
+        "text": "Traffic leakage and conversion revenue loss on missing publisher parameters violating Zero-Leak standard.",
+        "ids": [
+          "REL-001"
+        ]
+      },
+      {
+        "text": "Postback race conditions and duplicate conversion payouts caused by lack of unique constraint on click IDs.",
+        "ids": [
+          "DAT-001",
+          "SEC-004"
+        ]
+      },
+      {
+        "text": "Outbound Server-Side Request Forgery (SSRF) vulnerability in publisher postback webhook dispatcher.",
+        "ids": [
+          "SEC-003"
+        ]
+      },
+      {
+        "text": "Node.js memory exhaustion (OOM) during analytics reporting due to in-memory click/conversion aggregation.",
+        "ids": [
+          "PRF-001"
+        ]
+      }
+    ],
+    "do_this_week": [
+      "Eliminate the dev-mode authentication bypass in auth middleware and add JWT interceptor in frontend api.ts (SEC-001, ARC-002).",
+      "Enforce mandatory process.env.JWT_SECRET at backend startup and remove hardcoded fallback secret (SEC-002).",
+      "Add Zero-Leak fallback to master affiliate account in handleClickRedirect (REL-001).",
+      "Add unique database index on clickId in Conversion table to guarantee postback idempotency (DAT-001).",
+      "Implement SSRF guard on publisher postback URL dispatching (SEC-003)."
+    ],
+    "fix_first": [
+      {
+        "id": "SEC-001",
+        "reason": "Stops active administrative exposure when NODE_ENV is omitted in container environments."
+      },
+      {
+        "id": "SEC-002",
+        "reason": "Prevents offline JWT token forgery using committed default secret."
+      },
+      {
+        "id": "ARC-002",
+        "reason": "Prerequisite for strict authentication: equips frontend client with JWT token attachment."
+      },
+      {
+        "id": "REL-001",
+        "reason": "Quick win: Prevents dropping user tracking traffic when aff_id parameter is missing."
+      },
+      {
+        "id": "DAT-001",
+        "reason": "Guarantees postback webhook idempotency and blocks duplicate affiliate commission payouts."
+      },
+      {
+        "id": "SEC-003",
+        "reason": "Blocks internal cloud metadata and private subnet probing via publisher postbacks."
+      },
+      {
+        "id": "SEC-004",
+        "reason": "Validates advertiser tokens before allowing custom revenue overrides in postbacks."
+      },
+      {
+        "id": "PRF-001",
+        "reason": "Converts unbounded in-memory array scans to database-level COUNT/SUM aggregations."
+      },
+      {
+        "id": "OPS-001",
+        "reason": "Restricts wildcard CORS to trusted origins."
+      },
+      {
+        "id": "TST-001",
+        "reason": "Activates parameter tracking and postback attribution test suites in CI."
+      }
+    ]
+  },
+  "scorecard": [
+    {
+      "dimension": "security",
+      "score": 1.5,
+      "why": "Critical dev-mode auth bypass, hardcoded JWT secret fallback, and unvalidated SSRF in postbacks."
+    },
+    {
+      "dimension": "architecture",
+      "score": 2.5,
+      "why": "Clean REST controller structure and 3D UI, but OfferBuilder is a 2,300+ line monolith and frontend lacks auth token injection."
+    },
+    {
+      "dimension": "data",
+      "score": 2.5,
+      "why": "Prisma schema is well structured with clean enums, but lacks unique idempotency constraint on conversion click IDs."
+    },
+    {
+      "dimension": "performance",
+      "score": 2,
+      "why": "Reports load unbounded click and conversion arrays into Node.js heap memory rather than aggregating in SQL."
+    },
+    {
+      "dimension": "reliability",
+      "score": 2.5,
+      "why": "Tracking redirect returns 400 Bad Request on missing publisher parameter instead of safely routing to master account."
+    },
+    {
+      "dimension": "observability",
+      "score": 3,
+      "why": "Basic /health and /health/database endpoints are active, but structured application logging and trace IDs are absent."
+    },
+    {
+      "dimension": "testing",
+      "score": 2.5,
+      "why": "TypeScript compiles cleanly with 0 errors, but backend npm test script ignores 2 out of 3 test files."
+    },
+    {
+      "dimension": "cicd-supply-chain",
+      "score": 3,
+      "why": "Clean multi-stage Docker build and deployment shell script, but permissive wildcard CORS."
+    },
+    {
+      "dimension": "dependencies",
+      "score": 4,
+      "why": "Modern dependencies (Node 22+, React 18, Vite 6, Prisma 6, Tailwind 3) with clean lockfiles."
+    },
+    {
+      "dimension": "accessibility",
+      "score": 3.5,
+      "why": "Lucide icons with descriptive labels, modal dialogs, and clear UI text across components."
+    },
+    {
+      "dimension": "ux-design",
+      "score": 4,
+      "why": "Full visual parity across Dark and Light modes, tactile 3D gradients, scannable parameter tables per DOD."
+    },
+    {
+      "dimension": "code-health",
+      "score": 3,
+      "why": "Zero TypeScript errors, but monolithic OfferBuilder component and magic numbers in dashboard trends."
+    },
+    {
+      "dimension": "documentation",
+      "score": 3.5,
+      "why": "Clear parameter guides, targeting modals, and DOD specification present in repo."
+    }
+  ],
+  "findings": [
+    {
+      "id": "SEC-001",
+      "title": "Development-mode admin auto-login bypasses authentication when NODE_ENV is unset",
+      "dimension": "security",
+      "repo": "affliate",
+      "severity": "Critical",
+      "likelihood": "High",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U0",
+      "urgency_reason": "Any unauthenticated internet caller is granted immediate full administrator privileges if NODE_ENV is omitted or set to development.",
+      "evidence": "Lines 40-50 in backend/src/middleware/auth.ts: if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) { req.user = { id: 1, email: 'zeeshan@gmail.com', name: 'adren v', role: 'ADMIN', status: 'ACTIVE' }; return next(); }",
+      "locations": [
+        "backend/src/middleware/auth.ts:40-50"
+      ],
+      "impact_text": "Complete monorepo administration takeover and unauthorized campaign modification.",
+      "root_cause": "Hardcoded developer convenience bypass placed directly inside production-facing auth middleware.",
+      "fix": "Remove the automatic admin injection from authenticate(). Protected endpoints must strictly require a valid Bearer JWT. For local testing, generate a test token or seed script.",
+      "test": "Issue an HTTP GET /api/v1/offers without Authorization header. Server must return 401 Unauthorized regardless of NODE_ENV.",
+      "effort": "S",
+      "effort_hours": 1.5,
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "chain_id": "CHAIN-1",
+      "needs_decision": false,
+      "decision_id": null,
+      "status": "open",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "wave-0",
+      "sequence": 1
+    },
+    {
+      "id": "ARC-002",
+      "title": "Frontend API service lacks authentication header attachment and token management",
+      "dimension": "architecture",
+      "repo": "affliate",
+      "severity": "High",
+      "likelihood": "High",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U0",
+      "urgency_reason": "Hardens the frontend client to transmit JWT tokens so strict backend authentication can be safely enforced.",
+      "evidence": "All fetch() calls in frontend/src/services/api.ts:17-48 omit Authorization: Bearer headers, relying exclusively on the backend dev-mode backdoor.",
+      "locations": [
+        "frontend/src/services/api.ts:17-48"
+      ],
+      "impact_text": "Enforcing secure authentication on the backend will immediately break all frontend functionality with 401 Unauthorized errors.",
+      "root_cause": "API service layer was built without a centralized HTTP client wrapper that injects stored authentication tokens.",
+      "fix": "Implement an apiFetch wrapper in frontend/src/services/api.ts that retrieves the JWT from localStorage and attaches Authorization: Bearer ${token} to every request.",
+      "test": "Inspect outgoing network requests from frontend; all /api/v1/* requests must carry Authorization header.",
+      "effort": "S",
+      "effort_hours": 2,
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": "CHAIN-1",
+      "needs_decision": false,
+      "decision_id": null,
+      "status": "open",
+      "unblocks": [],
+      "quick_win": true,
+      "wave": "wave-0",
+      "sequence": 2
+    },
+    {
+      "id": "SEC-002",
+      "title": "Hardcoded JWT secret fallback committed to source control",
+      "dimension": "security",
+      "repo": "affliate",
+      "severity": "High",
+      "likelihood": "High",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U0",
+      "urgency_reason": "Enables attackers to forge valid administrator JWT tokens offline whenever JWT_SECRET is not explicitly provided in the environment.",
+      "evidence": "Line 5 in backend/src/middleware/auth.ts: const JWT_SECRET = process.env.JWT_SECRET || 'super_secure_affiliate_jwt_token_2026';",
+      "locations": [
+        "backend/src/middleware/auth.ts:5"
+      ],
+      "impact_text": "Offline cryptographic signature forgery granting admin session tokens.",
+      "root_cause": "Fallback default secret string used in place of strict startup environment assertion.",
+      "fix": "Assert that process.env.JWT_SECRET is non-empty at startup, throw a fatal initialization error if missing, and remove the hardcoded fallback string.",
+      "test": "Start backend server without JWT_SECRET in environment; server must fail fast with descriptive error.",
+      "effort": "S",
+      "effort_hours": 1,
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": "CHAIN-1",
+      "needs_decision": false,
+      "decision_id": null,
+      "status": "open",
+      "unblocks": [],
+      "quick_win": true,
+      "wave": "wave-0",
+      "sequence": 3
+    },
+    {
+      "id": "REL-001",
+      "title": "Tracking redirect returns 400 Bad Request on missing affiliate ID instead of Master Fallback",
+      "dimension": "reliability",
+      "repo": "affliate",
+      "severity": "High",
+      "likelihood": "High",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "Violates the project Zero-Leak Redirection standard (DOD Rule 6), causing live user traffic to be discarded with an error page.",
+      "evidence": "Lines 10-13 in backend/src/controllers/trackingController.ts: if (isNaN(offerId) || isNaN(publisherId)) { res.status(400).json({ error: 'Bad Request', message: 'Missing offer_id or aff_id' }); return; }",
+      "locations": [
+        "backend/src/controllers/trackingController.ts:10-13"
+      ],
+      "impact_text": "Direct loss of incoming traffic, consumer abandonment, and lost advertiser revenue when partner query parameters are omitted or malformed.",
+      "root_cause": "Controller abruptly returns JSON error instead of resolving default master publisher account fallback.",
+      "fix": "Resolve publisherId with fallback to designated master admin affiliate ID when aff_id is missing or invalid, ensuring 100% of traffic redirects successfully.",
+      "test": "Request /click?offer_id=1 without aff_id; response must be 302 redirecting to offer destination with master account attribution.",
+      "effort": "S",
+      "effort_hours": 1.5,
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": null,
+      "needs_decision": false,
+      "decision_id": null,
+      "status": "open",
+      "unblocks": [],
+      "quick_win": true,
+      "wave": "wave-0",
+      "sequence": 4
+    },
+    {
+      "id": "DAT-001",
+      "title": "Missing unique constraint on Click ID in Conversions table enables postback race conditions",
+      "dimension": "data",
+      "repo": "affliate",
+      "severity": "High",
+      "likelihood": "High",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "Concurrent postbacks for the same clickId bypass findFirst check and insert duplicate conversions, resulting in double payout payouts.",
+      "evidence": "backend/prisma/schema.prisma:237 defines clickId without @unique or composite index, and trackingController.ts:131-137 uses non-atomic findFirst followed by create.",
+      "locations": [
+        "backend/prisma/schema.prisma:237",
+        "backend/src/controllers/trackingController.ts:131-137"
+      ],
+      "impact_text": "Duplicate commission accruals and financial payout inflation when networks retry webhook postbacks simultaneously.",
+      "root_cause": "Application-level duplicate check rather than database-enforced unique constraint or atomic upsert.",
+      "fix": "Add a unique index or constraint on (clickId, goalValue) in prisma/schema.prisma and handle unique constraint violations gracefully in handlePostback.",
+      "test": "Fire 5 simultaneous POST /postback requests with identical clickid; exactly 1 conversion must be created, and 4 must return 409 Conflict.",
+      "effort": "M",
+      "effort_hours": 3,
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "chain_id": null,
+      "needs_decision": false,
+      "decision_id": null,
+      "status": "open",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "wave-1",
+      "sequence": 5
+    },
+    {
+      "id": "PRF-001",
+      "title": "In-memory aggregation over unbounded click and conversion records causes high memory usage",
+      "dimension": "performance",
+      "repo": "affliate",
+      "severity": "High",
+      "likelihood": "High",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "Networks and Offers reporting controllers load full arrays of historical clicks and conversions into Node.js heap memory.",
+      "evidence": "backend/src/controllers/reportsController.ts:22-30 and 125-132 fetch all click IDs and conversion objects into memory, then execute in-process .filter() and .reduce().",
+      "locations": [
+        "backend/src/controllers/reportsController.ts:22-30",
+        "backend/src/controllers/reportsController.ts:125-132"
+      ],
+      "impact_text": "Production OOM crashes and server unresponsiveness when generating reports across large traffic volumes.",
+      "root_cause": "Using Prisma relational include with in-process array iteration instead of SQL COUNT, SUM, and groupBy aggregates.",
+      "fix": "Refactor reports queries to use Prisma groupBy / aggregate or raw SQL joins returning computed summary totals directly from PostgreSQL.",
+      "test": "Seed 50,000 clicks; verify report response time remains under 200ms and Node.js heap memory delta is negligible.",
+      "effort": "M",
+      "effort_hours": 4,
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "chain_id": null,
+      "needs_decision": false,
+      "decision_id": null,
+      "status": "open",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "wave-1",
+      "sequence": 6
+    },
+    {
+      "id": "SEC-003",
+      "title": "Server-Side Request Forgery (SSRF) in outbound publisher postback dispatcher",
+      "dimension": "security",
+      "repo": "affliate",
+      "severity": "High",
+      "likelihood": "Medium",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "Outbound HTTP requests are dispatched to publisher-provided URLs without IP validation, allowing internal subnet scanning.",
+      "evidence": "Lines 166-177 in backend/src/controllers/trackingController.ts: if (click.publisher.postbackUrl) { ... fetch(outUrl, { method: 'GET' }) } without validating protocol or destination IP address.",
+      "locations": [
+        "backend/src/controllers/trackingController.ts:166-177"
+      ],
+      "impact_text": "Scanning and potential data exfiltration from internal cloud metadata services (169.254.169.254) or localhost ports.",
+      "root_cause": "Invoking fetch() on arbitrary user-configured URLs without DNS pre-resolution and IP range blacklisting.",
+      "fix": "Implement an SSRF-safe HTTP dispatch helper that validates URL protocols (enforce https), resolves target hostname IPs, and blocks private/loopback/link-local ranges (127.0.0.0/8, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16).",
+      "test": "Configure publisher postback URL to http://127.0.0.1:5432 and http://169.254.169.254; postback engine must reject dispatch with security warning.",
+      "effort": "M",
+      "effort_hours": 4,
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": "CHAIN-1",
+      "needs_decision": false,
+      "decision_id": null,
+      "status": "open",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "wave-1",
+      "sequence": 7
+    },
+    {
+      "id": "SEC-004",
+      "title": "Postback endpoint accepts unauthenticated revenue overrides without validating advertiser token",
+      "dimension": "security",
+      "repo": "affliate",
+      "severity": "High",
+      "likelihood": "High",
+      "impact": "High",
+      "confidence": "confirmed",
+      "urgency": "U1",
+      "urgency_reason": "Any external caller with a click_id can forge conversion postbacks and inflate recorded revenue via query.sum parameter.",
+      "evidence": "Lines 101 and 142 in backend/src/controllers/trackingController.ts: const sumOverride = query.sum ? parseFloat(query.sum as string) : undefined; while offer.advertiserSecurityToken is never validated.",
+      "locations": [
+        "backend/src/controllers/trackingController.ts:101-143"
+      ],
+      "impact_text": "Falsification of financial revenue metrics and publisher balance accruals by unauthorized external callers.",
+      "root_cause": "Lack of security token or signature verification on inbound S2S postback receiver.",
+      "fix": "When an Offer defines an advertiserSecurityToken, verify that the incoming postback request includes a matching token or signature before processing the conversion.",
+      "test": "Postback call with mismatched or absent security token on a token-protected offer must return 403 Forbidden.",
+      "effort": "M",
+      "effort_hours": 3,
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "chain_id": null,
+      "needs_decision": false,
+      "decision_id": null,
+      "status": "open",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "wave-1",
+      "sequence": 8
+    },
+    {
+      "id": "OPS-001",
+      "title": "Permissive wildcard CORS configuration with credentials enabled",
+      "dimension": "cicd-supply-chain",
+      "repo": "affliate",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "Wildcard origin with credentials allowed violates web security standards and creates cross-origin ambiguity.",
+      "evidence": "Lines 14-19 in backend/src/index.ts: app.use(cors({ origin: '*', credentials: true }));",
+      "locations": [
+        "backend/src/index.ts:14-19"
+      ],
+      "impact_text": "Non-compliant CORS headers can cause browser fetch rejections or permit cross-origin requests from arbitrary domains.",
+      "root_cause": "Development convenience configuration not tightened for production deployment.",
+      "fix": "Replace wildcard origin with a configurable whitelist driven by CORS_ALLOWED_ORIGINS environment variable.",
+      "test": "Verify CORS headers return the specific requesting origin when whitelisted and reject unlisted origins.",
+      "effort": "S",
+      "effort_hours": 1,
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": null,
+      "needs_decision": false,
+      "decision_id": null,
+      "status": "open",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "wave-2",
+      "sequence": 9
+    },
+    {
+      "id": "TST-001",
+      "title": "Backend test runner ignores existing unit and postback integration test suites",
+      "dimension": "testing",
+      "repo": "affliate",
+      "severity": "Medium",
+      "likelihood": "High",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "npm test only executes api.test.ts, bypassing urlParameters.test.ts and postbackAttribution.test.ts.",
+      "evidence": "backend/package.json line 16 defines test as NODE_ENV=test tsx --test tests/api.test.ts rather than a glob pattern.",
+      "locations": [
+        "backend/package.json:16"
+      ],
+      "impact_text": "Regressions in postback attribution or parameter replacement are not caught during automated verification.",
+      "root_cause": "Hardcoded single test filename in package.json scripts.",
+      "fix": "Update backend package.json test script to NODE_ENV=test tsx --test 'tests/**/*.test.ts'.",
+      "test": "Run npm --prefix backend test; verify all test files are executed and report passes.",
+      "effort": "S",
+      "effort_hours": 0.5,
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": null,
+      "needs_decision": false,
+      "decision_id": null,
+      "status": "open",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "wave-2",
+      "sequence": 10
+    },
+    {
+      "id": "ARC-001",
+      "title": "Monolithic 2,300+ line OfferBuilder component violates modular component architecture",
+      "dimension": "architecture",
+      "repo": "affliate",
+      "severity": "Medium",
+      "likelihood": "High",
+      "impact": "Medium",
+      "confidence": "confirmed",
+      "urgency": "U2",
+      "urgency_reason": "High file complexity creates fragility and contributed directly to recent React hook order regressions.",
+      "evidence": "frontend/src/components/offers/OfferBuilder.tsx is 2,304 lines long, packaging General, Tracking, Targeting, Payouts, and Postback modals inside a single file.",
+      "locations": [
+        "frontend/src/components/offers/OfferBuilder.tsx:1-2304"
+      ],
+      "impact_text": "Difficult maintainability, sluggish IDE typing, and heightened regression risk during campaign configuration changes.",
+      "root_cause": "Failure to decompose the campaign wizard into focused, tab-specific subcomponents.",
+      "fix": "Decompose OfferBuilder into modular subcomponents under frontend/src/components/offers/builder/ (GeneralTab.tsx, TrackingTab.tsx, TargetingTab.tsx, PayoutsTab.tsx, AffiliatesTab.tsx).",
+      "test": "Component tests verify all tabs mount, state is retained across tab switches, and tsc --noEmit passes cleanly.",
+      "effort": "L",
+      "effort_hours": 8,
+      "fix_risk": "medium",
+      "blocked_by": [],
+      "chain_id": null,
+      "needs_decision": false,
+      "decision_id": null,
+      "status": "open",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "wave-2",
+      "sequence": 11
+    },
+    {
+      "id": "CDH-001",
+      "title": "Hardcoded KPI trend multipliers and magic numbers in dashboard analytics",
+      "dimension": "code-health",
+      "repo": "affliate",
+      "severity": "Low",
+      "likelihood": "Low",
+      "impact": "Low",
+      "confidence": "confirmed",
+      "urgency": "U3",
+      "urgency_reason": "Displays misleading synthetic growth percentages (+136%, +200%) rather than authentic statistical comparisons.",
+      "evidence": "backend/src/controllers/dashboardController.ts:58-59 uses Math.round((todayClicks / (totalClicks || 1)) * 100 * 2.5) || 136.",
+      "locations": [
+        "backend/src/controllers/dashboardController.ts:58-59"
+      ],
+      "impact_text": "Administrators see inaccurate performance deltas on the main dashboard KPI cards.",
+      "root_cause": "Placeholder mock calculations left in place after prototype phase.",
+      "fix": "Query yesterday's click and conversion counts to compute genuine day-over-day percentage changes.",
+      "test": "Verify dashboard summary returns mathematically exact deltas matching database records.",
+      "effort": "S",
+      "effort_hours": 1.5,
+      "fix_risk": "low",
+      "blocked_by": [],
+      "chain_id": null,
+      "needs_decision": false,
+      "decision_id": null,
+      "status": "open",
+      "unblocks": [],
+      "quick_win": false,
+      "wave": "wave-2",
+      "sequence": 12
+    }
+  ],
+  "chains": [
+    {
+      "id": "CHAIN-1",
+      "title": "Unauthenticated Monorepo Access and Internal Network Reconnaissance",
+      "steps": [
+        "Attacker sends unauthenticated request to /api/v1/* while NODE_ENV is unset or development (SEC-001)",
+        "Backend automatically assigns active Admin identity zeeshan@gmail.com",
+        "Attacker accesses publisher management and registers an SSRF webhook pointing to cloud metadata or internal databases (SEC-003)",
+        "Attacker triggers /postback to exfiltrate internal service responses"
+      ],
+      "ids": [
+        "SEC-001",
+        "SEC-002",
+        "ARC-002",
+        "SEC-003"
+      ],
+      "break_at": "SEC-001"
+    }
+  ],
+  "waves": [
+    {
+      "id": "wave-0",
+      "name": "Wave 0: Immediate Security Hardening & Zero-Leak Redirection",
+      "track": "Engineering",
+      "goal": "Contain the authentication bypass, secure JWT secret configuration, equip frontend with auth tokens, and enforce zero-leak master fallback redirection.",
+      "ids": [
+        "SEC-001",
+        "SEC-002",
+        "ARC-002",
+        "REL-001"
+      ],
+      "effort": "5.5 hours",
+      "exit_criteria": [
+        "Unauthenticated requests to /api/v1/offers return 401 Unauthorized in all environments.",
+        "Backend server throws startup error if JWT_SECRET environment variable is missing.",
+        "Frontend transmits Authorization: Bearer <token> on all API requests.",
+        "Inbound clicks with missing aff_id safely fallback to master affiliate account with 302 redirect."
+      ],
+      "checkpoint": true,
+      "why_order": "Stops active administrative exposure, seals traffic leakage immediately, and lays the required foundation for all subsequent work."
+    },
+    {
+      "id": "wave-1",
+      "name": "Wave 1: Data Integrity & Postback Protection",
+      "track": "Engineering",
+      "goal": "Eliminate postback race conditions, validate advertiser tokens, and secure outbound webhooks against SSRF.",
+      "ids": [
+        "DAT-001",
+        "SEC-004",
+        "SEC-003",
+        "PRF-001"
+      ],
+      "effort": "14 hours",
+      "exit_criteria": [
+        "Duplicate postbacks for the same clickId are blocked at the database level.",
+        "Advertiser security tokens are verified before accepting revenue overrides.",
+        "Outbound publisher postbacks block private IP addresses and cloud metadata services.",
+        "Reporting queries aggregate data in SQL without loading unbounded click records into memory."
+      ],
+      "checkpoint": true,
+      "why_order": "Guarantees financial integrity of affiliate balances and eliminates database memory exhaustion risks."
+    },
+    {
+      "id": "wave-2",
+      "name": "Wave 2: Component Architecture & Operational Polish",
+      "track": "UI/UX & Operations",
+      "goal": "Decompose monolithic OfferBuilder into maintainable sub-tabs, tighten CORS origins, enable full test execution, and remove magic numbers.",
+      "ids": [
+        "ARC-001",
+        "OPS-001",
+        "TST-001",
+        "CDH-001"
+      ],
+      "effort": "11 hours",
+      "exit_criteria": [
+        "OfferBuilder is split into clean modular sub-components under 400 lines each.",
+        "CORS origin is restricted to configured frontend domains.",
+        "npm test executes all backend test suites including parameter and postback tests.",
+        "Dashboard trend indicators reflect actual day-over-day calculations."
+      ],
+      "checkpoint": false,
+      "why_order": "Long-term architectural maintainability and test coverage after core security and financial invariants are secured."
+    }
+  ],
+  "decisions": [
+    {
+      "id": "DEC-001",
+      "question": "Should publisher postback webhooks be queued asynchronously via Redis/BullMQ or dispatched inline with timeout?",
+      "options": [
+        "Inline dispatch with a strict 3-second timeout and SSRF IP validation (simpler, zero extra infrastructure)",
+        "Background job queue via Redis/BullMQ (more resilient against publisher endpoint outages, requires Redis instance)"
+      ],
+      "recommended": "Inline dispatch with strict 3-second timeout for current scale; migrate to BullMQ when volume exceeds 10,000 conversions/day.",
+      "blocks": [
+        "SEC-003"
+      ],
+      "needed_by": "wave-1"
+    }
+  ],
+  "strengths": [
+    {
+      "title": "Strict Type-Safety and Compilation Health",
+      "detail": "Both frontend and backend compile cleanly with 0 errors across TypeScript 5.7+ with strict mode enabled.",
+      "locations": [
+        "frontend/tsconfig.json:1",
+        "backend/tsconfig.json:1"
+      ]
+    },
+    {
+      "title": "Tactile 3D Gradient Aesthetic & Dual-Theme Parity",
+      "detail": "Implements modern 3D depth, subtle top bevel highlights, tactile button shadows, and full visual parity across Dark and Light modes per project Definition of Done.",
+      "locations": [
+        "frontend/src/index.css:1-307",
+        "frontend/src/context/ThemeContext.tsx:1-53"
+      ]
+    },
+    {
+      "title": "Table-First Visual Architecture",
+      "detail": "Parameter configurations, tracking domains, and affiliate reports are organized into scannable tables with clear columns rather than cluttered pill badges.",
+      "locations": [
+        "frontend/src/components/offers/postbacks/PostbackParametersTable.tsx:1-488",
+        "frontend/src/components/common/DataTable.tsx:1-310"
+      ]
+    },
+    {
+      "title": "Idempotent Deployment & Rollback Infrastructure",
+      "detail": "Production deployment is automated with health verification, automated database backups prior to migration, and single-command instant rollback.",
+      "locations": [
+        "deployment/deploy.sh:1-180",
+        "deployment/rollback.sh:1-100"
+      ]
+    }
+  ],
+  "coverage": {
+    "reviewed": [
+      {
+        "area": "backend/src/middleware/auth.ts",
+        "depth": "line-by-line inspection of token generation and verification"
+      },
+      {
+        "area": "backend/src/controllers/trackingController.ts",
+        "depth": "deep trace of click redirection and postback conversion handling"
+      },
+      {
+        "area": "backend/src/controllers/reportsController.ts",
+        "depth": "memory and query performance analysis"
+      },
+      {
+        "area": "backend/prisma/schema.prisma",
+        "depth": "complete database schema, relations, indexes, and constraints review"
+      },
+      {
+        "area": "frontend/src/components/offers/OffersView.tsx",
+        "depth": "React hook ordering and state lifecycle verification"
+      },
+      {
+        "area": "frontend/src/components/offers/OfferBuilder.tsx",
+        "depth": "component structure and state management review"
+      },
+      {
+        "area": "frontend/src/services/api.ts",
+        "depth": "API client authentication and error handling inspection"
+      },
+      {
+        "area": "deployment/ and Dockerfiles",
+        "depth": "container security and port exposures"
+      }
+    ],
+    "skipped": [
+      {
+        "area": "audit/Archive/",
+        "reason": "historical archived files outside active runtime"
+      },
+      {
+        "area": "node_modules",
+        "reason": "third-party vendor libraries"
+      }
+    ],
+    "gaps": "End-to-end automated browser tests were not executed per Workspace Rule 1 (automated test suite command constraint)."
+  },
+  "tools": [
+    {
+      "name": "tsc (Backend)",
+      "version": "5.7.3",
+      "purpose": "Static type checking and syntax verification for backend services",
+      "result": "Passed with 0 errors"
+    },
+    {
+      "name": "tsc (Frontend)",
+      "version": "5.7.3",
+      "purpose": "Static type checking and React component interface validation",
+      "result": "Passed with 0 errors"
+    },
+    {
+      "name": "Secret Scanner (Custom AST / Regex)",
+      "version": "1.0.0",
+      "purpose": "Detect hardcoded credentials, JWT secrets, and database URLs",
+      "result": "Identified hardcoded JWT fallback string in auth.ts"
+    },
+    {
+      "name": "Git Churn Analyzer",
+      "version": "git 2.43+",
+      "purpose": "Identify architectural hotspots and frequently modified files",
+      "result": "Identified OfferBuilder.tsx and OffersView.tsx as primary churn hotspots"
+    }
+  ],
+  "baselines": {
+    "type_errors": 0,
+    "total_lines_of_code": 16007,
+    "exposed_ports": {
+      "frontend": 3085,
+      "backend": 3086
+    }
+  }
+}

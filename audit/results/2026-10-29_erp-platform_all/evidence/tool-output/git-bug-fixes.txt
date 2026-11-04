@@ -1,0 +1,19 @@
+c6971b4 fix(vouchers): parse and restore cheque details and dates when recalling draft
+f5f9402 fix(vouchers): resolve bank account id for bank payment cheque search
+893b1ea docs: fix the inconsistencies a reviewing agent found; test the full permission table
+38bcf96 docs(inventory): note the draft workflow and the fixed D1 and F1
+b94d74b fix(stock-transfers): pass draft permission into TransferList; restore its tests
+1950098 fix(access): check the user's role before saving or posting documents
+5e12019 fix(settings): show the real sign-in rules instead of a form that saved nothing
+e660bff fix(auth): enforce password length and stop pre-filling the login form
+0323738 fix(overview): show real figures on Vouchers and Inventory Overview
+538dd64 fix(dashboard): restore real financial charts
+a572e84 fix(lint): resolve unescaped entities and unused imports for strict production docker build
+6845157 fix(ui): reduce voucher grid row height to compact 34px and header to 33px
+f024657 feat(ui): add colored section headings, alignment fixes, excel-style dynamic voucher grid, and reusable advanced search dialogs
+007db23 Pro deployment scripts, light template sidebar, Fiscal Years redesign, Definition of Done
+ad3d320 Compact stat tiles and sample-style chart cards
+6103af2 Audit remediation, automated tests, demo data and 3D analytics
+aaa762d fix: make .input, .btn-primary, .btn-ghost self-contained in globals.css
+71d6463 redesign CategoriesPage and UomPage to production-grade UI
+beded01 fix(inventory): production-grade overhaul — DB constraints, tree hierarchy, UI consistency

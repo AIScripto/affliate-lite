@@ -1,0 +1,1161 @@
+2026-10-07T08:32:09Z
+
+> erp-frontend@1.1.0 type-check
+> tsc --noEmit
+
+EXIT type-check=0
+
+> erp-frontend@1.1.0 lint
+> eslint "src/**/*.{ts,tsx}"
+
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/AssessmentForm.tsx
+  268:93  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  284:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  286:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  319:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  321:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/BulkAssessmentTable.tsx
+    75:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+    86:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+   644:75  warning  Unexpected any. Specify a different type                                                                                        @typescript-eslint/no-explicit-any
+   662:27  warning  Unexpected any. Specify a different type                                                                                        @typescript-eslint/no-explicit-any
+   711:6   warning  React Hook useCallback has a missing dependency: 'hasActivePeriod'. Either include it or remove the dependency array            react-hooks/exhaustive-deps
+  1044:6   warning  React Hook useCallback has a missing dependency: 'effectiveCanApprove'. Either include it or remove the dependency array        react-hooks/exhaustive-deps
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/BulkAssessmentTableRow.tsx
+  19:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:61  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/ChangePasswordModal.tsx
+   54:6   warning  React Hook useEffect has a missing dependency: 'handleClose'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  106:19  warning  Unexpected any. Specify a different type                                                                        @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/PendingApprovalsPanel.tsx
+  180:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  180:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/behavioral/BehavioralAssessmentModal.tsx
+  98:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/behavioral/BehavioralAssessmentView.tsx
+  137:5   warning  React Hook useEffect has a missing dependency: 'competencies'. Either include it or remove the dependency array                                           react-hooks/exhaustive-deps
+  237:5   warning  React Hook useMemo has missing dependencies: 'config', 'expectationsForGrade', and 'hasExpectations'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  353:16  warning  Unexpected any. Specify a different type                                                                                                                  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/behavioral/BehavioralScoreCard.tsx
+  185:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/communication/CefrAssessmentModal.tsx
+  724:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/config/ConfigTable.tsx
+    7:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  288:17  warning  Unexpected any. Specify a different type                                                                                        @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/config/access/useLineManagerResourceState.ts
+  39:9  warning  The 'safeUsers' logical expression could make the dependencies of useMemo Hook (at line 137) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'safeUsers' in its own useMemo() Hook                      react-hooks/exhaustive-deps
+  40:9  warning  The 'safeEmployees' logical expression could make the dependencies of useMemo Hook (at line 137) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'safeEmployees' in its own useMemo() Hook              react-hooks/exhaustive-deps
+  41:9  warning  The 'safeLineAssignments' logical expression could make the dependencies of useMemo Hook (at line 137) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'safeLineAssignments' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/config/communication/CefrPromotionGatingTab.tsx
+  17:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  39:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/config/organization/EmployeesSection.tsx
+  304:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/config/periods/EvaluationPeriodsSection.tsx
+  535:87  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  548:82  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/config/taxonomy/DepartmentSkillMapSection.tsx
+  113:6  warning  React Hook useMemo has missing dependencies: 'getDepartmentMaps' and 'getDisplayMaps'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  552:6  warning  React Hook useMemo has a missing dependency: 'getSkillAreaName'. Either include it or remove the dependency array                          react-hooks/exhaustive-deps
+  565:6  warning  React Hook useMemo has a missing dependency: 'getDepartmentDomains'. Either include it or remove the dependency array                      react-hooks/exhaustive-deps
+  589:6  warning  React Hook useMemo has a missing dependency: 'getDepartmentDomains'. Either include it or remove the dependency array                      react-hooks/exhaustive-deps
+  595:6  warning  React Hook useMemo has a missing dependency: 'getTargetStatus'. Either include it or remove the dependency array                           react-hooks/exhaustive-deps
+  613:6  warning  React Hook useMemo has a missing dependency: 'getSkillArea'. Either include it or remove the dependency array                              react-hooks/exhaustive-deps
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/dashboard/tabs/AssessmentsTab.tsx
+  103:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/dashboard/tabs/ResourceOverviewDashboard.tsx
+  69:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  86:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/dashboard/tabs/cards/BehavioralPillarsCard.tsx
+  16:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/dashboard/tabs/cards/CefrLanguageCard.tsx
+  16:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/dashboard/tabs/cards/TechnicalDomainsCard.tsx
+  14:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/dashboard/tabs/components/assessments/CompetencyTableView.tsx
+  21:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/dashboard/tabs/components/assessments/DomainProgressOverview.tsx
+  17:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/dashboard/tabs/components/assessments/PriorityGapMatrix.tsx
+  18:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/dashboard/tabs/components/assessments/SkillAreaCoverageRadar.tsx
+  25:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/dashboard/tabs/components/assessments/SkillAreaGapMap.tsx
+  15:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/dashboard/tabs/components/assessments/TriDimensionRadar.tsx
+  14:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/dashboard/tabs/panels/LineManagerTeamPanel.tsx
+  36:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/login/LoginForm.tsx
+  7:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/reports/PersonPicker.tsx
+  13:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/reports/ReportSidebar.tsx
+  61:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  77:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/reports/tabs/GapRadar.tsx
+   24:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+   32:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+   42:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+   48:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  159:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  166:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/reports/tabs/components/result-sheet/ResultSheetHeader.tsx
+   5:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  11:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/reports/tabs/components/result-sheet/ResultSheetKpiCards.tsx
+   6:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   7:13  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  13:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/reports/tabs/components/result-sheet/ResultSnapshotGauge.tsx
+  7:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/reports/tabs/components/result-sheet/hooks/useEmployeeResultSheet.ts
+  114:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  117:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  118:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  118:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  134:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/reports/tabs/components/result-sheet/pdfGenerator.ts
+  12:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:13  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  16:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/reports/tabs/scoreParts.tsx
+  75:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/components/ui/charts/StandardRadarChart.tsx
+   15:9   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  172:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  217:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/hooks/useConfig.test.ts
+   57:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  132:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  627:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/hooks/useEmployeeReadinessMetrics.ts
+  322:6  warning  React Hook useMemo has a missing dependency: 'myGapResult'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/lib/reportGroups.test.ts
+  10:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  10:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/tk-lpt-1088/development/react/erp/ERP/frontend/src/pages/LoginPage.tsx
+  80:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 91 problems (0 errors, 91 warnings)
+
+EXIT lint=0
+
+> erp-frontend@1.1.0 test:coverage
+> vitest --coverage
+
+
+ DEV  v0.34.6 /Users/tk-lpt-1088/development/react/erp/ERP/frontend
+      Coverage enabled with v8
+
+ ✓ src/components/config/communication/CefrGradeMatrixTab.test.tsx  (40 tests) 550ms
+ ✓ src/components/PendingApprovalsPanel.test.tsx  (67 tests) 612ms
+ ✓ src/hooks/useConfig.test.ts  (92 tests) 765ms
+ ✓ src/components/BulkAssessmentTable.test.tsx  (75 tests) 755ms
+ ✓ src/components/communication/CefrAssessmentModal.test.tsx  (65 tests) 860ms
+ ✓ src/components/behavioral/BehavioralAssessmentView.test.tsx  (49 tests) 534ms
+ ✓ src/components/config/periods/EvaluationPeriodsSection.test.tsx  (33 tests) 420ms
+ ✓ src/components/config/taxonomy/CompetenciesSection.test.tsx  (32 tests) 352ms
+ ✓ src/hooks/useCommunication.test.ts  (41 tests) 285ms
+ ✓ src/components/reports/tabs/PromotionReadinessTab.test.tsx  (32 tests) 404ms
+ ✓ src/components/communication/CommunicationAssessmentView.test.tsx  (35 tests) 329ms
+ ✓ src/components/config/access/AccessManagementSection.test.tsx  (60 tests) 308ms
+ ✓ src/components/dashboard/tabs/AIInsightsTab.test.tsx  (29 tests) 330ms
+ ✓ src/components/reports/tabs/CompetencyScoresTab.test.tsx  (31 tests) 394ms
+ ✓ src/pages/DashboardPage.test.tsx  (54 tests) 255ms
+ ✓ src/components/config/industries/IndustrySectorsSection.test.tsx  (39 tests) 273ms
+ ✓ src/components/config/organization/EmployeesSection.test.tsx  (25 tests) 248ms
+ ✓ src/components/reports/tabs/GapAnalysisTab.test.tsx  (29 tests) 236ms
+ ✓ src/components/config/industries/IndustriesSection.test.tsx  (35 tests) 211ms
+ ✓ src/components/config/organization/UsersSection.test.tsx  (29 tests) 228ms
+ ✓ src/components/config/organization/GradesSection.test.tsx  (28 tests) 225ms
+ ✓ src/components/config/industries/BusinessSubDomainsSection.test.tsx  (34 tests) 198ms
+ ✓ src/components/config/taxonomy/SkillDomainsSection.test.tsx  (27 tests) 198ms
+ ✓ src/components/config/organization/DepartmentsSection.test.tsx  (26 tests) 194ms
+ ✓ src/components/config/industries/BusinessDomainsSection.test.tsx  (31 tests) 222ms
+ ✓ src/components/config/taxonomy/CategoriesSection.test.tsx  (30 tests) 196ms
+ ✓ src/components/behavioral/BehavioralAssessmentModal.test.tsx  (15 tests) 146ms
+ ✓ src/components/dashboard/tabs/AssessmentsTab.test.tsx  (43 tests) 161ms
+ ✓ src/components/config/scoring/AssessmentProjectsSection.test.tsx  (26 tests) 182ms
+ ✓ src/components/config/taxonomy/CompetencyThresholdMatrix.test.tsx  (36 tests) 193ms
+ ✓ src/components/AssessmentForm.test.tsx  (27 tests) 158ms
+ ✓ src/components/BulkAddDialog.test.tsx  (29 tests) 167ms
+ ✓ src/components/config/communication/CefrDocumentationTab.test.tsx  (16 tests) 120ms
+ ✓ src/components/config/scoring/AssessmentStatusesSection.test.tsx  (22 tests) 128ms
+ ✓ src/components/config/scoring/AssessmentTypesSection.test.tsx  (26 tests) 143ms
+ ✓ src/hooks/useReports.test.ts  (12 tests) 108ms
+ ✓ src/components/assessments/ImprovementPlanModal.test.tsx  (19 tests) 99ms
+ ✓ src/components/config/taxonomy/TechnologiesSection.test.tsx  (18 tests) 88ms
+ ✓ src/components/config/scoring/AssessmentLevelsSection.test.tsx  (21 tests) 135ms
+ ✓ src/components/reports/tabs/CefrAnalyticsTab.test.tsx  (12 tests) 114ms
+ ✓ src/components/dashboard/tabs/panels/LineManagerTeamPanel.test.tsx  (22 tests) 57ms
+ ✓ src/components/config/access/RolesSection.test.tsx  (21 tests) 106ms
+ ✓ src/hooks/useImprovementPlan.test.ts  (6 tests) 63ms
+ ✓ src/components/config/access/LineManagerAccessPanel.test.tsx  (23 tests) 96ms
+ ✓ src/components/reports/tabs/ExecutiveLeaderboardTab.test.tsx  (25 tests) 61ms
+ ✓ src/components/reports/tabs/GapRadar.test.tsx  (21 tests) 55ms
+ ✓ src/components/TeamRoster.test.tsx  (12 tests) 74ms
+ ✓ src/components/reports/tabs/PromotionReadinessDetail.test.tsx  (4 tests) 70ms
+ ✓ src/components/reports/tabs/DomainScoresTab.test.tsx  (9 tests) 66ms
+ ✓ src/components/config/ConfigSection.test.tsx  (37 tests) 71ms
+ ✓ src/components/reports/ReportsSection.test.tsx  (34 tests) 54ms
+ ✓ src/components/config/communication/CefrRubricsTab.test.tsx  (10 tests) 63ms
+ ✓ src/components/reports/tabs/ExecutiveSummaryTab.test.tsx  (14 tests) 60ms
+ ✓ src/components/reports/tabs/StarRatingsTab.test.tsx  (22 tests) 72ms
+ ✓ src/components/dashboard/tabs/OverviewTab.test.tsx  (15 tests) 53ms
+ ✓ src/components/config/organization/OrganizationFilters.test.tsx  (8 tests) 73ms
+ ✓ src/components/config/communication/CefrLevelsBandsTab.test.tsx  (11 tests) 56ms
+ ✓ src/hooks/useAssessment.skillScope.test.ts  (7 tests) 55ms
+ ✓ src/components/dashboard/tabs/ResourceOverviewDashboard.test.tsx  (6 tests) 65ms
+ ✓ src/components/dashboard/tabs/TeamHealthCharts.test.tsx  (22 tests) 53ms
+ ✓ src/components/reports/tabs/components/GroupRankingList.test.tsx  (14 tests) 51ms
+ ✓ src/components/config/ConfigNavTree.test.tsx  (10 tests) 40ms
+ ✓ src/components/config/communication/CefrConfigSection.test.tsx  (18 tests) 39ms
+ ✓ src/components/behavioral/BehavioralScoreCard.test.tsx  (11 tests) 33ms
+ ✓ src/components/reports/ReportSidebar.test.tsx  (10 tests) 44ms
+ ✓ src/components/config/behavioral/BehavioralConfigSection.test.tsx  (13 tests) 28ms
+ ✓ src/components/ui/SearchableSelect.test.tsx  (13 tests) 32ms
+ ✓ src/components/reports/tabs/components/TopPerformersList.test.tsx  (15 tests) 41ms
+ ✓ src/components/communication/CommunicationScoreCard.test.tsx  (14 tests) 42ms
+ ✓ src/components/dashboard/TriDimensionReadinessCard.test.tsx  (10 tests) 34ms
+ ✓ src/components/reports/ReportFilterBar.test.tsx  (16 tests) 31ms
+ ✓ src/components/config/taxonomy/SkillFrameworkSection.test.tsx  (7 tests) 28ms
+ ✓ src/components/config/communication/CefrPromotionGatingTab.test.tsx  (5 tests) 31ms
+ ✓ src/components/config/scoring/AssessmentSetupSection.test.tsx  (7 tests) 26ms
+ ✓ src/components/config/industries/IndustriesDomainsSection.test.tsx  (7 tests) 25ms
+ ✓ src/hooks/useAssessment.approval.test.ts  (2 tests) 20ms
+ ✓ src/components/reports/tabs/components/ExecutiveDataTable.test.tsx  (11 tests) 26ms
+ ✓ src/components/reports/tabs/components/GroupComparisonChart.test.tsx  (10 tests) 28ms
+ ✓ src/components/ui/charts/StandardRadarChart.test.tsx  (17 tests) 25ms
+ ✓ src/components/config/access/DepartmentAccessPanel.test.tsx  (3 tests) 16ms
+ ✓ src/App.test.tsx  (1 test) 10ms
+ ✓ src/components/reports/tabs/components/GroupDataTable.test.tsx  (5 tests) 12ms
+ ✓ src/components/reports/tabs/components/DepartmentExcellenceList.test.tsx  (8 tests) 20ms
+ ✓ src/components/reports/tabs/promotionReadinessData.test.ts  (15 tests) 11ms
+ ✓ src/components/dashboard/tabs/components/assessments/CompetencyFiltersBar.test.tsx  (6 tests) 20ms
+ ✓ src/components/reports/tabs/components/PillarAttainmentChart.test.tsx  (10 tests) 16ms
+ ✓ src/components/config/access/AccessAuditPanel.test.tsx  (6 tests) 22ms
+ ✓ src/components/reports/tabs/components/ExecutiveSummaryCards.test.tsx  (6 tests) 17ms
+ ✓ src/components/config/access/RolesAccessPanel.test.tsx  (3 tests) 16ms
+ ✓ src/components/reports/GroupByToggle.test.tsx  (4 tests) 13ms
+ ✓ src/components/ui/Modal.test.tsx  (7 tests) 16ms
+ ✓ src/components/ui/assessment/AssessmentPrimitives.test.tsx  (8 tests) 13ms
+ ✓ src/components/reports/tabs/components/PillarCharts.test.tsx  (9 tests) 15ms
+ ✓ src/components/ui/HelpButton.test.tsx  (1 test) 13ms
+ ✓ src/components/communication/CefrLevelBadge.test.tsx  (5 tests) 11ms
+ ✓ src/components/ui/SidePanel.test.tsx  (1 test) 12ms
+ ✓ src/components/ui/OrdinalMeter.test.tsx  (7 tests) 11ms
+ ✓ src/components/ui/Stars.test.tsx  (10 tests) 10ms
+ ✓ src/hooks/useNarrowScreen.test.tsx  (5 tests) 10ms
+ ✓ src/hooks/useEmployeeReadinessMetrics.cefr.test.tsx  (8 tests) 12ms
+stderr | src/lib/formatters.test.ts > fractionToPct with negative fractions > leaves a value already in percent alone, either sign
+[units] fractionToPct received 75, which is outside the fraction range -1..1. A value already on the percent scale reached a fraction converter. Fix the field at its source, then use toPercent at the call site.
+[units] fractionToPct received -75, which is outside the fraction range -1..1. A value already on the percent scale reached a fraction converter. Fix the field at its source, then use toPercent at the call site.
+
+ ✓ src/lib/formatters.test.ts  (22 tests) 10ms
+ ✓ src/lib/scoreBins.test.ts  (9 tests) 8ms
+ ✓ src/lib/session.test.ts  (7 tests) 6ms
+ ✓ src/hooks/useEmployeeReadinessMetrics.tech.test.tsx  (5 tests) 11ms
+ ✓ src/lib/reportGroups.test.ts  (22 tests) 5ms
+ ✓ src/components/config/configCategories.test.ts  (12 tests) 8ms
+ ✓ src/components/dashboard/tabs/components/CefrLanguageCard.test.tsx  (2 tests) 12ms
+ ✓ src/hooks/useChartTheme.test.ts  (4 tests) 3ms
+ ✓ src/components/reports/reportMeta.test.ts  (5 tests) 5ms
+ ✓ src/components/reports/reportNavigation.test.ts  (10 tests) 7ms
+ ✓ src/lib/roundHalfUp.test.ts  (7 tests) 2ms
+ ✓ src/lib/assessmentHelpers.cefrGap.test.ts  (7 tests) 3ms
+ ✓ src/lib/cefrDefinitions.test.ts  (7 tests) 5ms
+ ✓ src/lib/chartColors.test.ts  (16 tests) 7ms
+ ✓ src/lib/pillarAttainment.test.ts  (18 tests) 5ms
+ ✓ src/components/config/access/accessUtils.audit.test.ts  (8 tests) 4ms
+ ✓ src/components/reports/tabs/cefrBenchmarksData.test.ts  (5 tests) 4ms
+ ✓ src/components/reports/tabs/gapReportCsv.test.ts  (4 tests) 4ms
+ ✓ src/components/reports/tabs/healthOverviewData.test.ts  (6 tests) 3ms
+ ✓ src/components/reports/tabs/skillMatrixData.test.ts  (11 tests) 5ms
+ ✓ src/lib/batchRunner.test.ts  (3 tests) 3ms
+ ✓ src/lib/domainRollup.test.ts  (11 tests) 4ms
+ ✓ src/lib/units.test.ts  (7 tests) 2ms
+ ✓ src/components/reports/reportScope.test.ts  (2 tests) 2ms
+ ✓ src/components/reports/tabs/domainScoresData.test.ts  (5 tests) 5ms
+ ✓ src/lib/apiError.test.ts  (5 tests) 3ms
+ ✓ src/components/reports/reportFilterSupport.test.ts  (8 tests) 4ms
+ ✓ src/lib/csv.test.ts  (4 tests) 3ms
+ ✓ src/lib/formValidation.test.ts  (8 tests) 2ms
+ ✓ src/lib/ordinal.test.ts  (7 tests) 3ms
+ ✓ src/lib/scoringPreview.test.ts  (5 tests) 2ms
+ ✓ src/lib/techTarget.test.ts  (7 tests) 3ms
+ ✓ src/components/config/access/accessUtils.lineFilters.test.ts  (6 tests) 3ms
+ ✓ src/lib/pillarState.test.ts  (5 tests) 2ms
+ ✓ src/components/config/ConfigSection.routes.test.ts  (3 tests) 3ms
+ ✓ src/components/reports/tabs/scoreParts.test.ts  (4 tests) 2ms
+
+ Test Files  136 passed (136)
+      Tests  2334 passed (2334)
+   Start at  13:32:30
+   Duration  10.98s (transform 3.04s, setup 8ms, collect 15.53s, tests 13.93s, environment 18ms, prepare 8.44s)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   83.42 |    94.51 |   92.25 |   83.42 |                   
+ src               |   49.35 |    66.66 |   33.33 |   49.35 |                   
+  App.tsx          |     100 |      100 |     100 |     100 |                   
+  main.tsx         |       0 |        0 |       0 |       0 | 1-13              
+  routes.tsx       |       0 |        0 |       0 |       0 | 1-26              
+ src/components    |   80.33 |    94.51 |   92.06 |   80.33 |                   
+  ...smentForm.tsx |     100 |    94.53 |     100 |     100 | ...70,313,534,561 
+  ...AddDialog.tsx |   99.62 |    97.54 |     100 |   99.62 | 100-101           
+  ...lProgress.tsx |     100 |    94.73 |     100 |     100 | 21                
+  ...mentTable.tsx |   99.69 |     94.3 |     100 |   99.69 | 154-156,953-954   
+  ...tTableRow.tsx |       0 |        0 |       0 |       0 | 1-245             
+  ...wordModal.tsx |       0 |        0 |       0 |       0 | 1-282             
+  ...gueDialog.tsx |       0 |        0 |       0 |       0 | 1-273             
+  ...valsPanel.tsx |     100 |    96.75 |     100 |     100 | ...51,191,201,242 
+  ...ctedRoute.tsx |       0 |        0 |       0 |       0 | 1-36              
+  PublicRoute.tsx  |       0 |        0 |       0 |       0 | 1-15              
+  TeamRoster.tsx   |   89.85 |    94.25 |   78.94 |   89.85 | 356-358,381-420   
+  ...eProvider.tsx |       0 |        0 |       0 |       0 | 1-15              
+ ...ts/assessments |     100 |      100 |     100 |     100 |                   
+  ...PlanModal.tsx |     100 |      100 |     100 |     100 |                   
+ ...nts/behavioral |     100 |    98.07 |     100 |     100 |                   
+  ...mentModal.tsx |     100 |    97.82 |     100 |     100 | 83,246            
+  ...smentView.tsx |     100 |    98.11 |     100 |     100 | ...60,267,290,335 
+  ...evelBadge.tsx |     100 |       50 |     100 |     100 | 18                
+  ...ScoreCard.tsx |     100 |      100 |     100 |     100 |                   
+ ...ponents/common |   90.24 |       50 |      50 |   90.24 |                   
+  ...lpCallout.tsx |   90.24 |       50 |      50 |   90.24 | 70-77             
+ .../communication |   99.84 |    96.86 |     100 |   99.84 |                   
+  ...mentModal.tsx |     100 |    99.18 |     100 |     100 | 364,645           
+  ...evelBadge.tsx |     100 |     87.5 |     100 |     100 | 19                
+  ...smentView.tsx |   99.64 |    95.23 |     100 |   99.64 | 493-495           
+  ...ScoreCard.tsx |     100 |    96.34 |     100 |     100 | 88,106,114        
+ ...ponents/config |   69.22 |    94.53 |    64.1 |   69.22 |                   
+  ...igNavTree.tsx |   99.31 |    90.47 |   33.33 |   99.31 | 128               
+  ...igSection.tsx |     100 |    98.11 |     100 |     100 | 144               
+  ConfigTable.tsx  |   85.75 |     97.4 |   58.33 |   85.75 | 21-65             
+  ...TableState.ts |     100 |     87.5 |     100 |     100 | 43,48,55          
+  ...onomyView.tsx |       0 |        0 |       0 |       0 | 1-446             
+  ...erSelects.tsx |       0 |        0 |       0 |       0 | 1-6               
+  ...Categories.ts |     100 |      100 |     100 |     100 |                   
+ .../config/access |   88.35 |    95.06 |   83.78 |   88.35 |                   
+  ...uditPanel.tsx |     100 |      100 |     100 |     100 |                   
+  ...ntSection.tsx |     100 |      100 |     100 |     100 |                   
+  ...cessModal.tsx |       0 |        0 |       0 |       0 | 1-64              
+  ...cessPanel.tsx |     100 |      100 |     100 |     100 |                   
+  ...cessModal.tsx |       0 |        0 |       0 |       0 | 1-47              
+  ...cessPanel.tsx |     100 |      100 |     100 |     100 |                   
+  ...cessModal.tsx |       0 |        0 |       0 |       0 | 1-92              
+  ...cessPanel.tsx |     100 |      100 |     100 |     100 |                   
+  RolesSection.tsx |     100 |    96.77 |     100 |     100 | 85                
+  accessUtils.ts   |     100 |    93.84 |      64 |     100 | 102-103,115,209   
+  ...ourceState.ts |     100 |    84.84 |     100 |     100 | ...-91,99,101,112 
+ ...fig/behavioral |     100 |      100 |     100 |     100 |                   
+  ...igSection.tsx |     100 |      100 |     100 |     100 |                   
+ .../communication |   99.94 |    93.57 |     100 |   99.94 |                   
+  ...igSection.tsx |     100 |    94.73 |     100 |     100 | 76                
+  ...tationTab.tsx |   99.82 |    93.25 |     100 |   99.82 | 205               
+  ...MatrixTab.tsx |     100 |    93.03 |     100 |     100 | ...29,553,669,683 
+  ...sBandsTab.tsx |     100 |      100 |     100 |     100 |                   
+  ...GatingTab.tsx |     100 |    83.33 |     100 |     100 | 16,39,49          
+  ...ubricsTab.tsx |     100 |      100 |     100 |     100 |                   
+ ...fig/industries |     100 |    98.39 |   95.23 |     100 |                   
+  ...nsSection.tsx |     100 |    95.74 |   86.95 |     100 | 21,24,58          
+  ...nsSection.tsx |     100 |    98.71 |   94.44 |     100 | 24                
+  ...nsSection.tsx |     100 |    94.11 |     100 |     100 | 58                
+  ...esSection.tsx |     100 |      100 |     100 |     100 |                   
+  ...rsSection.tsx |     100 |      100 |     100 |     100 |                   
+ ...g/organization |   99.83 |    98.14 |     100 |   99.83 |                   
+  ...tsSection.tsx |     100 |      100 |     100 |     100 |                   
+  ...esSection.tsx |     100 |    96.46 |     100 |     100 | ...82,299,312,421 
+  ...esSection.tsx |     100 |      100 |     100 |     100 |                   
+  UsersSection.tsx |   99.29 |    98.51 |     100 |   99.29 | 39-40             
+ ...config/periods |   99.69 |    99.14 |     100 |   99.69 |                   
+  ...dsSection.tsx |   99.69 |    99.14 |     100 |   99.69 | 68-69             
+ ...config/scoring |     100 |       95 |     100 |     100 |                   
+  ...lsSection.tsx |     100 |    97.95 |     100 |     100 | 45                
+  ...tsSection.tsx |     100 |    92.85 |     100 |     100 | 19,21-22,48,64    
+  ...upSection.tsx |     100 |    94.11 |     100 |     100 | 57                
+  ...esSection.tsx |     100 |    96.15 |     100 |     100 | 44,49             
+  ...esSection.tsx |     100 |    94.23 |     100 |     100 | 22,46,54          
+ ...onfig/taxonomy |   86.53 |    93.14 |   89.76 |   86.53 |                   
+  ...esSection.tsx |     100 |    98.48 |     100 |     100 | 53                
+  ...esSection.tsx |     100 |      100 |     100 |     100 |                   
+  ...apSection.tsx |   70.72 |    88.43 |   84.44 |   70.72 | ...94,758,888-893 
+  ...nsSection.tsx |     100 |    98.33 |     100 |     100 | 59,105            
+  ...rkSection.tsx |     100 |    94.11 |     100 |     100 | 61                
+  ...esSection.tsx |     100 |    85.48 |    62.5 |     100 | ...93,100-106,171 
+ ...ents/dashboard |     100 |      100 |     100 |     100 |                   
+  ...inessCard.tsx |     100 |      100 |     100 |     100 |                   
+  types.ts         |     100 |      100 |     100 |     100 |                   
+ ...shboard/layout |     0.4 |        0 |       0 |     0.4 |                   
+  InfoTip.tsx      |     100 |      100 |     100 |     100 |                   
+  ...eSwitcher.tsx |       0 |        0 |       0 |       0 | 1-84              
+  ...ofileMenu.tsx |       0 |        0 |       0 |       0 | 1-161             
+ ...dashboard/tabs |   91.07 |    91.62 |   97.82 |   91.07 |                   
+  ...sightsTab.tsx |   99.25 |    95.35 |     100 |   99.25 | ...53,455,465-470 
+  ...hboardTab.tsx |       0 |        0 |       0 |       0 | 1-246             
+  ...smentsTab.tsx |   98.99 |    97.53 |     100 |   98.99 | 459-463           
+  OverviewTab.tsx  |   90.62 |    98.61 |     100 |   90.62 | 164-193           
+  ...Dashboard.tsx |   92.36 |    45.45 |     100 |   92.36 | ...97,109,115-120 
+  ...lthCharts.tsx |     100 |    98.86 |     100 |     100 | 103               
+ ...ard/tabs/cards |       0 |        0 |       0 |       0 |                   
+  ...llarsCard.tsx |       0 |        0 |       0 |       0 | 1-116             
+  ...guageCard.tsx |       0 |        0 |       0 |       0 | 1-100             
+  ...mainsCard.tsx |       0 |        0 |       0 |       0 | 1-100             
+ ...abs/components |   98.39 |    33.33 |   63.63 |   98.39 |                   
+  ...llarsCard.tsx |     100 |       50 |      50 |     100 | 83-89             
+  ...guageCard.tsx |     100 |    78.57 |      50 |     100 | 74-84             
+  ...ardHeader.tsx |     100 |       50 |      50 |     100 | 65                
+  ...essKpiBar.tsx |   94.17 |    11.53 |     100 |   94.17 | ...30,144,166,199 
+  ...mainsCard.tsx |     100 |    18.18 |      50 |     100 | 56-77             
+ ...ts/assessments |   16.41 |    77.77 |   53.84 |   16.41 |                   
+  ...iltersBar.tsx |     100 |      100 |     100 |     100 |                   
+  ...TableView.tsx |       0 |        0 |       0 |       0 | 1-206             
+  ...sOverview.tsx |       0 |        0 |       0 |       0 | 1-139             
+  ...GapMatrix.tsx |       0 |        0 |       0 |       0 | 1-137             
+  ...rageRadar.tsx |       0 |        0 |       0 |       0 | 1-136             
+  ...reaGapMap.tsx |       0 |        0 |       0 |       0 | 1-128             
+  ...sionRadar.tsx |       0 |        0 |       0 |       0 | 1-84              
+ ...rd/tabs/panels |   75.28 |    96.93 |      80 |   75.28 |                   
+  ...FilterBar.tsx |       0 |        0 |       0 |       0 | 1-99              
+  ...TeamPanel.tsx |    97.6 |    97.93 |     100 |    97.6 | 287-294           
+ ...onents/filters |       0 |        0 |       0 |       0 |                   
+  ...erSelects.tsx |       0 |        0 |       0 |       0 | 1-176             
+ ...mponents/login |       0 |        0 |       0 |       0 |                   
+  DemoAccounts.tsx |       0 |        0 |       0 |       0 | 1-57              
+  LoginForm.tsx    |       0 |        0 |       0 |       0 | 1-61              
+  LoginHero.tsx    |       0 |        0 |       0 |       0 | 1-69              
+ ...onents/reports |     100 |    97.03 |   95.23 |     100 |                   
+  ...pByToggle.tsx |     100 |      100 |     100 |     100 |                   
+  PersonPicker.tsx |     100 |     87.5 |     100 |     100 | 16,50             
+  ...FilterBar.tsx |     100 |      100 |     100 |     100 |                   
+  ...tGroupNav.tsx |     100 |      100 |     100 |     100 |                   
+  ...rtSidebar.tsx |     100 |      100 |     100 |     100 |                   
+  ...rtTabsBar.tsx |     100 |      100 |     100 |     100 |                   
+  ...tsSection.tsx |     100 |    98.07 |     100 |     100 | 33                
+  ...rtDisplay.tsx |     100 |      100 |     100 |     100 |                   
+  ...terSupport.ts |     100 |       80 |     100 |     100 | 39                
+  reportFilters.ts |     100 |      100 |     100 |     100 |                   
+  ...Navigation.ts |     100 |    88.46 |     100 |     100 | 38                
+  reportScope.ts   |     100 |      100 |     100 |     100 |                   
+  shared.tsx       |     100 |      100 |   77.77 |     100 |                   
+ ...s/reports/tabs |   95.12 |    96.24 |   98.66 |   95.12 |                   
+  ...lyticsTab.tsx |     100 |    92.53 |     100 |     100 | ...39,177-178,182 
+  ...ScoresTab.tsx |     100 |    95.37 |   95.65 |     100 | ...85,510,631-632 
+  ...ScoresTab.tsx |     100 |      100 |     100 |     100 |                   
+  ...tSheetTab.tsx |       0 |        0 |       0 |       0 | 1-107             
+  ...rboardTab.tsx |     100 |      100 |     100 |     100 |                   
+  ...ummaryTab.tsx |     100 |    88.23 |     100 |     100 | ...46,167,171-195 
+  ...alysisTab.tsx |     100 |    97.42 |     100 |     100 | ...12-113,169,603 
+  GapRadar.tsx     |     100 |    98.14 |     100 |     100 | 51,171            
+  ...essDetail.tsx |     100 |       88 |     100 |     100 | 22-24,43          
+  ...dinessTab.tsx |     100 |    96.45 |     100 |     100 | 303,334,374-380   
+  ...atingsTab.tsx |     100 |      100 |     100 |     100 |                   
+  YoYGrowthTab.tsx |       0 |        0 |       0 |       0 | 1-165             
+  ...hmarksData.ts |     100 |    98.21 |     100 |     100 | 51                
+  ...hmarksHelp.ts |     100 |      100 |     100 |     100 |                   
+  ...ScoresData.ts |     100 |    92.75 |     100 |     100 | 94,123,129,141    
+  ...ScoresHelp.ts |     100 |      100 |     100 |     100 |                   
+  gapReportCsv.ts  |     100 |    93.75 |     100 |     100 | 42                
+  ...erviewData.ts |     100 |      100 |     100 |     100 |                   
+  ...erviewHelp.ts |     100 |      100 |     100 |     100 |                   
+  ...rboardHelp.ts |     100 |      100 |     100 |     100 |                   
+  ...dinessData.ts |     100 |    97.41 |     100 |     100 | 100,142,152,231   
+  ...dinessHelp.ts |     100 |      100 |     100 |     100 |                   
+  ...nessParts.tsx |     100 |      100 |     100 |     100 |                   
+  ...inessTheme.ts |     100 |    88.23 |     100 |     100 | 30,42             
+  scoreParts.tsx   |     100 |    97.72 |     100 |     100 | 47                
+  ...MatrixData.ts |     100 |    97.08 |     100 |     100 | 39,67,115,150     
+  ...MatrixHelp.ts |     100 |      100 |     100 |     100 |                   
+ ...abs/components |     100 |    99.55 |     100 |     100 |                   
+  ...lenceList.tsx |     100 |      100 |     100 |     100 |                   
+  ...DataTable.tsx |     100 |      100 |     100 |     100 |                   
+  ...maryCards.tsx |     100 |      100 |     100 |     100 |                   
+  ...isonChart.tsx |     100 |      100 |     100 |     100 |                   
+  ...DataTable.tsx |     100 |      100 |     100 |     100 |                   
+  ...nkingList.tsx |     100 |      100 |     100 |     100 |                   
+  ...mentChart.tsx |     100 |      100 |     100 |     100 |                   
+  ...nessRings.tsx |     100 |      100 |     100 |     100 |                   
+  ...rmersList.tsx |     100 |    95.83 |     100 |     100 | 146               
+ ...s/result-sheet |       0 |        0 |       0 |       0 |                   
+  ...GapsTable.tsx |       0 |        0 |       0 |       0 | 1-59              
+  ...eetHeader.tsx |       0 |        0 |       0 |       0 | 1-60              
+  ...tKpiCards.tsx |       0 |        0 |       0 |       0 | 1-82              
+  ...shotGauge.tsx |       0 |        0 |       0 |       0 | 1-75              
+  ...coresList.tsx |       0 |        0 |       0 |       0 | 1-58              
+  pdfGenerator.ts  |       0 |        0 |       0 |       0 | 1-231             
+ ...lt-sheet/hooks |       0 |        0 |       0 |       0 |                   
+  ...esultSheet.ts |       0 |        0 |       0 |       0 | 1-170             
+ src/components/ui |   51.96 |     81.4 |   66.66 |   51.96 |                   
+  Badge.tsx        |   95.69 |       50 |     100 |   95.69 | 85-88             
+  CalibrLogo.tsx   |       0 |        0 |       0 |       0 | 1-99              
+  ...irmDialog.tsx |       0 |        0 |       0 |       0 | 1-110             
+  FormFooter.tsx   |     100 |      100 |     100 |     100 |                   
+  GradientIcon.tsx |     100 |      100 |     100 |     100 |                   
+  HelpButton.tsx   |     100 |      100 |     100 |     100 |                   
+  IconBadge.tsx    |    92.4 |       20 |     100 |    92.4 | 61-66             
+  InfoTip.tsx      |   41.73 |    28.57 |    12.5 |   41.73 | ...4,86-88,95-112 
+  Modal.tsx        |     100 |      100 |     100 |     100 |                   
+  OrdinalMeter.tsx |     100 |      100 |     100 |     100 |                   
+  PanelHeader.tsx  |     100 |      100 |     100 |     100 |                   
+  ...wordInput.tsx |       0 |        0 |       0 |       0 | 1-33              
+  PillarBadge.tsx  |     100 |      100 |     100 |     100 |                   
+  ProfileCard.tsx  |       0 |        0 |       0 |       0 | 1-52              
+  ProgressBar.tsx  |     100 |      100 |     100 |     100 |                   
+  ScoreDisplay.tsx |   82.17 |     7.69 |     100 |   82.17 | ...54,84-91,95-97 
+  ...ltiSelect.tsx |       0 |        0 |       0 |       0 | 1-197             
+  ...bleSelect.tsx |     100 |      100 |     100 |     100 |                   
+  ...onDivider.tsx |       0 |        0 |       0 |       0 | 1-38              
+  SidePanel.tsx    |     100 |      100 |     100 |     100 |                   
+  Skeleton.tsx     |     100 |      100 |     100 |     100 |                   
+  SkillTile.tsx    |       0 |        0 |       0 |       0 | 1-178             
+  Spinner.tsx      |     100 |      100 |     100 |     100 |                   
+  StackedBar.tsx   |     100 |       80 |     100 |     100 | 13                
+  Stars.tsx        |     100 |      100 |     100 |     100 |                   
+  ...bleSelect.tsx |       0 |        0 |       0 |       0 | 1-189             
+  ...Container.tsx |       0 |        0 |       0 |       0 | 1-193             
+  button.tsx       |       0 |        0 |       0 |       0 | 1-41              
+  input.tsx        |       0 |        0 |       0 |       0 | 1-8               
+  label.tsx        |       0 |        0 |       0 |       0 | 1-13              
+  select.tsx       |       0 |        0 |       0 |       0 | 1-28              
+  softTone.ts      |     100 |      100 |     100 |     100 |                   
+  table.tsx        |       0 |        0 |       0 |       0 | 1-31              
+  ...irmDialog.tsx |     100 |      100 |     100 |     100 |                   
+ .../ui/assessment |   58.01 |    90.41 |   42.85 |   58.01 |                   
+  ...eroLayout.tsx |       0 |        0 |       0 |       0 | 1-118             
+  ...ScoreCard.tsx |       0 |        0 |       0 |       0 | 1-150             
+  ...lectorBar.tsx |     100 |    96.66 |      50 |     100 | 79                
+  ...icKpiCard.tsx |   86.48 |    77.77 |      50 |   86.48 | 45,97-110         
+  ...ncyLadder.tsx |     100 |    93.75 |     100 |     100 | 71                
+ ...ents/ui/charts |   99.43 |    97.43 |     100 |   99.43 |                   
+  ...tChartRow.tsx |    97.8 |    83.33 |     100 |    97.8 | 86-87             
+  ...adarChart.tsx |     100 |      100 |     100 |     100 |                   
+ ...s/ui/dashboard |    67.8 |    66.66 |      50 |    67.8 |                   
+  ...rdKpiCard.tsx |     100 |      100 |     100 |     100 |                   
+  ...AlertCard.tsx |       0 |        0 |       0 |       0 | 1-66              
+ src/hooks         |   86.44 |    94.49 |   95.85 |   86.44 |                   
+  ...iDashboard.ts |       0 |        0 |       0 |       0 | 1-130             
+  useAssessment.ts |   60.24 |    96.29 |    62.5 |   60.24 | ...44-357,487-576 
+  ...ringConfig.ts |     100 |    92.85 |     100 |     100 | 46                
+  useBehavioral.ts |       0 |        0 |       0 |       0 | 1-90              
+  useChartTheme.ts |     100 |      100 |     100 |     100 |                   
+  ...munication.ts |     100 |      100 |     100 |     100 |                   
+  useConfig.ts     |    99.5 |    96.98 |   99.55 |    99.5 | 1087-1094         
+  ...essMetrics.ts |   96.59 |    84.61 |     100 |   96.59 | ...18-224,251,289 
+  ...vementPlan.ts |     100 |      100 |     100 |     100 |                   
+  ...rrowScreen.ts |     100 |      100 |     100 |     100 |                   
+  ...eryEnabled.ts |   77.77 |    83.33 |      50 |   77.77 | 6-9               
+  useReports.ts    |     100 |      100 |     100 |     100 |                   
+ src/lib           |   84.72 |     90.9 |   90.62 |   84.72 |                   
+  api.ts           |       0 |        0 |       0 |       0 | 1-85              
+  apiError.ts      |     100 |    94.11 |     100 |     100 | 35                
+  ...entHelpers.ts |   96.15 |    80.35 |   88.88 |   96.15 | 115-121           
+  batchRunner.ts   |     100 |      100 |     100 |     100 |                   
+  ...efinitions.ts |     100 |      100 |     100 |     100 |                   
+  ...efinitions.ts |     100 |       95 |     100 |     100 | 83-84             
+  chartColors.ts   |   97.05 |      100 |   66.66 |   97.05 | 89-91             
+  ...efinitions.ts |   98.36 |     62.5 |     100 |   98.36 | 42                
+  csv.ts           |     100 |      100 |     100 |     100 |                   
+  designSystem.ts  |       0 |        0 |       0 |       0 | 1-68              
+  domainRollup.ts  |     100 |      100 |     100 |     100 |                   
+  ...Validation.ts |     100 |      100 |     100 |     100 |                   
+  formatters.ts    |   99.21 |    89.74 |     100 |   99.21 | 237-238           
+  ordinal.ts       |     100 |      100 |     100 |     100 |                   
+  ...Attainment.ts |     100 |    86.66 |     100 |     100 | 37,41,106         
+  pillarState.ts   |     100 |      100 |     100 |     100 |                   
+  queryClient.ts   |   66.66 |      100 |       0 |   66.66 | 3-10              
+  ...rtGrouping.ts |     100 |      100 |     100 |     100 |                   
+  reportGroups.ts  |     100 |     87.5 |     100 |     100 | 122,163-167       
+  roundHalfUp.ts   |     100 |      100 |     100 |     100 |                   
+  scoreBins.ts     |     100 |      100 |     100 |     100 |                   
+  ...ingPreview.ts |     100 |      100 |     100 |     100 |                   
+  session.ts       |     100 |      100 |     100 |     100 |                   
+  ...peMessages.ts |     100 |      100 |     100 |     100 |                   
+  techTarget.ts    |     100 |      100 |     100 |     100 |                   
+  toast.ts         |       0 |        0 |       0 |       0 | 1-146             
+  units.ts         |   98.41 |      100 |   83.33 |   98.41 | 63                
+ src/pages         |   85.24 |    96.89 |   94.44 |   85.24 |                   
+  ...boardPage.tsx |     100 |    97.39 |     100 |     100 | 76,508-510,527    
+  LoginPage.tsx    |       0 |        0 |       0 |       0 | 1-95              
+ src/store         |     100 |      100 |    87.5 |     100 |                   
+  authStore.ts     |     100 |      100 |     100 |     100 |                   
+  themeStore.ts    |     100 |      100 |      50 |     100 |                   
+ src/test-utils    |     100 |      100 |     100 |     100 |                   
+  ...okHarness.tsx |     100 |      100 |     100 |     100 |                   
+ src/types         |   87.88 |    83.33 |   66.66 |   87.88 |                   
+  api.ts           |       0 |        0 |       0 |       0 | 1-51              
+  behavioral.ts    |     100 |      100 |     100 |     100 |                   
+  communication.ts |     100 |      100 |     100 |     100 |                   
+  rbac.ts          |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------
+
+ PASS  Waiting for file changes...
+       press h to show help, press q to quit
+[3Jc
+ RERUN  scripts/check-no-demo-accounts.test.ts
+
+ ✓ scripts/check-no-demo-accounts.test.ts  (6 tests) 14ms
+ ✓ src/components/PendingApprovalsPanel.test.tsx  (67 tests) 706ms
+ ✓ src/hooks/useConfig.test.ts  (92 tests) 831ms
+ ✓ src/components/config/communication/CefrGradeMatrixTab.test.tsx  (40 tests) 585ms
+ ✓ src/components/BulkAssessmentTable.test.tsx  (75 tests) 854ms
+ ✓ src/components/communication/CefrAssessmentModal.test.tsx  (65 tests) 968ms
+ ✓ src/components/config/periods/EvaluationPeriodsSection.test.tsx  (33 tests) 470ms
+ ✓ src/components/behavioral/BehavioralAssessmentView.test.tsx  (49 tests) 569ms
+ ✓ src/components/reports/tabs/PromotionReadinessTab.test.tsx  (32 tests) 437ms
+ ✓ src/components/reports/tabs/CompetencyScoresTab.test.tsx  (31 tests) 387ms
+ ✓ src/components/config/taxonomy/CompetenciesSection.test.tsx  (32 tests) 373ms
+ ✓ src/components/dashboard/tabs/AIInsightsTab.test.tsx  (29 tests) 308ms
+ ✓ src/hooks/useCommunication.test.ts  (41 tests) 297ms
+ ✓ src/components/communication/CommunicationAssessmentView.test.tsx  (35 tests) 340ms
+ ✓ src/components/config/industries/IndustrySectorsSection.test.tsx  (39 tests) 264ms
+ ✓ src/components/config/access/AccessManagementSection.test.tsx  (60 tests) 300ms
+ ✓ src/pages/DashboardPage.test.tsx  (54 tests) 256ms
+ ✓ src/components/config/organization/UsersSection.test.tsx  (29 tests) 217ms
+ ✓ src/components/config/organization/GradesSection.test.tsx  (28 tests) 203ms
+ ✓ src/components/config/organization/EmployeesSection.test.tsx  (25 tests) 240ms
+ ✓ src/components/reports/tabs/GapAnalysisTab.test.tsx  (29 tests) 227ms
+ ✓ src/components/config/industries/BusinessDomainsSection.test.tsx  (31 tests) 220ms
+ ✓ src/components/config/industries/BusinessSubDomainsSection.test.tsx  (34 tests) 191ms
+ ✓ src/components/config/taxonomy/SkillDomainsSection.test.tsx  (27 tests) 193ms
+ ✓ src/components/config/industries/IndustriesSection.test.tsx  (35 tests) 214ms
+ ✓ src/components/config/taxonomy/CategoriesSection.test.tsx  (30 tests) 198ms
+ ✓ src/components/BulkAddDialog.test.tsx  (29 tests) 173ms
+ ✓ src/components/config/taxonomy/CompetencyThresholdMatrix.test.tsx  (36 tests) 181ms
+ ✓ src/components/config/scoring/AssessmentProjectsSection.test.tsx  (26 tests) 182ms
+ ✓ src/components/config/organization/DepartmentsSection.test.tsx  (26 tests) 193ms
+ ✓ src/components/dashboard/tabs/AssessmentsTab.test.tsx  (43 tests) 176ms
+ ✓ src/components/config/scoring/AssessmentLevelsSection.test.tsx  (21 tests) 131ms
+ ✓ src/components/config/scoring/AssessmentTypesSection.test.tsx  (26 tests) 142ms
+ ✓ src/components/behavioral/BehavioralAssessmentModal.test.tsx  (15 tests) 151ms
+ ✓ src/components/AssessmentForm.test.tsx  (27 tests) 155ms
+ ✓ src/components/config/scoring/AssessmentStatusesSection.test.tsx  (22 tests) 130ms
+ ✓ src/hooks/useReports.test.ts  (12 tests) 112ms
+ ✓ src/components/config/access/RolesSection.test.tsx  (21 tests) 103ms
+ ✓ src/components/config/communication/CefrDocumentationTab.test.tsx  (16 tests) 123ms
+ ✓ src/components/assessments/ImprovementPlanModal.test.tsx  (19 tests) 100ms
+ ✓ src/components/reports/tabs/CefrAnalyticsTab.test.tsx  (12 tests) 113ms
+ ✓ src/components/TeamRoster.test.tsx  (12 tests) 87ms
+ ✓ src/components/config/access/LineManagerAccessPanel.test.tsx  (23 tests) 110ms
+ ✓ src/components/config/taxonomy/TechnologiesSection.test.tsx  (18 tests) 97ms
+ ✓ src/components/reports/tabs/StarRatingsTab.test.tsx  (22 tests) 65ms
+ ✓ src/components/config/organization/OrganizationFilters.test.tsx  (8 tests) 63ms
+ ✓ src/components/config/ConfigSection.test.tsx  (37 tests) 69ms
+ ✓ src/components/reports/tabs/PromotionReadinessDetail.test.tsx  (4 tests) 72ms
+ ✓ src/components/reports/tabs/DomainScoresTab.test.tsx  (9 tests) 66ms
+ ✓ src/components/dashboard/tabs/ResourceOverviewDashboard.test.tsx  (6 tests) 68ms
+ ✓ src/hooks/useImprovementPlan.test.ts  (6 tests) 61ms
+ ✓ src/components/config/communication/CefrRubricsTab.test.tsx  (10 tests) 59ms
+ ✓ src/components/reports/tabs/ExecutiveLeaderboardTab.test.tsx  (25 tests) 64ms
+ ✓ src/components/reports/tabs/ExecutiveSummaryTab.test.tsx  (14 tests) 62ms
+ ✓ src/components/dashboard/tabs/panels/LineManagerTeamPanel.test.tsx  (22 tests) 57ms
+ ✓ src/components/config/communication/CefrLevelsBandsTab.test.tsx  (11 tests) 48ms
+ ✓ src/components/reports/tabs/GapRadar.test.tsx  (21 tests) 55ms
+ ✓ src/hooks/useAssessment.skillScope.test.ts  (7 tests) 49ms
+ ✓ src/components/reports/ReportsSection.test.tsx  (34 tests) 52ms
+ ✓ src/components/dashboard/tabs/TeamHealthCharts.test.tsx  (22 tests) 50ms
+ ✓ src/components/dashboard/tabs/OverviewTab.test.tsx  (15 tests) 52ms
+ ✓ src/components/reports/tabs/components/GroupRankingList.test.tsx  (14 tests) 54ms
+ ✓ src/components/reports/ReportSidebar.test.tsx  (10 tests) 47ms
+ ✓ src/components/communication/CommunicationScoreCard.test.tsx  (14 tests) 33ms
+ ✓ src/components/config/ConfigNavTree.test.tsx  (10 tests) 41ms
+ ✓ src/components/reports/tabs/components/TopPerformersList.test.tsx  (15 tests) 35ms
+ ✓ src/components/config/communication/CefrConfigSection.test.tsx  (18 tests) 39ms
+ ✓ src/components/dashboard/TriDimensionReadinessCard.test.tsx  (10 tests) 31ms
+ ✓ src/components/behavioral/BehavioralScoreCard.test.tsx  (11 tests) 29ms
+ ✓ src/components/ui/SearchableSelect.test.tsx  (13 tests) 31ms
+ ✓ src/components/reports/ReportFilterBar.test.tsx  (16 tests) 32ms
+ ✓ src/components/config/communication/CefrPromotionGatingTab.test.tsx  (5 tests) 30ms
+ ✓ src/components/config/behavioral/BehavioralConfigSection.test.tsx  (13 tests) 29ms
+ ✓ src/components/config/taxonomy/SkillFrameworkSection.test.tsx  (7 tests) 32ms
+ ✓ src/components/config/scoring/AssessmentSetupSection.test.tsx  (7 tests) 29ms
+ ✓ src/components/reports/tabs/components/GroupComparisonChart.test.tsx  (10 tests) 27ms
+ ✓ src/components/config/industries/IndustriesDomainsSection.test.tsx  (7 tests) 24ms
+ ✓ src/components/reports/tabs/components/ExecutiveDataTable.test.tsx  (11 tests) 29ms
+ ✓ src/components/ui/charts/StandardRadarChart.test.tsx  (17 tests) 24ms
+ ✓ src/hooks/useAssessment.approval.test.ts  (2 tests) 23ms
+ ✓ src/components/config/access/AccessAuditPanel.test.tsx  (6 tests) 21ms
+ ✓ src/components/reports/tabs/components/DepartmentExcellenceList.test.tsx  (8 tests) 19ms
+ ✓ src/components/dashboard/tabs/components/assessments/CompetencyFiltersBar.test.tsx  (6 tests) 19ms
+ ✓ src/components/reports/tabs/components/ExecutiveSummaryCards.test.tsx  (6 tests) 17ms
+ ✓ src/components/reports/tabs/components/PillarAttainmentChart.test.tsx  (10 tests) 19ms
+ ✓ src/components/config/access/DepartmentAccessPanel.test.tsx  (3 tests) 16ms
+ ✓ src/components/ui/Modal.test.tsx  (7 tests) 15ms
+ ✓ src/components/config/access/RolesAccessPanel.test.tsx  (3 tests) 15ms
+ ✓ src/components/reports/tabs/components/PillarCharts.test.tsx  (9 tests) 19ms
+ ✓ src/components/reports/GroupByToggle.test.tsx  (4 tests) 12ms
+ ✓ src/components/ui/assessment/AssessmentPrimitives.test.tsx  (8 tests) 13ms
+ ✓ src/components/ui/HelpButton.test.tsx  (1 test) 13ms
+ ✓ src/components/reports/tabs/components/GroupDataTable.test.tsx  (5 tests) 12ms
+ ✓ src/components/ui/SidePanel.test.tsx  (1 test) 11ms
+ ✓ src/hooks/useEmployeeReadinessMetrics.cefr.test.tsx  (8 tests) 11ms
+ ✓ src/components/reports/tabs/promotionReadinessData.test.ts  (15 tests) 11ms
+ ✓ src/components/communication/CefrLevelBadge.test.tsx  (5 tests) 10ms
+ ✓ src/components/ui/OrdinalMeter.test.tsx  (7 tests) 11ms
+ ✓ src/hooks/useEmployeeReadinessMetrics.tech.test.tsx  (5 tests) 9ms
+ ✓ src/components/dashboard/tabs/components/CefrLanguageCard.test.tsx  (2 tests) 10ms
+ ✓ src/App.test.tsx  (1 test) 16ms
+ ✓ src/components/ui/Stars.test.tsx  (10 tests) 10ms
+ ✓ src/hooks/useNarrowScreen.test.tsx  (5 tests) 10ms
+stderr | src/lib/formatters.test.ts > fractionToPct with negative fractions > leaves a value already in percent alone, either sign
+[units] fractionToPct received 75, which is outside the fraction range -1..1. A value already on the percent scale reached a fraction converter. Fix the field at its source, then use toPercent at the call site.
+[units] fractionToPct received -75, which is outside the fraction range -1..1. A value already on the percent scale reached a fraction converter. Fix the field at its source, then use toPercent at the call site.
+
+ ✓ src/lib/formatters.test.ts  (22 tests) 9ms
+ ✓ src/lib/scoreBins.test.ts  (9 tests) 7ms
+ ✓ src/lib/chartColors.test.ts  (16 tests) 7ms
+ ✓ src/components/config/configCategories.test.ts  (12 tests) 9ms
+ ✓ src/components/reports/reportNavigation.test.ts  (10 tests) 8ms
+ ✓ src/lib/session.test.ts  (7 tests) 10ms
+ ✓ src/lib/reportGroups.test.ts  (22 tests) 13ms
+ ✓ src/lib/cefrDefinitions.test.ts  (7 tests) 7ms
+ ✓ src/lib/pillarAttainment.test.ts  (18 tests) 6ms
+ ✓ src/components/reports/tabs/skillMatrixData.test.ts  (11 tests) 6ms
+ ✓ src/components/reports/reportMeta.test.ts  (5 tests) 4ms
+ ✓ src/components/reports/tabs/domainScoresData.test.ts  (5 tests) 5ms
+ ✓ src/components/config/access/accessUtils.audit.test.ts  (8 tests) 4ms
+ ✓ src/components/reports/tabs/cefrBenchmarksData.test.ts  (5 tests) 3ms
+ ✓ src/components/reports/tabs/gapReportCsv.test.ts  (4 tests) 3ms
+ ✓ src/lib/domainRollup.test.ts  (11 tests) 4ms
+ ✓ src/components/reports/reportFilterSupport.test.ts  (8 tests) 5ms
+ ✓ src/lib/assessmentHelpers.cefrGap.test.ts  (7 tests) 5ms
+ ✓ src/hooks/useChartTheme.test.ts  (4 tests) 5ms
+ ✓ src/components/reports/tabs/healthOverviewData.test.ts  (6 tests) 4ms
+ ✓ src/lib/batchRunner.test.ts  (3 tests) 3ms
+ ✓ src/lib/apiError.test.ts  (5 tests) 3ms
+ ✓ src/lib/csv.test.ts  (4 tests) 3ms
+ ✓ src/lib/ordinal.test.ts  (7 tests) 2ms
+ ✓ src/lib/techTarget.test.ts  (7 tests) 4ms
+ ✓ src/components/config/access/accessUtils.lineFilters.test.ts  (6 tests) 5ms
+ ✓ src/lib/roundHalfUp.test.ts  (7 tests) 3ms
+ ✓ src/lib/units.test.ts  (7 tests) 4ms
+ ✓ src/components/config/ConfigSection.routes.test.ts  (3 tests) 6ms
+ ✓ src/components/reports/reportScope.test.ts  (2 tests) 2ms
+ ✓ src/lib/formValidation.test.ts  (8 tests) 4ms
+ ✓ src/lib/scoringPreview.test.ts  (5 tests) 3ms
+ ✓ src/lib/pillarState.test.ts  (5 tests) 2ms
+ ✓ src/components/reports/tabs/scoreParts.test.ts  (4 tests) 3ms
+
+ Test Files  137 passed (137)
+      Tests  2340 passed (2340)
+   Start at  18:58:17
+   Duration  25.88s
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   97.75 |    95.12 |   95.56 |   97.75 |                   
+ src               |     100 |      100 |     100 |     100 |                   
+  App.tsx          |     100 |      100 |     100 |     100 |                   
+ src/components    |   98.68 |       95 |   96.66 |   98.68 |                   
+  ...smentForm.tsx |     100 |    94.53 |     100 |     100 | ...70,313,534,561 
+  ...AddDialog.tsx |   99.62 |    97.54 |     100 |   99.62 | 100-101           
+  ...lProgress.tsx |     100 |    94.73 |     100 |     100 | 21                
+  ...mentTable.tsx |   99.69 |     94.3 |     100 |   99.69 | 154-156,953-954   
+  ...valsPanel.tsx |     100 |    96.75 |     100 |     100 | ...51,191,201,242 
+  TeamRoster.tsx   |   89.85 |    94.25 |   78.94 |   89.85 | 356-358,381-420   
+ ...ts/assessments |     100 |      100 |     100 |     100 |                   
+  ...PlanModal.tsx |     100 |      100 |     100 |     100 |                   
+ ...nts/behavioral |     100 |    98.07 |     100 |     100 |                   
+  ...mentModal.tsx |     100 |    97.82 |     100 |     100 | 83,246            
+  ...smentView.tsx |     100 |    98.11 |     100 |     100 | ...60,267,290,335 
+  ...evelBadge.tsx |     100 |       50 |     100 |     100 | 18                
+  ...ScoreCard.tsx |     100 |      100 |     100 |     100 |                   
+ ...ponents/common |   90.24 |       50 |      50 |   90.24 |                   
+  ...lpCallout.tsx |   90.24 |       50 |      50 |   90.24 | 70-77             
+ .../communication |   99.84 |    96.86 |     100 |   99.84 |                   
+  ...mentModal.tsx |     100 |    99.18 |     100 |     100 | 364,645           
+  ...evelBadge.tsx |     100 |     87.5 |     100 |     100 | 19                
+  ...smentView.tsx |   99.64 |    95.23 |     100 |   99.64 | 493-495           
+  ...ScoreCard.tsx |     100 |    96.34 |     100 |     100 | 88,106,114        
+ ...ponents/config |   96.05 |    95.58 |   67.56 |   96.05 |                   
+  ...igNavTree.tsx |   99.31 |    90.47 |   33.33 |   99.31 | 128               
+  ...igSection.tsx |     100 |    98.11 |     100 |     100 | 144               
+  ConfigTable.tsx  |   85.75 |     97.4 |   58.33 |   85.75 | 21-65             
+  ...TableState.ts |     100 |     87.5 |     100 |     100 | 43,48,55          
+  ...Categories.ts |     100 |      100 |     100 |     100 |                   
+ .../config/access |     100 |    95.85 |   87.32 |     100 |                   
+  ...uditPanel.tsx |     100 |      100 |     100 |     100 |                   
+  ...ntSection.tsx |     100 |      100 |     100 |     100 |                   
+  ...cessPanel.tsx |     100 |      100 |     100 |     100 |                   
+  ...cessPanel.tsx |     100 |      100 |     100 |     100 |                   
+  ...cessPanel.tsx |     100 |      100 |     100 |     100 |                   
+  RolesSection.tsx |     100 |    96.77 |     100 |     100 | 85                
+  accessUtils.ts   |     100 |    93.84 |      64 |     100 | 102-103,115,209   
+  ...ourceState.ts |     100 |    84.84 |     100 |     100 | ...-91,99,101,112 
+ ...fig/behavioral |     100 |      100 |     100 |     100 |                   
+  ...igSection.tsx |     100 |      100 |     100 |     100 |                   
+ .../communication |   99.94 |    93.57 |     100 |   99.94 |                   
+  ...igSection.tsx |     100 |    94.73 |     100 |     100 | 76                
+  ...tationTab.tsx |   99.82 |    93.25 |     100 |   99.82 | 205               
+  ...MatrixTab.tsx |     100 |    93.03 |     100 |     100 | ...29,553,669,683 
+  ...sBandsTab.tsx |     100 |      100 |     100 |     100 |                   
+  ...GatingTab.tsx |     100 |    83.33 |     100 |     100 | 16,39,49          
+  ...ubricsTab.tsx |     100 |      100 |     100 |     100 |                   
+ ...fig/industries |     100 |    98.39 |   95.23 |     100 |                   
+  ...nsSection.tsx |     100 |    95.74 |   86.95 |     100 | 21,24,58          
+  ...nsSection.tsx |     100 |    98.71 |   94.44 |     100 | 24                
+  ...nsSection.tsx |     100 |    94.11 |     100 |     100 | 58                
+  ...esSection.tsx |     100 |      100 |     100 |     100 |                   
+  ...rsSection.tsx |     100 |      100 |     100 |     100 |                   
+ ...g/organization |   99.83 |    98.14 |     100 |   99.83 |                   
+  ...tsSection.tsx |     100 |      100 |     100 |     100 |                   
+  ...esSection.tsx |     100 |    96.46 |     100 |     100 | ...82,299,312,421 
+  ...esSection.tsx |     100 |      100 |     100 |     100 |                   
+  UsersSection.tsx |   99.29 |    98.51 |     100 |   99.29 | 39-40             
+ ...config/periods |   99.69 |    99.14 |     100 |   99.69 |                   
+  ...dsSection.tsx |   99.69 |    99.14 |     100 |   99.69 | 68-69             
+ ...config/scoring |     100 |       95 |     100 |     100 |                   
+  ...lsSection.tsx |     100 |    97.95 |     100 |     100 | 45                
+  ...tsSection.tsx |     100 |    92.85 |     100 |     100 | 19,21-22,48,64    
+  ...upSection.tsx |     100 |    94.11 |     100 |     100 | 57                
+  ...esSection.tsx |     100 |    96.15 |     100 |     100 | 44,49             
+  ...esSection.tsx |     100 |    94.23 |     100 |     100 | 22,46,54          
+ ...onfig/taxonomy |   86.53 |    93.14 |   89.76 |   86.53 |                   
+  ...esSection.tsx |     100 |    98.48 |     100 |     100 | 53                
+  ...esSection.tsx |     100 |      100 |     100 |     100 |                   
+  ...apSection.tsx |   70.72 |    88.43 |   84.44 |   70.72 | ...94,758,888-893 
+  ...nsSection.tsx |     100 |    98.33 |     100 |     100 | 59,105            
+  ...rkSection.tsx |     100 |    94.11 |     100 |     100 | 61                
+  ...esSection.tsx |     100 |    85.48 |    62.5 |     100 | ...93,100-106,171 
+ ...ents/dashboard |     100 |      100 |     100 |     100 |                   
+  ...inessCard.tsx |     100 |      100 |     100 |     100 |                   
+  types.ts         |     100 |      100 |     100 |     100 |                   
+ ...shboard/layout |     100 |      100 |     100 |     100 |                   
+  InfoTip.tsx      |     100 |      100 |     100 |     100 |                   
+ ...dashboard/tabs |   97.89 |    91.76 |     100 |   97.89 |                   
+  ...sightsTab.tsx |   99.25 |    95.35 |     100 |   99.25 | ...53,455,465-470 
+  ...smentsTab.tsx |   98.99 |    97.53 |     100 |   98.99 | 459-463           
+  OverviewTab.tsx  |   90.62 |    98.61 |     100 |   90.62 | 164-193           
+  ...Dashboard.tsx |   92.36 |    45.45 |     100 |   92.36 | ...97,109,115-120 
+  ...lthCharts.tsx |     100 |    98.86 |     100 |     100 | 103               
+ ...abs/components |   98.39 |    33.33 |   63.63 |   98.39 |                   
+  ...llarsCard.tsx |     100 |       50 |      50 |     100 | 83-89             
+  ...guageCard.tsx |     100 |    78.57 |      50 |     100 | 74-84             
+  ...ardHeader.tsx |     100 |       50 |      50 |     100 | 65                
+  ...essKpiBar.tsx |   94.17 |    11.53 |     100 |   94.17 | ...30,144,166,199 
+  ...mainsCard.tsx |     100 |    18.18 |      50 |     100 | 56-77             
+ ...ts/assessments |     100 |      100 |     100 |     100 |                   
+  ...iltersBar.tsx |     100 |      100 |     100 |     100 |                   
+ ...rd/tabs/panels |    97.6 |    97.93 |     100 |    97.6 |                   
+  ...TeamPanel.tsx |    97.6 |    97.93 |     100 |    97.6 | 287-294           
+ ...onents/reports |     100 |    97.03 |   95.23 |     100 |                   
+  ...pByToggle.tsx |     100 |      100 |     100 |     100 |                   
+  PersonPicker.tsx |     100 |     87.5 |     100 |     100 | 16,50             
+  ...FilterBar.tsx |     100 |      100 |     100 |     100 |                   
+  ...tGroupNav.tsx |     100 |      100 |     100 |     100 |                   
+  ...rtSidebar.tsx |     100 |      100 |     100 |     100 |                   
+  ...rtTabsBar.tsx |     100 |      100 |     100 |     100 |                   
+  ...tsSection.tsx |     100 |    98.07 |     100 |     100 | 33                
+  ...rtDisplay.tsx |     100 |      100 |     100 |     100 |                   
+  ...terSupport.ts |     100 |       80 |     100 |     100 | 39                
+  reportFilters.ts |     100 |      100 |     100 |     100 |                   
+  ...Navigation.ts |     100 |    88.46 |     100 |     100 | 38                
+  reportScope.ts   |     100 |      100 |     100 |     100 |                   
+  shared.tsx       |     100 |      100 |   77.77 |     100 |                   
+ ...s/reports/tabs |     100 |    96.35 |   99.32 |     100 |                   
+  ...lyticsTab.tsx |     100 |    92.53 |     100 |     100 | ...39,177-178,182 
+  ...ScoresTab.tsx |     100 |    95.37 |   95.65 |     100 | ...85,510,631-632 
+  ...ScoresTab.tsx |     100 |      100 |     100 |     100 |                   
+  ...rboardTab.tsx |     100 |      100 |     100 |     100 |                   
+  ...ummaryTab.tsx |     100 |    88.23 |     100 |     100 | ...46,167,171-195 
+  ...alysisTab.tsx |     100 |    97.42 |     100 |     100 | ...12-113,169,603 
+  GapRadar.tsx     |     100 |    98.14 |     100 |     100 | 51,171            
+  ...essDetail.tsx |     100 |       88 |     100 |     100 | 22-24,43          
+  ...dinessTab.tsx |     100 |    96.45 |     100 |     100 | 303,334,374-380   
+  ...atingsTab.tsx |     100 |      100 |     100 |     100 |                   
+  ...hmarksData.ts |     100 |    98.21 |     100 |     100 | 51                
+  ...hmarksHelp.ts |     100 |      100 |     100 |     100 |                   
+  ...ScoresData.ts |     100 |    92.75 |     100 |     100 | 94,123,129,141    
+  ...ScoresHelp.ts |     100 |      100 |     100 |     100 |                   
+  gapReportCsv.ts  |     100 |    93.75 |     100 |     100 | 42                
+  ...erviewData.ts |     100 |      100 |     100 |     100 |                   
+  ...erviewHelp.ts |     100 |      100 |     100 |     100 |                   
+  ...rboardHelp.ts |     100 |      100 |     100 |     100 |                   
+  ...dinessData.ts |     100 |    97.41 |     100 |     100 | 100,142,152,231   
+  ...dinessHelp.ts |     100 |      100 |     100 |     100 |                   
+  ...nessParts.tsx |     100 |      100 |     100 |     100 |                   
+  ...inessTheme.ts |     100 |    88.23 |     100 |     100 | 30,42             
+  scoreParts.tsx   |     100 |    97.72 |     100 |     100 | 47                
+  ...MatrixData.ts |     100 |    97.08 |     100 |     100 | 39,67,115,150     
+  ...MatrixHelp.ts |     100 |      100 |     100 |     100 |                   
+ ...abs/components |     100 |    99.55 |     100 |     100 |                   
+  ...lenceList.tsx |     100 |      100 |     100 |     100 |                   
+  ...DataTable.tsx |     100 |      100 |     100 |     100 |                   
+  ...maryCards.tsx |     100 |      100 |     100 |     100 |                   
+  ...isonChart.tsx |     100 |      100 |     100 |     100 |                   
+  ...DataTable.tsx |     100 |      100 |     100 |     100 |                   
+  ...nkingList.tsx |     100 |      100 |     100 |     100 |                   
+  ...mentChart.tsx |     100 |      100 |     100 |     100 |                   
+  ...nessRings.tsx |     100 |      100 |     100 |     100 |                   
+  ...rmersList.tsx |     100 |    95.83 |     100 |     100 | 146               
+ src/components/ui |   93.69 |    87.56 |   85.71 |   93.69 |                   
+  Badge.tsx        |   95.69 |       50 |     100 |   95.69 | 85-88             
+  FormFooter.tsx   |     100 |      100 |     100 |     100 |                   
+  GradientIcon.tsx |     100 |      100 |     100 |     100 |                   
+  HelpButton.tsx   |     100 |      100 |     100 |     100 |                   
+  IconBadge.tsx    |    92.4 |       20 |     100 |    92.4 | 61-66             
+  InfoTip.tsx      |   41.73 |    28.57 |    12.5 |   41.73 | ...4,86-88,95-112 
+  Modal.tsx        |     100 |      100 |     100 |     100 |                   
+  OrdinalMeter.tsx |     100 |      100 |     100 |     100 |                   
+  PanelHeader.tsx  |     100 |      100 |     100 |     100 |                   
+  PillarBadge.tsx  |     100 |      100 |     100 |     100 |                   
+  ProgressBar.tsx  |     100 |      100 |     100 |     100 |                   
+  ScoreDisplay.tsx |   82.17 |     7.69 |     100 |   82.17 | ...54,84-91,95-97 
+  ...bleSelect.tsx |     100 |      100 |     100 |     100 |                   
+  SidePanel.tsx    |     100 |      100 |     100 |     100 |                   
+  Skeleton.tsx     |     100 |      100 |     100 |     100 |                   
+  Spinner.tsx      |     100 |      100 |     100 |     100 |                   
+  StackedBar.tsx   |     100 |       80 |     100 |     100 | 13                
+  Stars.tsx        |     100 |      100 |     100 |     100 |                   
+  softTone.ts      |     100 |      100 |     100 |     100 |                   
+  ...irmDialog.tsx |     100 |      100 |     100 |     100 |                   
+ .../ui/assessment |    96.3 |    92.95 |      60 |    96.3 |                   
+  ...lectorBar.tsx |     100 |    96.66 |      50 |     100 | 79                
+  ...icKpiCard.tsx |   86.48 |    77.77 |      50 |   86.48 | 45,97-110         
+  ...ncyLadder.tsx |     100 |    93.75 |     100 |     100 | 71                
+ ...ents/ui/charts |   99.43 |    97.43 |     100 |   99.43 |                   
+  ...tChartRow.tsx |    97.8 |    83.33 |     100 |    97.8 | 86-87             
+  ...adarChart.tsx |     100 |      100 |     100 |     100 |                   
+ ...s/ui/dashboard |     100 |      100 |     100 |     100 |                   
+  ...rdKpiCard.tsx |     100 |      100 |     100 |     100 |                   
+ src/hooks         |   92.27 |    94.84 |   96.47 |   92.27 |                   
+  useAssessment.ts |   60.24 |    96.29 |    62.5 |   60.24 | ...44-357,487-576 
+  ...ringConfig.ts |     100 |    92.85 |     100 |     100 | 46                
+  useChartTheme.ts |     100 |      100 |     100 |     100 |                   
+  ...munication.ts |     100 |      100 |     100 |     100 |                   
+  useConfig.ts     |    99.5 |    96.98 |   99.55 |    99.5 | 1087-1094         
+  ...essMetrics.ts |   96.59 |    84.61 |     100 |   96.59 | ...18-224,251,289 
+  ...vementPlan.ts |     100 |      100 |     100 |     100 |                   
+  ...rrowScreen.ts |     100 |      100 |     100 |     100 |                   
+  ...eryEnabled.ts |   77.77 |    83.33 |      50 |   77.77 | 6-9               
+  useReports.ts    |     100 |      100 |     100 |     100 |                   
+ src/lib           |   98.77 |    91.56 |   93.54 |   98.77 |                   
+  apiError.ts      |     100 |    94.11 |     100 |     100 | 35                
+  ...entHelpers.ts |   96.15 |    80.35 |   88.88 |   96.15 | 115-121           
+  batchRunner.ts   |     100 |      100 |     100 |     100 |                   
+  ...efinitions.ts |     100 |      100 |     100 |     100 |                   
+  ...efinitions.ts |     100 |       95 |     100 |     100 | 83-84             
+  chartColors.ts   |   97.05 |      100 |   66.66 |   97.05 | 89-91             
+  ...efinitions.ts |   98.36 |     62.5 |     100 |   98.36 | 42                
+  csv.ts           |     100 |      100 |     100 |     100 |                   
+  domainRollup.ts  |     100 |      100 |     100 |     100 |                   
+  ...Validation.ts |     100 |      100 |     100 |     100 |                   
+  formatters.ts    |   99.21 |    89.74 |     100 |   99.21 | 237-238           
+  ordinal.ts       |     100 |      100 |     100 |     100 |                   
+  ...Attainment.ts |     100 |    86.66 |     100 |     100 | 37,41,106         
+  pillarState.ts   |     100 |      100 |     100 |     100 |                   
+  queryClient.ts   |   66.66 |      100 |       0 |   66.66 | 3-10              
+  ...rtGrouping.ts |     100 |      100 |     100 |     100 |                   
+  reportGroups.ts  |     100 |     87.5 |     100 |     100 | 122,163-167       
+  roundHalfUp.ts   |     100 |      100 |     100 |     100 |                   
+  scoreBins.ts     |     100 |      100 |     100 |     100 |                   
+  ...ingPreview.ts |     100 |      100 |     100 |     100 |                   
+  session.ts       |     100 |      100 |     100 |     100 |                   
+  ...peMessages.ts |     100 |      100 |     100 |     100 |                   
+  techTarget.ts    |     100 |      100 |     100 |     100 |                   
+  units.ts         |   98.41 |      100 |   83.33 |   98.41 | 63                
+ src/pages         |     100 |    97.39 |     100 |     100 |                   
+  ...boardPage.tsx |     100 |    97.39 |     100 |     100 | 76,508-510,527    
+ src/store         |     100 |      100 |    87.5 |     100 |                   
+  authStore.ts     |     100 |      100 |     100 |     100 |                   
+  themeStore.ts    |     100 |      100 |      50 |     100 |                   
+ src/test-utils    |     100 |      100 |     100 |     100 |                   
+  ...okHarness.tsx |     100 |      100 |     100 |     100 |                   
+ src/types         |     100 |      100 |     100 |     100 |                   
+  behavioral.ts    |     100 |      100 |     100 |     100 |                   
+  communication.ts |     100 |      100 |     100 |     100 |                   
+  rbac.ts          |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------
+
+ PASS  Waiting for file changes...
+       press h to show help, press q to quit
+[3Jc
+ RERUN  src/pages/LoginPage.test.tsx x1
+
+stderr | src/pages/LoginPage.test.tsx > LoginPage developer sign-in shortcuts > shows the demo accounts in a development build
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+ ✓ src/pages/LoginPage.test.tsx  (2 tests) 161ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  18:59:18
+   Duration  246ms
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   80.42 |    61.11 |   23.52 |   80.42 |                   
+ components/login  |   93.22 |       50 |      40 |   93.22 |                   
+  DemoAccounts.tsx |     100 |      100 |      50 |     100 |                   
+  LoginForm.tsx    |   86.88 |       25 |   33.33 |   86.88 | 41-44,53-56       
+ components/ui     |     100 |       20 |      50 |     100 |                   
+  ...wordInput.tsx |     100 |       20 |      50 |     100 | 10-29             
+ lib               |      65 |      100 |       0 |      65 |                   
+  apiError.ts      |      65 |      100 |       0 |      65 | 27-40             
+ pages             |   73.33 |      100 |   33.33 |   73.33 |                   
+  LoginPage.tsx    |   73.33 |      100 |   33.33 |   73.33 | 34-61             
+ store             |   70.73 |      100 |       0 |   70.73 |                   
+  authStore.ts     |   70.73 |      100 |       0 |   70.73 | ...63,74-76,79-81 
+-------------------|---------|----------|---------|---------|-------------------
+
+ PASS  Waiting for file changes...
+       press h to show help, press q to quit
+       rerun x1
+[2K[1A[2K[G[3Jc
+ RERUN  src/pages/LoginPage.tsx x2
+
+stderr | src/pages/LoginPage.test.tsx > LoginPage developer sign-in shortcuts > shows the demo accounts in a development build
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+ ❯ src/pages/LoginPage.test.tsx  (2 tests | 1 failed) 151ms
+   ❯ src/pages/LoginPage.test.tsx > LoginPage developer sign-in shortcuts > shows no demo accounts in a production build, and no setting can bring them back
+     → expected '{"type":"div","props":{"className":"m…' to not include 'DEMO ACCOUNTS'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/LoginPage.test.tsx > LoginPage developer sign-in shortcuts > shows no demo accounts in a production build, and no setting can bring them back
+AssertionError: expected '{"type":"div","props":{"className":"m…' to not include 'DEMO ACCOUNTS'
+ ❯ src/pages/LoginPage.test.tsx:54:22
+     52|     const tree = await renderLoginPage({ DEV: false, PROD: true, MODE:…
+     53|     delete env.VITE_SHOW_DEMO_ACCOUNTS;
+     54|     expect(tree).not.toContain('DEMO ACCOUNTS');
+       |                      ^
+     55|     expect(tree).not.toContain('Can use all app areas');
+     56|     expect(tree).toContain('Welcome back');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  18:59:25
+   Duration  215ms
+
+
+ FAIL  Tests failed. Watching for file changes...
+       press h to show help, press q to quit
+       rerun x2
+[2K[1A[2K[G[3Jc
+ RERUN  src/pages/LoginPage.tsx x3
+
+stderr | src/pages/LoginPage.test.tsx > LoginPage developer sign-in shortcuts > shows the demo accounts in a development build
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+ ✓ src/pages/LoginPage.test.tsx  (2 tests) 134ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  18:59:26
+   Duration  203ms
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   80.42 |    61.11 |   23.52 |   80.42 |                   
+ components/login  |   93.22 |       50 |      40 |   93.22 |                   
+  DemoAccounts.tsx |     100 |      100 |      50 |     100 |                   
+  LoginForm.tsx    |   86.88 |       25 |   33.33 |   86.88 | 41-44,53-56       
+ components/ui     |     100 |       20 |      50 |     100 |                   
+  ...wordInput.tsx |     100 |       20 |      50 |     100 | 10-29             
+ lib               |      65 |      100 |       0 |      65 |                   
+  apiError.ts      |      65 |      100 |       0 |      65 | 27-40             
+ pages             |   73.33 |      100 |   33.33 |   73.33 |                   
+  LoginPage.tsx    |   73.33 |      100 |   33.33 |   73.33 | 34-61             
+ store             |   70.73 |      100 |       0 |   70.73 |                   
+  authStore.ts     |   70.73 |      100 |       0 |   70.73 | ...63,74-76,79-81 
+-------------------|---------|----------|---------|---------|-------------------
+
+ PASS  Waiting for file changes...
+       press h to show help, press q to quit
+       rerun x3
+[2K[1A[2K[G[3Jc
+ RERUN  src/pages/LoginPage.test.tsx x4
+
+stderr | src/pages/LoginPage.test.tsx > LoginPage developer sign-in shortcuts > shows the demo accounts in a development build
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+ ✓ src/pages/LoginPage.test.tsx  (2 tests) 185ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  19:06:32
+   Duration  288ms
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   80.42 |    61.11 |   23.52 |   80.42 |                   
+ components/login  |   93.22 |       50 |      40 |   93.22 |                   
+  DemoAccounts.tsx |     100 |      100 |      50 |     100 |                   
+  LoginForm.tsx    |   86.88 |       25 |   33.33 |   86.88 | 41-44,53-56       
+ components/ui     |     100 |       20 |      50 |     100 |                   
+  ...wordInput.tsx |     100 |       20 |      50 |     100 | 10-29             
+ lib               |      65 |      100 |       0 |      65 |                   
+  apiError.ts      |      65 |      100 |       0 |      65 | 27-40             
+ pages             |   73.33 |      100 |   33.33 |   73.33 |                   
+  LoginPage.tsx    |   73.33 |      100 |   33.33 |   73.33 | 34-61             
+ store             |   70.73 |      100 |       0 |   70.73 |                   
+  authStore.ts     |   70.73 |      100 |       0 |   70.73 | ...63,74-76,79-81 
+-------------------|---------|----------|---------|---------|-------------------
+
+ PASS  Waiting for file changes...
+       press h to show help, press q to quit
+       rerun x4
+[2K[1A[2K[G

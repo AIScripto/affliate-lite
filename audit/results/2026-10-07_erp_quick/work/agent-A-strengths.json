@@ -1,0 +1,52 @@
+[
+  {
+    "title": "Access token is re-validated against the database on every request",
+    "detail": "authenticate() verifies the JWT, then loads the user and rejects inactive users, and takes role and employee id from the database, not from the token. A deactivated or re-roled user is cut off within one request. Access token lifetime is 15 minutes.",
+    "locations": ["backend/src/middleware/authenticate.ts:37", "backend/src/middleware/authenticate.ts:47"]
+  },
+  {
+    "title": "Refresh token is stored hashed, lives in an httpOnly strict cookie, and is not returned in the body",
+    "detail": "Refresh tokens are SHA-256 hashed in refresh_tokens, cookie has httpOnly, sameSite strict, secure in production; the access token is held in memory only (Zustand, no localStorage), and the session flag in sessionStorage holds no secret. Refresh checks signature, stored hash, revoked flag, expiry and user is_active.",
+    "locations": ["backend/src/modules/auth/auth.controller.ts:54", "backend/src/modules/auth/auth.service.ts:144", "backend/src/modules/auth/auth.service.ts:184", "frontend/src/store/authStore.ts:29"]
+  },
+  {
+    "title": "Passwords are hashed with bcrypt cost 12 and the login response carries no hash",
+    "detail": "bcryptjs with cost 12 for create, update and change-password; login and /auth/me return an explicit field list, not the user row. JWT secrets must be at least 32 characters (env schema).",
+    "locations": ["backend/src/modules/auth/auth.service.ts:54", "backend/src/modules/auth/auth.service.ts:244", "backend/src/config/env.ts:9"]
+  },
+  {
+    "title": "CORS is a single configured origin and helmet is enabled with HSTS",
+    "detail": "cors uses env.FRONTEND_URL (no wildcard) with credentials, explicit methods and headers; helmet is on with a CSP and a one-year HSTS. nginx also sets HSTS, nosniff, frame deny and referrer policy, and rate limits login by real remote address.",
+    "locations": ["backend/src/app.ts:30", "backend/src/app.ts:45", "nginx/nginx.conf:41"]
+  },
+  {
+    "title": "Login has app-level and edge rate limiting plus account lockout",
+    "detail": "express-rate-limit 10 per minute on /auth/login, nginx limit_req on login keyed by $binary_remote_addr, and 5-failure account lock. (See findings for the proxy and lockout gaps.)",
+    "locations": ["backend/src/modules/auth/auth.router.ts:11", "backend/src/modules/auth/auth.service.ts:103"]
+  },
+  {
+    "title": "Technical skill write routes are scope-checked per object and strip engineer-set levels",
+    "detail": "create, update, delete, approve, submit-drafts and read all resolve the target employee and call canAccessEmployee with forAssessment; ENGINEER and managers on their own record cannot set level and get draft status on update; approve refuses LM/MANAGER on their own record with 403 SELF_APPROVAL_PROHIBITED. Pending queue excludes the manager's own rows.",
+    "locations": ["backend/src/modules/assessment/assessment.controller.ts:24", "backend/src/modules/assessment/assessment.controller.ts:59", "backend/src/modules/assessment/assessment.controller.ts:109", "backend/src/modules/assessment/assessment.controller.ts:159"]
+  },
+  {
+    "title": "Mass assignment is prevented by Zod schemas that strip unknown keys",
+    "detail": "Assessment, CEFR, behavioral and user schemas are plain z.object (not passthrough) and the validated data replaces req.body; services build prisma data from named fields, not spread of the body. updateRole is the one with passthrough only on config policy (admin only).",
+    "locations": ["backend/src/modules/assessment/assessment.schema.ts:3", "backend/src/modules/communication/communication.schema.ts:32", "backend/src/modules/behavioral/behavioral.schema.ts:11", "backend/src/middleware/validate.ts:34"]
+  },
+  {
+    "title": "Behavioral and CEFR read paths and CEFR create are scope-checked; improvement plans block self-authoring",
+    "detail": "Behavioral reads return 404 for out-of-scope ids so ids cannot be probed; CEFR create, latest, history and expectation call canAccessEmployee; CEFR create demotes LM/MANAGER self-assessment to pending; improvement plans refuse self-authoring and check forAssessment scope.",
+    "locations": ["backend/src/modules/behavioral/behavioral.controller.ts:128", "backend/src/modules/communication/communication.controller.ts:108", "backend/src/modules/improvement-plan/improvement-plan.controller.ts:26"]
+  },
+  {
+    "title": "Role hierarchy permission codes match between backend and frontend",
+    "detail": "PERMISSION_CODES (11 codes) are identical in backend/src/types/rbac.ts and frontend/src/types/rbac.ts. The only difference is the two extra frontend roles, which is the accepted mapping. Permissions are looked up from the database (role_permissions) on each requirePermission call and a deactivated role passes nothing.",
+    "locations": ["backend/src/types/rbac.ts:3", "frontend/src/types/rbac.ts:12", "backend/src/middleware/authorize.ts:41"]
+  },
+  {
+    "title": "Config and admin routes all use requirePermission or requireRole",
+    "detail": "All 86 routes in config.router.ts are behind authenticate plus requirePermission, requirePermissionOrRole or requireRole; every write is permission-gated and validate(schema) is present on every POST/PUT/PATCH.",
+    "locations": ["backend/src/modules/config/config.router.ts:55"]
+  }
+]

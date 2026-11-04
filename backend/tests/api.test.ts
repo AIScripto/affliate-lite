@@ -13,7 +13,7 @@ test.before(async () => {
   await new Promise<void>((resolve) => {
     server = app.listen(0, () => {
       const addr = server.address();
-      const port = typeof addr === 'object' && addr ? addr.port : 5000;
+      const port = typeof addr === 'object' && addr ? addr.port : 3086;
       baseUrl = `http://127.0.0.1:${port}`;
       resolve();
     });

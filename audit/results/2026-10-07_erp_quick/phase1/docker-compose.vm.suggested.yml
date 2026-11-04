@@ -1,0 +1,49 @@
+# Suggested version of the VM's docker-compose.yml (reviewed 2026-10-12). Compare with yours before using:
+#   diff docker-compose.yml docker-compose.vm.suggested.yml
+# Lines marked [A] are the Phase 1 changes. Lines marked [B] are extra and should be tried on a quiet deploy first.
+services:
+  api:
+    # [A] A release tag is required (OPS-002). "latest" is whatever built last, from any pipeline.
+    image: tariqsulehri/rct-backend:${BACKEND_TAG:?Set BACKEND_TAG to a release such as v1.2.0 or production-abc1234, not latest}
+    container_name: rct-backend
+    platform: linux/amd64
+    restart: unless-stopped
+    env_file:
+      - ./backend.env
+    ports:
+      # [A] Only the VM itself can reach the API directly (SEC-019). Users go through nginx.
+      - "127.0.0.1:4000:4000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # [B] Docker marks the API unhealthy when /ready (which checks the database) stops answering. The image has no
+    # curl, so the check uses Node itself.
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4000/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    # [B] Without this, container logs grow with no limit until the disk is full.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  frontend:
+    # [A] Same rule for the frontend (it follows the backend tag unless FRONTEND_TAG is set).
+    image: tariqsulehri/rct-frontend:${FRONTEND_TAG:?Set FRONTEND_TAG to a release such as v1.1.6 or production-abc1234, not latest}
+    container_name: rct-frontend
+    platform: linux/amd64
+    restart: unless-stopped
+    ports:
+      # [B] Bind to the VM only if the VM nginx is the only way in (it proxies to 127.0.0.1:3001) and nobody opens
+      # <vm-ip>:3001 directly. Otherwise leave this as "3001:80".
+      - "127.0.0.1:3001:80"
+    depends_on:
+      - api
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"

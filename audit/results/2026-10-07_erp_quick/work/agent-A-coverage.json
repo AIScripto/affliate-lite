@@ -1,0 +1,55 @@
+{
+  "reviewed": [
+    {"area": "backend auth module (router, controller, service, schema), middleware authenticate/authorize/validate/errorHandler", "depth": "full read"},
+    {"area": "backend app.ts (helmet, cors, trust proxy, body limits, logging)", "depth": "full read"},
+    {"area": "assessment router/controller/schema, service create/update/approve/delete/submit", "depth": "full read"},
+    {"area": "communication router/controller/schema, service create/status/get", "depth": "read of controller and key service methods"},
+    {"area": "behavioral router/controller/schema, service create/get", "depth": "read of controller and key service methods"},
+    {"area": "access-scope.service.ts (scope rules)", "depth": "full read"},
+    {"area": "config router (all 86 routes), user and audit-log service functions, audit write path", "depth": "router full read; service user/audit/assignment sections read"},
+    {"area": "reports, ai, improvement-plan routers and controllers", "depth": "routers full; reports/improvement controllers full; ai controller only"},
+    {"area": "frontend authStore, session.ts, ProtectedRoute, api.ts interceptor, logout/change-password callers", "depth": "full read"},
+    {"area": "role and permission code comparison backend vs frontend rbac.ts", "depth": "full read"},
+    {"area": "nginx.conf rate limiting and proxy headers", "depth": "partial read (limit zones, login and api locations)"},
+    {"area": "prisma schema for User, RefreshToken, SkillAssessment, BehavAssessment, AccessAuditLog", "depth": "read of model definitions"}
+  ],
+  "route_guard_table_summary": {
+    "total_routes": 130,
+    "by_router": {
+      "auth": 5,
+      "assessment": 9,
+      "communication": 11,
+      "behavioral": 6,
+      "config": 86,
+      "ai": 2,
+      "improvement-plan": 2,
+      "reports": 9
+    },
+    "lack_authenticate": [
+      "POST /auth/login (public by design, has rate limiter and validate)",
+      "POST /auth/refresh (public by design, cookie based, no limiter)",
+      "GET /behav/config (public, reference data only)"
+    ],
+    "lack_role_or_permission": [
+      "auth: GET /auth/me, POST /auth/change-password, POST /auth/logout (self-service, acceptable)",
+      "reports: all 9 routes (authenticate + stub that only checks req.user exists)",
+      "improvement-plan: GET /improvement-plans/:empCode (scoped in controller)",
+      "behavioral: GET /behav/config"
+    ],
+    "write_routes_lacking_validate": [
+      "DELETE /assessments/skill-assessments/:id",
+      "PATCH /comm/... none; POST /ai/chat (manual typeof check in controller, no Zod schema)"
+    ],
+    "role_only_not_permission": "assessment, communication, behavioral, ai, reports and config read routes use requireRole with hard-coded role lists; only config writes and roles/users/assignments use database permissions (project rule says permissions come from the database)."
+  },
+  "not_verified": [
+    "No code was run, so the pino-http default of logging request headers (A-08) is from library knowledge, not observed output.",
+    "Whether production sits behind nginx with one hop, and the real NODE_ENV and cookie secure flag in deployment (config is outside the repo).",
+    "Reports service scoping per role (getAccessibleReportEmployeeIds and each report query) was only sampled, not read end to end.",
+    "OpenAI/AI service data handling was not reviewed (out of scope).",
+    "Frontend query hooks use of useProtectedQueryEnabled and UI hiding of approval buttons were not checked.",
+    "Existing contents of access_audit_logs in the database were not inspected (production rule), so whether hashes are already stored is inferred from code.",
+    "Frontend 7-role mapping for COMMUNICATION_EXPERT and LANGUAGE_EXPERT was only grepped, not verified end to end.",
+    "Dependency versions (express, proxy-addr 2.0.7 in package-lock) were checked by grep only; no advisory lookup (no network)."
+  ]
+}

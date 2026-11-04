@@ -1,0 +1,25 @@
+{
+  "title": "ERP (erp) audit",
+  "project": "ERP",
+  "date": "2026-10-07",
+  "mode": "AUDIT-ONLY",
+  "scope": "backend + frontend on master, quick depth, five critical flows",
+  "auditor": "AI audit agent (three parallel reviewers), High findings verified by hand",
+  "confidentiality": "Confidential",
+  "kit_version": "0.1.0",
+  "team_size": 1,
+  "release_cadence": "as needed",
+  "repos": [
+    {
+      "name": "backend",
+      "branch": "master",
+      "commit": "227b698"
+    },
+    {
+      "name": "frontend",
+      "branch": "master",
+      "commit": "45ae7f7"
+    }
+  ],
+  "previous_run": null
+}

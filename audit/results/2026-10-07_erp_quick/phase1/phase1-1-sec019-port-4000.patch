@@ -1,0 +1,26 @@
+diff -ruN a/deployments/docker-compose.prod.yml b/deployments/docker-compose.prod.yml
+--- a/deployments/docker-compose.prod.yml	2026-10-12 19:19:07
++++ b/deployments/docker-compose.prod.yml	2026-10-12 19:19:07
+@@ -11,7 +11,8 @@
+     env_file:
+       - ./backend.env
+     ports:
+-      - "4000:4000"
++      # Only the host itself can reach the API directly (health checks, debugging). Users go through nginx.
++      - "127.0.0.1:4000:4000"
+     extra_hosts:
+       - "host.docker.internal:host-gateway"
+ 
+diff -ruN a/docker-compose.yml b/docker-compose.yml
+--- a/docker-compose.yml	2026-10-12 19:19:07
++++ b/docker-compose.yml	2026-10-12 19:19:07
+@@ -9,7 +9,8 @@
+     env_file:
+       - .env
+     ports:
+-      - "4000:4000"
++      # Only the host itself can reach the API directly (health checks, debugging). Users go through nginx.
++      - "127.0.0.1:4000:4000"
+     extra_hosts:
+       - "host.docker.internal:host-gateway"
+ 

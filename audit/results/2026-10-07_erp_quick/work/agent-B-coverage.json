@@ -1,0 +1,40 @@
+{
+ "reviewed": [
+  {
+   "area": "scoring/score-recalculation + assessment.service write paths",
+   "depth": "read in full"
+  },
+  {
+   "area": "schema.prisma assessments, scores, periods, config tables",
+   "depth": "read relevant models"
+  },
+  {
+   "area": "config module (router, user/employee/period services, controller user handlers)",
+   "depth": "targeted"
+  },
+  {
+   "area": "ai.service (payload, fetch calls, fallback)",
+   "depth": "targeted"
+  },
+  {
+   "area": "reports.service (exec summary, yoy), report-data.service",
+   "depth": "targeted"
+  },
+  {
+   "area": "errorHandler, logger, server.ts, database.ts, app.ts",
+   "depth": "read in full"
+  },
+  {
+   "area": "latest 8 migrations",
+   "depth": "grep for destructive statements"
+  }
+ ],
+ "not_verified": [
+  "DATABASE_READ_URL: only declared in env.ts; no read-replica client found in src, so read-after-write risk not applicable",
+  "Refresh token revocation on role change/deactivation (auth module)",
+  "Index fit vs report query patterns beyond schema @@index review",
+  "Frontend use of fields; behavioral/communication write paths for period lock",
+  "Jira: no code usage found in backend/src (only seed text mentioning Jira); JIRA_API_TOKEN var not seen in code",
+  "Migrations older than the latest 8"
+ ]
+}

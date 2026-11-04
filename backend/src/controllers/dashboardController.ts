@@ -54,9 +54,32 @@ export async function getDashboardSummary(req: Request, res: Response): Promise<
   // EPC Formula: Payout / Clicks
   const epc = totalClicks > 0 ? Number((totalPayout / totalClicks).toFixed(2)) : 0.0;
 
-  // Trend percentages (mocked reasonable delta or dynamic based on today's share)
-  const clickTrend = totalClicks > 0 ? Math.min(200, Math.round((todayClicks / (totalClicks || 1)) * 100 * 2.5) || 136) : 0;
-  const convTrend = totalConversions > 0 ? Math.min(300, Math.round((todayConversions / (totalConversions || 1)) * 100 * 3) || 200) : 0;
+  // Calculate yesterday's boundary for authentic day-over-day trends
+  const yesterdayStart = new Date(startOfToday);
+  yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+
+  const [yesterdayClicks, yesterdayConversions] = await Promise.all([
+    prisma.click.count({
+      where: {
+        ...clickWhere,
+        createdAt: { gte: yesterdayStart, lt: startOfToday },
+      },
+    }),
+    prisma.conversion.count({
+      where: {
+        ...conversionWhere,
+        createdAt: { gte: yesterdayStart, lt: startOfToday },
+      },
+    }),
+  ]);
+
+  const clickTrend = yesterdayClicks > 0
+    ? Math.round(((todayClicks - yesterdayClicks) / yesterdayClicks) * 100)
+    : todayClicks > 0 ? 100 : 0;
+
+  const convTrend = yesterdayConversions > 0
+    ? Math.round(((todayConversions - yesterdayConversions) / yesterdayConversions) * 100)
+    : todayConversions > 0 ? 100 : 0;
 
   // Traffic for last 30 days
   const thirtyDaysAgo = new Date();

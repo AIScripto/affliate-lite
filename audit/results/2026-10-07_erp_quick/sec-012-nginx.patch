@@ -1,0 +1,15 @@
+--- nginx-a/nginx/nginx.conf
++++ nginx-b/nginx/nginx.conf
+@@ -39,7 +39,11 @@
+   # Rate limiting zones
+   # ============================================================================
+   limit_req_zone $binary_remote_addr zone=auth_limit:10m rate=10r/m;
+-  limit_req_zone $http_x_forwarded_for zone=api_limit:10m rate=500r/m;
++  # Keyed on the address that connected to nginx. It used to be the client's own X-Forwarded-For header: a client
++  # that omitted it got an empty key (not counted at all), and a client that sent a random value per request
++  # got a fresh bucket each time. If another load balancer sits in front of this nginx, use the real_ip module
++  # (set_real_ip_from / real_ip_header) so $binary_remote_addr is the client and not that balancer.
++  limit_req_zone $binary_remote_addr zone=api_limit:10m rate=500r/m;
+ 
+   # ============================================================================
+   # Upstream API servers

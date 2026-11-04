@@ -4,10 +4,15 @@ import { prisma } from '../db/prisma';
 import { generateToken } from '../middleware/auth';
 
 export async function login(req: Request, res: Response): Promise<void> {
-  const { email, password } = req.body;
+  const { email, password } = req.body || {};
+
+  if (!email || !password) {
+    res.status(400).json({ error: 'Bad Request', message: 'Email and password are required' });
+    return;
+  }
 
   const user = await prisma.user.findUnique({
-    where: { email: email.toLowerCase() },
+    where: { email: String(email).trim().toLowerCase() },
   });
 
   if (!user) {

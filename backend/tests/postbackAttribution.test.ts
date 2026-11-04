@@ -123,3 +123,13 @@ export const postbackAttributionTestCases = [
     },
   },
 ];
+
+import test from 'node:test';
+import assert from 'node:assert/strict';
+
+for (const tc of postbackAttributionTestCases) {
+  test(tc.name, () => {
+    assert.equal(tc.run(), true, tc.description);
+  });
+}
+

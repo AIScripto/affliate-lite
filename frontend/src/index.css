@@ -202,6 +202,14 @@
 }
 
 /* 3D Color Tiles With Rich Gradients */
+.tile-gradient-emerald,
+.tile-gradient-indigo,
+.tile-gradient-sky,
+.tile-gradient-amber,
+.tile-gradient-purple {
+  padding: 1.25rem;
+}
+
 .tile-gradient-emerald {
   background: linear-gradient(135deg, rgba(6, 78, 59, 0.4) 0%, var(--color-surface) 60%, rgba(5, 150, 105, 0.15) 100%);
   border: 1px solid rgba(16, 185, 129, 0.35);

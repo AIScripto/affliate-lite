@@ -108,7 +108,7 @@ export function NetworksReportView() {
       {/* 4 Color Tiles With Gradients */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {/* Tile 1: Approved Conversions - Emerald Gradient */}
-        <div className="tile-gradient-emerald p-4.5">
+        <div className="tile-gradient-emerald p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-fg">Approved</span>
             <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shadow-sm">
@@ -125,7 +125,7 @@ export function NetworksReportView() {
         </div>
 
         {/* Tile 2: Total Clicks - Indigo Gradient */}
-        <div className="tile-gradient-indigo p-4.5">
+        <div className="tile-gradient-indigo p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-fg">Total Clicks</span>
             <div className="w-8 h-8 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center shadow-sm">
@@ -140,7 +140,7 @@ export function NetworksReportView() {
         </div>
 
         {/* Tile 3: Total Payout - Sky Gradient */}
-        <div className="tile-gradient-sky p-4.5">
+        <div className="tile-gradient-sky p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-fg">Total Payout</span>
             <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-500 border border-sky-500/30 flex items-center justify-center shadow-sm">
@@ -155,7 +155,7 @@ export function NetworksReportView() {
         </div>
 
         {/* Tile 4: Unchecked Conversions - Amber Gradient */}
-        <div className="tile-gradient-amber p-4.5">
+        <div className="tile-gradient-amber p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-fg">Pending Check</span>
             <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-500 border border-amber-500/30 flex items-center justify-center shadow-sm">
