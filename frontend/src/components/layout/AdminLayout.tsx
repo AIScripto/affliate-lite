@@ -231,7 +231,7 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
           <button
             type="button"
             onClick={() => onNavigate('reports')}
-            className={navItemClass(currentNav === 'reports')}
+            className={`w-full ${navItemClass(currentNav === 'reports')}`}
           >
             <BarChart3 className="w-4 h-4" />
             <span>Reports</span>

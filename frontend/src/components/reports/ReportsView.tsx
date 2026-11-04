@@ -144,6 +144,16 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
   const [showExportMenu, setShowExportMenu] = useState(false);
   const exportMenuRef = useRef<HTMLDivElement | null>(null);
 
+  // Interactive Chart & Tile Tooltip States
+  const [activeBarIndex, setActiveBarIndex] = useState<number | null>(null);
+  const [hoveredTileNode, setHoveredTileNode] = useState<{
+    tile: 'clicks' | 'conversions' | 'revenue' | 'payout';
+    index: number;
+    label: string;
+    value: string;
+    subtext?: string;
+  } | null>(null);
+
   // Sync initialTab when props change
   useEffect(() => {
     if (initialTab) {
@@ -835,11 +845,6 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
           : [0, totalClicks];
         const clickSvg = generateSmoothSvg(clickTrend, 200, 40);
 
-        const convTrend = overviewData?.trends?.conversions && overviewData.trends.conversions.length > 0
-          ? overviewData.trends.conversions
-          : [0, totalConvs];
-        const convSvg = generateSmoothSvg(convTrend, 200, 40);
-
         const revTrend = overviewData?.trends?.revenue && overviewData.trends.revenue.length > 0
           ? overviewData.trends.revenue
           : [0, totalRevenue];
@@ -868,10 +873,13 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
 
         return (
           <div className="space-y-3.5">
-            {/* Top Row: 4 Gradient Sparkline Metric Tiles */}
+            {/* Top Row: 4 Metric Tiles with Distinct & Meaningful Standard Graphs */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {/* Tile 1: Active Traffic / Clicks */}
-              <div className="panel-card p-3.5 border border-border-strong relative overflow-hidden flex flex-col justify-between">
+              {/* Tile 1: Active Traffic / Clicks (Spline Wave Stream) */}
+              <div
+                className="panel-card p-3.5 border border-border-strong relative overflow-hidden flex flex-col justify-between"
+                onMouseLeave={() => setHoveredTileNode(null)}
+              >
                 <div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -882,17 +890,23 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                         Active Clicks
                       </span>
                     </div>
-                    <span className="flex items-center gap-0.5 px-2 py-0.5 rounded text-[11px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
-                      CR {overallCr.toFixed(1)}%
-                    </span>
+                    {hoveredTileNode?.tile === 'clicks' ? (
+                      <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-sky-500/25 text-sky-300 border border-sky-400/50 animate-pulse">
+                        {hoveredTileNode.label}: {hoveredTileNode.value}
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-0.5 px-2 py-0.5 rounded text-[11px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
+                        CR {overallCr.toFixed(1)}%
+                      </span>
+                    )}
                   </div>
                   <div className="mt-2 text-2xl font-black text-white tracking-tight tabular-nums">
                     {totalClicks.toLocaleString()}
                   </div>
                 </div>
 
-                {/* Glowing SVG Wave Sparkline (Neon Blue) */}
-                <div className="mt-2 -mx-1">
+                {/* Spline Wave Stream (Neon Blue with interactive nodes) */}
+                <div className="mt-2 -mx-1 relative">
                   <svg className="w-full h-10 overflow-visible" viewBox="0 0 200 40" preserveAspectRatio="none">
                     <defs>
                       <linearGradient id="clickGrad" x1="0" y1="0" x2="0" y2="1">
@@ -908,7 +922,35 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                       strokeWidth="2.5"
                       strokeLinecap="round"
                     />
-                    <circle cx={clickSvg.lastX} cy={clickSvg.lastY} r="3.5" fill="#38bdf8" className="animate-pulse" />
+                    {/* Interactive Points on Clicks Stream */}
+                    {timelineBuckets.map((b, idx) => {
+                      const x = (idx / (timelineBuckets.length - 1 || 1)) * 200;
+                      const maxB = Math.max(...timelineBuckets.map((k) => k.clicks), 1);
+                      const norm = b.clicks / maxB;
+                      const y = 36 - norm * 28;
+                      const isHovered = hoveredTileNode?.tile === 'clicks' && hoveredTileNode.index === idx;
+                      return (
+                        <circle
+                          key={idx}
+                          cx={x}
+                          cy={y}
+                          r={isHovered ? 5 : 3}
+                          fill={isHovered ? '#FFFFFF' : '#38bdf8'}
+                          stroke="#38bdf8"
+                          strokeWidth={isHovered ? 2 : 1}
+                          className="cursor-pointer transition-all"
+                          onMouseEnter={() =>
+                            setHoveredTileNode({
+                              tile: 'clicks',
+                              index: idx,
+                              label: b.label,
+                              value: `${b.clicks} Clicks`,
+                              subtext: `${b.conversions} Conv`,
+                            })
+                          }
+                        />
+                      );
+                    })}
                   </svg>
                 </div>
 
@@ -918,8 +960,11 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                 </div>
               </div>
 
-              {/* Tile 2: Conversions */}
-              <div className="panel-card p-3.5 border border-border-strong relative overflow-hidden flex flex-col justify-between">
+              {/* Tile 2: Conversions (Discrete Event Histogram) */}
+              <div
+                className="panel-card p-3.5 border border-border-strong relative overflow-hidden flex flex-col justify-between"
+                onMouseLeave={() => setHoveredTileNode(null)}
+              >
                 <div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -930,33 +975,72 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                         Conversions
                       </span>
                     </div>
-                    <span className="flex items-center gap-0.5 px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                      {approvedConvs} Approved
-                    </span>
+                    {hoveredTileNode?.tile === 'conversions' ? (
+                      <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/25 text-emerald-300 border border-emerald-400/50 animate-pulse">
+                        {hoveredTileNode.label}: {hoveredTileNode.value}
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-0.5 px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                        {approvedConvs} Approved
+                      </span>
+                    )}
                   </div>
                   <div className="mt-2 text-2xl font-black text-white tracking-tight tabular-nums">
                     {totalConvs.toLocaleString()}
                   </div>
                 </div>
 
-                {/* Glowing SVG Wave Sparkline (Neon Emerald) */}
-                <div className="mt-2 -mx-1">
+                {/* Discrete Event Histogram Bars (Standard representation for event counts) */}
+                <div className="mt-2 -mx-1 relative">
                   <svg className="w-full h-10 overflow-visible" viewBox="0 0 200 40" preserveAspectRatio="none">
                     <defs>
-                      <linearGradient id="convGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#10b981" stopOpacity="0.45" />
-                        <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+                      <linearGradient id="convBarGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10b981" />
+                        <stop offset="100%" stopColor="#047857" />
                       </linearGradient>
                     </defs>
-                    <path d={convSvg.fillPath} fill="url(#convGrad)" />
-                    <path
-                      d={convSvg.strokePath}
-                      fill="none"
-                      stroke="#10b981"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                    />
-                    <circle cx={convSvg.lastX} cy={convSvg.lastY} r="3.5" fill="#10b981" className="animate-pulse" />
+                    {/* Baseline subtle reference line */}
+                    <line x1="0" y1="36" x2="200" y2="36" stroke="currentColor" strokeOpacity="0.1" />
+
+                    {timelineBuckets.map((b, idx) => {
+                      const totalBars = timelineBuckets.length;
+                      const colW = 200 / totalBars;
+                      const barW = 16;
+                      const x = idx * colW + (colW - barW) / 2;
+                      const maxC = Math.max(...timelineBuckets.map((k) => k.conversions), 1);
+                      const barH = b.conversions > 0 ? Math.max((b.conversions / maxC) * 30, 8) : 3;
+                      const y = 36 - barH;
+                      const isHovered = hoveredTileNode?.tile === 'conversions' && hoveredTileNode.index === idx;
+
+                      return (
+                        <g
+                          key={idx}
+                          className="cursor-pointer transition-all"
+                          onMouseEnter={() =>
+                            setHoveredTileNode({
+                              tile: 'conversions',
+                              index: idx,
+                              label: b.label,
+                              value: `${b.conversions} Conv`,
+                              subtext: `$${b.payout.toFixed(2)} payout`,
+                            })
+                          }
+                        >
+                          <rect
+                            x={x}
+                            y={y}
+                            width={barW}
+                            height={barH}
+                            rx={3}
+                            fill={b.conversions > 0 ? (isHovered ? '#34d399' : 'url(#convBarGrad)') : 'rgba(255,255,255,0.08)'}
+                            className="transition-colors"
+                          />
+                          {b.conversions > 0 && (
+                            <circle cx={x + barW / 2} cy={y} r={2.5} fill="#6ee7b7" className="animate-pulse" />
+                          )}
+                        </g>
+                      );
+                    })}
                   </svg>
                 </div>
 
@@ -966,8 +1050,11 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                 </div>
               </div>
 
-              {/* Tile 3: Gross Revenue */}
-              <div className="panel-card p-3.5 border border-border-strong relative overflow-hidden flex flex-col justify-between">
+              {/* Tile 3: Gross Revenue (Stepped Mountain Gradient Curve) */}
+              <div
+                className="panel-card p-3.5 border border-border-strong relative overflow-hidden flex flex-col justify-between"
+                onMouseLeave={() => setHoveredTileNode(null)}
+              >
                 <div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -978,17 +1065,23 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                         Gross Revenue
                       </span>
                     </div>
-                    <span className="flex items-center gap-0.5 px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
-                      Margin {marginPercent.toFixed(1)}%
-                    </span>
+                    {hoveredTileNode?.tile === 'revenue' ? (
+                      <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-500/25 text-indigo-300 border border-indigo-400/50 animate-pulse">
+                        {hoveredTileNode.label}: {hoveredTileNode.value}
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-0.5 px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
+                        Margin {marginPercent.toFixed(1)}%
+                      </span>
+                    )}
                   </div>
                   <div className="mt-2 text-2xl font-black text-white tracking-tight tabular-nums">
                     $ {totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
 
-                {/* Glowing SVG Wave Sparkline (Neon Indigo/Cyan) */}
-                <div className="mt-2 -mx-1">
+                {/* Mountain Slope Curve with Shaded Step Nodes */}
+                <div className="mt-2 -mx-1 relative">
                   <svg className="w-full h-10 overflow-visible" viewBox="0 0 200 40" preserveAspectRatio="none">
                     <defs>
                       <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
@@ -1004,7 +1097,36 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                       strokeWidth="2.5"
                       strokeLinecap="round"
                     />
-                    <circle cx={revSvg.lastX} cy={revSvg.lastY} r="3.5" fill="#818cf8" className="animate-pulse" />
+                    {/* Interactive Revenue Milestone Markers */}
+                    {timelineBuckets.map((b, idx) => {
+                      const x = (idx / (timelineBuckets.length - 1 || 1)) * 200;
+                      const maxR = Math.max(...timelineBuckets.map((k) => k.revenue), 1);
+                      const norm = b.revenue / maxR;
+                      const y = 36 - norm * 28;
+                      const isHovered = hoveredTileNode?.tile === 'revenue' && hoveredTileNode.index === idx;
+
+                      return (
+                        <circle
+                          key={idx}
+                          cx={x}
+                          cy={y}
+                          r={isHovered ? 5 : 3}
+                          fill={isHovered ? '#FFFFFF' : '#818cf8'}
+                          stroke="#818cf8"
+                          strokeWidth={isHovered ? 2 : 1}
+                          className="cursor-pointer transition-all"
+                          onMouseEnter={() =>
+                            setHoveredTileNode({
+                              tile: 'revenue',
+                              index: idx,
+                              label: b.label,
+                              value: `$${b.revenue.toFixed(2)} Rev`,
+                              subtext: `Margin: ${marginPercent.toFixed(1)}%`,
+                            })
+                          }
+                        />
+                      );
+                    })}
                   </svg>
                 </div>
 
@@ -1014,8 +1136,11 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                 </div>
               </div>
 
-              {/* Tile 4: Affiliate Payout */}
-              <div className="panel-card p-3.5 border border-border-strong relative overflow-hidden flex flex-col justify-between">
+              {/* Tile 4: Affiliate Payout (Dual-Tone Bar & Yield Spline Combo) */}
+              <div
+                className="panel-card p-3.5 border border-border-strong relative overflow-hidden flex flex-col justify-between"
+                onMouseLeave={() => setHoveredTileNode(null)}
+              >
                 <div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -1026,33 +1151,94 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                         Total Payout
                       </span>
                     </div>
-                    <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                      CR {overallCr.toFixed(1)}%
-                    </span>
+                    {hoveredTileNode?.tile === 'payout' ? (
+                      <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/25 text-amber-300 border border-amber-400/50 animate-pulse">
+                        {hoveredTileNode.label}: {hoveredTileNode.value}
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                        CR {overallCr.toFixed(1)}%
+                      </span>
+                    )}
                   </div>
                   <div className="mt-2 text-2xl font-black text-white tracking-tight tabular-nums">
                     $ {totalPayout.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
 
-                {/* Glowing SVG Wave Sparkline (Neon Amber) */}
-                <div className="mt-2 -mx-1">
+                {/* Hybrid: Mini Payout Pillars with Golden EPC Rate Line */}
+                <div className="mt-2 -mx-1 relative">
                   <svg className="w-full h-10 overflow-visible" viewBox="0 0 200 40" preserveAspectRatio="none">
                     <defs>
-                      <linearGradient id="payoutGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.45" />
-                        <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+                      <linearGradient id="payoutBarGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.8" />
+                        <stop offset="100%" stopColor="#b45309" stopOpacity="0.2" />
                       </linearGradient>
                     </defs>
-                    <path d={payoutSvg.fillPath} fill="url(#payoutGrad)" />
+
+                    {/* Underlying Payout Pillars */}
+                    {timelineBuckets.map((b, idx) => {
+                      const totalBars = timelineBuckets.length;
+                      const colW = 200 / totalBars;
+                      const barW = 10;
+                      const x = idx * colW + (colW - barW) / 2;
+                      const maxP = Math.max(...timelineBuckets.map((k) => k.payout), 1);
+                      const barH = b.payout > 0 ? Math.max((b.payout / maxP) * 26, 6) : 2;
+                      const y = 36 - barH;
+
+                      return (
+                        <rect
+                          key={`bar-${idx}`}
+                          x={x}
+                          y={y}
+                          width={barW}
+                          height={barH}
+                          rx={2}
+                          fill="url(#payoutBarGrad)"
+                          className="opacity-70 hover:opacity-100 transition"
+                        />
+                      );
+                    })}
+
+                    {/* Overlaid Golden Rate Spline */}
                     <path
                       d={payoutSvg.strokePath}
                       fill="none"
-                      stroke="#f59e0b"
-                      strokeWidth="2.5"
+                      stroke="#fbbf24"
+                      strokeWidth="2"
                       strokeLinecap="round"
                     />
-                    <circle cx={payoutSvg.lastX} cy={payoutSvg.lastY} r="3.5" fill="#f59e0b" className="animate-pulse" />
+
+                    {/* Interactive Points on Rate Spline */}
+                    {timelineBuckets.map((b, idx) => {
+                      const x = (idx / (timelineBuckets.length - 1 || 1)) * 200;
+                      const maxP = Math.max(...timelineBuckets.map((k) => k.payout), 1);
+                      const norm = b.payout / maxP;
+                      const y = 36 - norm * 26;
+                      const isHovered = hoveredTileNode?.tile === 'payout' && hoveredTileNode.index === idx;
+
+                      return (
+                        <circle
+                          key={`pt-${idx}`}
+                          cx={x}
+                          cy={y}
+                          r={isHovered ? 5 : 3}
+                          fill={isHovered ? '#FFFFFF' : '#f59e0b'}
+                          stroke="#fbbf24"
+                          strokeWidth={isHovered ? 2 : 1}
+                          className="cursor-pointer transition-all"
+                          onMouseEnter={() =>
+                            setHoveredTileNode({
+                              tile: 'payout',
+                              index: idx,
+                              label: b.label,
+                              value: `$${b.payout.toFixed(2)} Paid`,
+                              subtext: `EPC: $${averageEpc.toFixed(2)}`,
+                            })
+                          }
+                        />
+                      );
+                    })}
                   </svg>
                 </div>
 
@@ -1065,13 +1251,13 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
 
             {/* Middle Row: Two High-Impact Visualization Cards */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
-              {/* Left 7 cols: Traffic & Performance Gradient Bars Chart (Real Chronological Buckets) */}
-              <div className="lg:col-span-7 panel-card border border-border-strong p-3.5 flex flex-col justify-between">
+              {/* Left 7 cols: Traffic & Performance Gradient Bars Chart with Rich Tooltip */}
+              <div className="lg:col-span-7 panel-card border border-border-strong p-3.5 flex flex-col justify-between relative">
                 <div>
                   <div className="flex items-center justify-between border-b border-border-strong pb-2 mb-3">
                     <div>
                       <h2 className="text-xs font-bold uppercase tracking-wider text-fg-heading">Traffic & Performance</h2>
-                      <p className="text-xs text-slate-300 dark:text-slate-300">Real database acquisition velocity vs postbacks</p>
+                      <p className="text-xs text-slate-300 dark:text-slate-300">Hover over bars to inspect detailed real-time interval metrics</p>
                     </div>
                     <div className="flex items-center gap-3 text-xs">
                       <span className="flex items-center gap-1.5 font-semibold text-fg">
@@ -1085,8 +1271,73 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                     </div>
                   </div>
 
-                  {/* Gradient Bar Chart with Dynamic Guidelines & Real Heights */}
-                  <div className="relative pt-2">
+                  {/* Gradient Bar Chart with Dynamic Guidelines & Rich Tooltip */}
+                  <div className="relative pt-2" onMouseLeave={() => setActiveBarIndex(null)}>
+                    {/* Rich Interactive Tooltip Popover */}
+                    {activeBarIndex !== null && timelineBuckets[activeBarIndex] && (() => {
+                      const b = timelineBuckets[activeBarIndex];
+                      const netMarginVal = b.revenue - b.payout;
+                      const colPercent = ((activeBarIndex + 0.5) / timelineBuckets.length) * 100;
+
+                      return (
+                        <div
+                          className="absolute pointer-events-none transition-all duration-150 z-30"
+                          style={{
+                            left: `${Math.min(Math.max(colPercent, 18), 82)}%`,
+                            top: '-4px',
+                            transform: 'translateX(-50%)',
+                          }}
+                        >
+                          <div className="bg-slate-900/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-600/80 rounded-xl p-2.5 shadow-2xl text-xs min-w-[210px] space-y-1.5 text-slate-100">
+                            <div className="flex items-center justify-between border-b border-slate-700/80 pb-1 font-bold">
+                              <span className="text-white flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                                Interval: {b.label}
+                              </span>
+                              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                                Slice {activeBarIndex + 1}/{timelineBuckets.length}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-1.5 text-slate-300">
+                                <span className="w-2 h-2 rounded-full bg-sky-400" />
+                                Clicks / Traffic:
+                              </span>
+                              <span className="font-extrabold text-white tabular-nums">{b.clicks}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-1.5 text-slate-300">
+                                <span className="w-2 h-2 rounded-full bg-rose-400" />
+                                Conversions:
+                              </span>
+                              <span className="font-extrabold text-rose-300 tabular-nums">{b.conversions}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-1.5 text-slate-300">
+                                <span className="w-2 h-2 rounded-full bg-indigo-400" />
+                                Gross Revenue:
+                              </span>
+                              <span className="font-bold text-slate-200 tabular-nums">${b.revenue.toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-1.5 text-slate-300">
+                                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                                Affiliate Payout:
+                              </span>
+                              <span className="font-bold text-amber-300 tabular-nums">${b.payout.toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center justify-between pt-1 border-t border-slate-700/80 text-[11px] font-semibold">
+                              <span className="text-slate-400">Net Profit / Margin:</span>
+                              <span className="text-emerald-400 font-bold tabular-nums">
+                                ${netMarginVal.toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Y-axis Guidelines */}
                     <div className="flex justify-between text-xs text-slate-300 dark:text-slate-300 border-b border-border-strong pb-1 font-semibold">
                       {yTicks.map((val, idx) => (
                         <span key={idx}>{val}</span>
@@ -1113,7 +1364,7 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                       <line x1="0" y1="92" x2="600" y2="92" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="3 3" />
                       <line x1="0" y1="115" x2="600" y2="115" stroke="currentColor" strokeOpacity="0.15" />
 
-                      {/* Dynamic Bars derived 100% from PostgreSQL */}
+                      {/* Dynamic Bars derived 100% from PostgreSQL with Hover Detection */}
                       {timelineBuckets.map((b, i) => {
                         const n = timelineBuckets.length;
                         const colWidth = 600 / n;
@@ -1121,10 +1372,22 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                         const x = i * colWidth + (colWidth - barW) / 2;
                         const clickH = b.clicks > 0 ? Math.max(Math.round((b.clicks / yMax) * 95), 6) : 2;
                         const convH = b.conversions > 0 ? Math.max(Math.round((b.conversions / yMax) * 95), 4) : 0;
+                        const isHovered = activeBarIndex === i;
 
                         return (
                           <g key={i}>
-                            <title>{`${b.label}: ${b.clicks} Clicks, ${b.conversions} Conversions ($${b.payout.toFixed(2)} Payout)`}</title>
+                            {/* Column Highlight Backdrop */}
+                            {isHovered && (
+                              <rect
+                                x={i * colWidth}
+                                y={0}
+                                width={colWidth}
+                                height={125}
+                                fill="rgba(99, 102, 241, 0.08)"
+                                rx={4}
+                              />
+                            )}
+
                             {/* Blue clicks bar */}
                             <rect
                               x={x}
@@ -1133,8 +1396,10 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                               height={clickH}
                               rx="3"
                               fill="url(#barBlue)"
-                              className="hover:opacity-85 transition cursor-pointer"
+                              className="transition-opacity"
+                              opacity={isHovered ? 1 : 0.9}
                             />
+
                             {/* Red/Rose conversions accent */}
                             {convH > 0 && (
                               <rect
@@ -1144,9 +1409,21 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                                 height={convH}
                                 rx="2"
                                 fill="url(#barRed)"
-                                className="hover:opacity-85 transition cursor-pointer"
+                                className="transition-opacity"
+                                opacity={isHovered ? 1 : 0.9}
                               />
                             )}
+
+                            {/* Transparent Full-Height Hitbox for Smooth Hovering */}
+                            <rect
+                              x={i * colWidth}
+                              y={0}
+                              width={colWidth}
+                              height={130}
+                              fill="transparent"
+                              className="cursor-pointer"
+                              onMouseEnter={() => setActiveBarIndex(i)}
+                            />
                           </g>
                         );
                       })}
@@ -1155,7 +1432,15 @@ export function ReportsView({ initialTab = 'overview' }: ReportsViewProps) {
                     {/* Timeline dynamic labels */}
                     <div className="flex justify-between text-xs text-slate-300 dark:text-slate-300 pt-1.5 border-t border-border-strong font-mono font-semibold">
                       {timelineBuckets.map((s, idx) => (
-                        <span key={idx} className="text-center">{s.label}</span>
+                        <span
+                          key={idx}
+                          className={`text-center cursor-pointer transition ${
+                            activeBarIndex === idx ? 'text-primary font-bold scale-110' : ''
+                          }`}
+                          onMouseEnter={() => setActiveBarIndex(idx)}
+                        >
+                          {s.label}
+                        </span>
                       ))}
                     </div>
                   </div>
