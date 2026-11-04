@@ -22,7 +22,7 @@ export function TargetingGuideModal({ isOpen, onClose }: TargetingGuideModalProp
 
         {/* 1. Multiple Groups & Priority */}
         <div className="p-4 rounded-xl bg-surface-elevated border border-border-subtle space-y-2">
-          <div className="flex items-center gap-2 font-bold text-sm text-black dark:text-white">
+          <div className="flex items-center gap-2 font-bold text-sm text-fg-heading">
             <Layers className="w-4 h-4 text-primary" />
             <span>1. Multiple Targeting Groups & Rule Priority</span>
           </div>
@@ -35,17 +35,17 @@ export function TargetingGuideModal({ isOpen, onClose }: TargetingGuideModalProp
 
         {/* 2. Condition Operators */}
         <div className="p-4 rounded-xl bg-surface-elevated border border-border-subtle space-y-2">
-          <div className="flex items-center gap-2 font-bold text-sm text-black dark:text-white">
+          <div className="flex items-center gap-2 font-bold text-sm text-fg-heading">
             <Shuffle className="w-4 h-4 text-emerald-500" />
             <span>2. Condition Operator: AND vs OR</span>
           </div>
           <ul className="space-y-1.5 list-disc list-inside text-fg-muted">
             <li>
-              <strong className="text-black dark:text-white">AND:</strong> Visitor must satisfy{' '}
+              <strong className="text-fg-heading">AND:</strong> Visitor must satisfy{' '}
               <em>all</em> active criteria (e.g. Country is US <strong>AND</strong> Device is iOS).
             </li>
             <li>
-              <strong className="text-black dark:text-white">OR:</strong> Visitor matches if{' '}
+              <strong className="text-fg-heading">OR:</strong> Visitor matches if{' '}
               <em>any</em> condition is fulfilled (e.g. Country is UK <strong>OR</strong> Device is PC).
             </li>
           </ul>
@@ -53,7 +53,7 @@ export function TargetingGuideModal({ isOpen, onClose }: TargetingGuideModalProp
 
         {/* 3. Geo-Fencing & Exclusions */}
         <div className="p-4 rounded-xl bg-surface-elevated border border-border-subtle space-y-2">
-          <div className="flex items-center gap-2 font-bold text-sm text-black dark:text-white">
+          <div className="flex items-center gap-2 font-bold text-sm text-fg-heading">
             <ShieldCheck className="w-4 h-4 text-amber-500" />
             <span>3. Geo-Fencing & Exclusions</span>
           </div>
@@ -66,7 +66,7 @@ export function TargetingGuideModal({ isOpen, onClose }: TargetingGuideModalProp
 
         {/* 4. Zero-Leak Fallback */}
         <div className="p-4 rounded-xl bg-surface-elevated border border-border-subtle space-y-2">
-          <div className="flex items-center gap-2 font-bold text-sm text-black dark:text-white">
+          <div className="flex items-center gap-2 font-bold text-sm text-fg-heading">
             <CheckCircle2 className="w-4 h-4 text-blue-500" />
             <span>4. Zero-Leak Safe Fallback (DOD Rule #6)</span>
           </div>

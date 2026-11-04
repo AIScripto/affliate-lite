@@ -68,7 +68,7 @@ export function AddCustomParamModal({
               <Plus className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-black dark:text-white">
+              <h3 className="text-sm font-bold text-fg-heading">
                 Add Custom Postback Parameter
               </h3>
               <p className="text-[11px] text-fg-muted">
@@ -95,7 +95,7 @@ export function AddCustomParamModal({
           )}
 
           <div>
-            <label className="block font-semibold text-black dark:text-white mb-1">
+            <label className="block font-semibold text-fg-heading mb-1">
               Parameter Token <span className="text-danger">*</span>
             </label>
             <div className="relative">
@@ -114,7 +114,7 @@ export function AddCustomParamModal({
           </div>
 
           <div>
-            <label className="block font-semibold text-black dark:text-white mb-1">
+            <label className="block font-semibold text-fg-heading mb-1">
               Display Name <span className="text-danger">*</span>
             </label>
             <input
@@ -128,7 +128,7 @@ export function AddCustomParamModal({
           </div>
 
           <div>
-            <label className="block font-semibold text-black dark:text-white mb-1">
+            <label className="block font-semibold text-fg-heading mb-1">
               Description
             </label>
             <textarea
@@ -141,7 +141,7 @@ export function AddCustomParamModal({
           </div>
 
           <div>
-            <label className="block font-semibold text-black dark:text-white mb-1">
+            <label className="block font-semibold text-fg-heading mb-1">
               Example Value
             </label>
             <input

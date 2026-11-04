@@ -185,6 +185,22 @@ All cards and buttons implement tactile 3D physical depth with subtle top-edge b
 - Macro tokens and parameters can be copied to clipboard or appended to URLs with a single click.
 - Instant visual feedback: `"Copied!"` or `"In URL ✓"` with emerald highlight.
 
+### 5. Multi-Theme & Appearance System
+- **11 Curated Themes:**
+  1. `Light` (☀️): Classic daytime workspace with crisp slate headers.
+  2. `Dark` (🌙): Low-glare midnight slate (default).
+  3. `Indigo` (💜): Deep slate and royal indigo accent.
+  4. `Emerald` (💚): Forest deep and mint emerald accent.
+  5. `Ocean` (🌊): Midnight navy and pacific sky blue accent.
+  6. `Rose` (🌹): Crimson night and radiant rose accent.
+  7. `Amber` (🌅): Warm espresso and sunlit golden amber accent.
+  8. `Slate` (🏢): Executive carbon and neutral slate accent.
+  9. `Violet` (👑): Royal purple and deep amethyst radiance.
+  10. `Teal` (🪸): Glacier mist and deep turquoise accent.
+  11. `Midnight OLED` (🌌): Pitch black OLED canvas with electric azure accent.
+- **Vivid Depth Add-on:** Enhances tactile card lift, subtle top bevel highlights, and deeper shadows without color distortion.
+- **Form Containers:** Forms must always use `.panel-card` (`bg-surface`) to prevent color-wash. Never apply `.titlebar-3d-gradient` to form bodies.
+
 ---
 
 ## Do's and Don'ts
@@ -194,10 +210,12 @@ All cards and buttons implement tactile 3D physical depth with subtle top-edge b
 - **DO** maintain high contrast between text (`--color-fg`, `--color-fg-heading`) and background.
 - **DO** provide instant visual feedback on any copy or toggle action.
 - **DO** use tabular numerals (`tabular-nums`) for currency, conversion counts, and timestamps.
-- **DO** test all new views in both Dark Mode and Light Mode.
+- **DO** verify all views across both Dark Mode, Light Mode, and vibrant tinted themes.
+- **DO** wrap forms in `.panel-card` with clean semantic borders.
 
 ### Don'ts
 - **DON'T** use wrapping badge clouds for dense configuration data.
+- **DON'T** apply `.titlebar-3d-gradient` to form containers or the top navigation bar.
 - **DON'T** use low-contrast text (e.g., light gray on white or dark slate on black).
 - **DON'T** hardcode colors, padding, or fonts; always reference Tailwind classes or design tokens.
 - **DON'T** use jarring unbounded animations; keep micro-interactions subtle (150ms-250ms ease).

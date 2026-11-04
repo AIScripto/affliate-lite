@@ -1068,13 +1068,13 @@ export function OfferBuilder({
         {/* ============================================================== */}
         {activeTab === 'general' && (
           <div className="panel-card p-6 border border-border-subtle bg-surface space-y-6 w-full">
-            <h2 className="text-base font-bold text-black dark:text-white border-b border-border-subtle pb-3">
+            <h2 className="text-base font-bold text-fg-heading border-b border-border-subtle pb-3">
               Core Information
             </h2>
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-black dark:text-white mb-1 text-xs">
+                  <label className="block font-bold text-fg-heading mb-1 text-xs">
                     Name <span className="text-danger">*</span>
                   </label>
                   <input
@@ -1095,7 +1095,7 @@ export function OfferBuilder({
                 </div>
 
                 <div>
-                  <label className="block font-bold text-black dark:text-white mb-1 text-xs">
+                  <label className="block font-bold text-fg-heading mb-1 text-xs">
                     Advertiser (Network) <span className="text-danger">*</span>
                   </label>
                   <select
@@ -1122,7 +1122,7 @@ export function OfferBuilder({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-black dark:text-white mb-1 text-xs">
+                  <label className="block font-bold text-fg-heading mb-1 text-xs">
                     Visibility <span className="text-danger">*</span>
                   </label>
                   <select
@@ -1143,7 +1143,7 @@ export function OfferBuilder({
                 </div>
 
                 <div>
-                  <label className="block font-bold text-black dark:text-white mb-1 text-xs">
+                  <label className="block font-bold text-fg-heading mb-1 text-xs">
                     Status <span className="text-danger">*</span>
                   </label>
                   <select
@@ -1159,7 +1159,7 @@ export function OfferBuilder({
               </div>
 
               <div>
-                <label className="block font-bold text-black dark:text-white mb-1 text-xs">Preview URL</label>
+                <label className="block font-bold text-fg-heading mb-1 text-xs">Preview URL</label>
                 <input
                   type="url"
                   placeholder="https://landingpage-preview.com"
@@ -1170,7 +1170,7 @@ export function OfferBuilder({
               </div>
 
               <div>
-                <label className="block font-bold text-black dark:text-white mb-1 text-xs">Description</label>
+                <label className="block font-bold text-fg-heading mb-1 text-xs">Description</label>
                 <textarea
                   rows={4}
                   placeholder="Campaign restrictions, conversion conditions, and instructions..."
@@ -1194,7 +1194,7 @@ export function OfferBuilder({
               <div className="panel-card p-6 border border-border-subtle bg-surface space-y-5">
                 <div className="flex items-center justify-between border-b border-border-subtle pb-3">
                   <div>
-                    <h2 className="text-base font-bold text-black dark:text-white">Core Settings</h2>
+                    <h2 className="text-base font-bold text-fg-heading">Core Settings</h2>
                     <p className="text-xs text-fg-muted">
                       Specify the tracking domain, advertiser base destination URL, and fallback redirect
                     </p>
@@ -1212,7 +1212,7 @@ export function OfferBuilder({
                 {/* Tracking Domain */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="font-bold text-black dark:text-white text-xs">
+                    <label className="font-bold text-fg-heading text-xs">
                       Select Tracking Domain
                     </label>
                     {domainId !== null && (
@@ -1246,7 +1246,7 @@ export function OfferBuilder({
                 {/* Base Destination URL */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="font-bold text-black dark:text-white text-xs">
+                    <label className="font-bold text-fg-heading text-xs">
                       Base Destination URL <span className="text-danger">*</span>
                     </label>
                     <button
@@ -1316,7 +1316,7 @@ export function OfferBuilder({
                 {/* Trafficback URL */}
                 <div className="pt-2 border-t border-border-subtle">
                   <div className="flex items-center justify-between mb-1">
-                    <label className="font-bold text-black dark:text-white text-xs">
+                    <label className="font-bold text-fg-heading text-xs">
                       Trafficback URL
                     </label>
                     <div className="flex items-center gap-3">
@@ -1373,7 +1373,7 @@ export function OfferBuilder({
               {/* Card 2: Validation Period & Cookie Window */}
               <div className="panel-card p-6 border border-border-subtle bg-surface space-y-5">
                 <div className="border-b border-border-subtle pb-3">
-                  <h2 className="text-base font-bold text-black dark:text-white">Validation Period & Cookie Window</h2>
+                  <h2 className="text-base font-bold text-fg-heading">Validation Period & Cookie Window</h2>
                   <p className="text-xs text-fg-muted">
                     Configure attribution lifetime, session durations, and conversion matching policies
                   </p>
@@ -1382,7 +1382,7 @@ export function OfferBuilder({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Cookie Lifetime / Attribution Window */}
                   <div>
-                    <label className="block font-bold text-black dark:text-white mb-1 text-xs">
+                    <label className="block font-bold text-fg-heading mb-1 text-xs">
                       Cookie Lifetime (Attribution Window)
                     </label>
                     <div className="flex items-center gap-2">
@@ -1410,7 +1410,7 @@ export function OfferBuilder({
 
                   {/* Click Session Lifespan */}
                   <div>
-                    <label className="block font-bold text-black dark:text-white mb-1 text-xs">
+                    <label className="block font-bold text-fg-heading mb-1 text-xs">
                       Click Session Lifespan
                     </label>
                     <div className="flex items-center gap-2">
@@ -1454,7 +1454,7 @@ export function OfferBuilder({
                 <div className="flex items-center justify-between border-b border-border-subtle pb-3">
                   <div className="flex items-center gap-2">
                     <HelpCircle className="w-4 h-4 text-primary" />
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-black dark:text-white">
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-fg-heading">
                       Base Destination URL Macros
                     </h3>
                   </div>
@@ -1494,13 +1494,13 @@ export function OfferBuilder({
                       <table className="w-full text-left text-xs border-collapse">
                         <thead className="sticky top-0 z-20 bg-surface-elevated border-b border-border-subtle shadow-sm">
                           <tr className="bg-surface-elevated">
-                            <th className="py-2.5 px-2.5 bg-surface-elevated text-[10px] uppercase font-bold text-black dark:text-white tracking-wider">
+                            <th className="py-2.5 px-2.5 bg-surface-elevated text-[10px] uppercase font-bold text-fg-heading tracking-wider">
                               Macro Token
                             </th>
-                            <th className="py-2.5 px-2 bg-surface-elevated text-[10px] uppercase font-bold text-black dark:text-white tracking-wider">
+                            <th className="py-2.5 px-2 bg-surface-elevated text-[10px] uppercase font-bold text-fg-heading tracking-wider">
                               Description
                             </th>
-                            <th className="py-2.5 px-2 text-right bg-surface-elevated text-[10px] uppercase font-bold text-black dark:text-white tracking-wider">
+                            <th className="py-2.5 px-2 text-right bg-surface-elevated text-[10px] uppercase font-bold text-fg-heading tracking-wider">
                               Action
                             </th>
                           </tr>
@@ -1586,7 +1586,7 @@ export function OfferBuilder({
             {/* Header with Title and Actions */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border-subtle">
               <div>
-                <h2 className="text-xl font-bold text-black dark:text-white">Targeting</h2>
+                <h2 className="text-xl font-bold text-fg-heading">Targeting</h2>
                 <p className="text-xs text-fg-muted mt-0.5">
                   Define geographic filters, device types, carrier constraints, and localized destination URLs.
                 </p>
@@ -1595,7 +1595,7 @@ export function OfferBuilder({
                 <button
                   type="button"
                   onClick={() => setShowTargetingGuideModal(true)}
-                  className="px-3.5 py-1.5 rounded-lg border border-border-subtle bg-surface hover:bg-surface-elevated text-black dark:text-white font-semibold text-xs transition flex items-center gap-1.5 shadow-sm"
+                  className="px-3.5 py-1.5 rounded-lg border border-border-subtle bg-surface hover:bg-surface-elevated text-fg-heading font-semibold text-xs transition flex items-center gap-1.5 shadow-sm"
                 >
                   <BookOpen className="w-3.5 h-3.5 text-primary" />
                   <span>How to use it?</span>
@@ -1637,7 +1637,7 @@ export function OfferBuilder({
           <div className="panel-card p-6 border border-border-subtle bg-surface space-y-5">
             <div className="flex items-center justify-between border-b border-border-subtle pb-3">
               <div>
-                <h2 className="text-base font-bold text-black dark:text-white">Dual-List Affiliate Assignment</h2>
+                <h2 className="text-base font-bold text-fg-heading">Dual-List Affiliate Assignment</h2>
                 <p className="text-xs text-fg-muted">
                   Assign specific publishers to this offer. Click (+) to enable, (-) to revoke.
                 </p>
@@ -1653,7 +1653,7 @@ export function OfferBuilder({
               {/* Left Card: All Affiliates */}
               <div className="panel-card p-4 border border-border-subtle bg-surface-elevated/30 flex flex-col h-96">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-bold text-xs uppercase tracking-wider text-black dark:text-white">
+                  <span className="font-bold text-xs uppercase tracking-wider text-fg-heading">
                     All Affiliates ({allAffiliates.length})
                   </span>
                 </div>
@@ -1771,7 +1771,7 @@ export function OfferBuilder({
             {/* Header with Title and Integration Docs button */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border-subtle">
               <div>
-                <h2 className="text-xl font-bold text-black dark:text-white">Postbacks</h2>
+                <h2 className="text-xl font-bold text-fg-heading">Postbacks</h2>
                 <p className="text-xs text-fg-muted mt-0.5">
                   Configure server-to-server (S2S) conversion attribution postbacks, HTML pixels, and parameter tokens.
                 </p>
@@ -1780,7 +1780,7 @@ export function OfferBuilder({
                 <button
                   type="button"
                   onClick={() => setShowIntegrationDocsModal(true)}
-                  className="px-3.5 py-1.5 rounded-lg border border-border-subtle bg-surface hover:bg-surface-elevated text-black dark:text-white font-semibold text-xs transition flex items-center gap-1.5 shadow-sm"
+                  className="px-3.5 py-1.5 rounded-lg border border-border-subtle bg-surface hover:bg-surface-elevated text-fg-heading font-semibold text-xs transition flex items-center gap-1.5 shadow-sm"
                 >
                   <BookOpen className="w-3.5 h-3.5 text-primary" />
                   <span>Integration docs</span>
@@ -1794,7 +1794,7 @@ export function OfferBuilder({
               <div className="lg:col-span-7 space-y-5">
                 <div className="panel-card p-6 border border-border-subtle bg-surface space-y-5 rounded-xl shadow-sm">
                   <div>
-                    <h3 className="text-base font-bold text-black dark:text-white">Integration pixels</h3>
+                    <h3 className="text-base font-bold text-fg-heading">Integration pixels</h3>
                     <p className="text-xs text-fg-muted mt-0.5">
                       Insert this script at advertiser success-page to integrate by pixel or call S2S postback
                     </p>
@@ -1803,7 +1803,7 @@ export function OfferBuilder({
                   {/* S2S (Postback) */}
                   <div className="space-y-2 pt-2 border-t border-border-subtle">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-black dark:text-white text-xs">S2S (Postback)</span>
+                      <span className="font-bold text-fg-heading text-xs">S2S (Postback)</span>
                       <button
                         type="button"
                         onClick={() => setShowParamsDocsModal(true)}
@@ -1842,7 +1842,7 @@ export function OfferBuilder({
                   {/* Image Pixel */}
                   <div className="space-y-2 pt-2 border-t border-border-subtle">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-black dark:text-white text-xs">Image</span>
+                      <span className="font-bold text-fg-heading text-xs">Image</span>
                       <button
                         type="button"
                         onClick={() => setShowParamsDocsModal(true)}
@@ -1883,7 +1883,7 @@ export function OfferBuilder({
                   {/* Iframe Pixel */}
                   <div className="space-y-2 pt-2 border-t border-border-subtle">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-black dark:text-white text-xs">IFrame</span>
+                      <span className="font-bold text-fg-heading text-xs">IFrame</span>
                       <button
                         type="button"
                         onClick={() => setShowParamsDocsModal(true)}
@@ -1924,7 +1924,7 @@ export function OfferBuilder({
                   {/* JavaScript Web Pixel Snippet */}
                   <div className="space-y-2 pt-2 border-t border-border-subtle">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-black dark:text-white text-xs">JavaScript Client Pixel</span>
+                      <span className="font-bold text-fg-heading text-xs">JavaScript Client Pixel</span>
                       <button
                         type="button"
                         onClick={() => setShowParamsDocsModal(true)}
@@ -1959,7 +1959,7 @@ export function OfferBuilder({
                   {/* Advertiser Click ID Macro & Security Token Inputs */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border-subtle text-xs">
                     <div>
-                      <label className="block font-bold text-black dark:text-white mb-1">
+                      <label className="block font-bold text-fg-heading mb-1">
                         Advertiser Click ID Macro
                       </label>
                       <input
@@ -1982,7 +1982,7 @@ export function OfferBuilder({
 
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="font-bold text-black dark:text-white">
+                        <label className="font-bold text-fg-heading">
                           Security Token (Anti-Fraud)
                         </label>
                         <button
@@ -2050,13 +2050,13 @@ export function OfferBuilder({
         {/* ============================================================== */}
         {activeTab === 'revenue' && (
           <div className="panel-card p-6 border border-border-subtle bg-surface space-y-5 w-full">
-            <h2 className="text-base font-bold text-black dark:text-white border-b border-border-subtle pb-3">
+            <h2 className="text-base font-bold text-fg-heading border-b border-border-subtle pb-3">
               Revenue & Payout Spread Settings
             </h2>
             <div className="space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-black dark:text-white mb-1">Payment Model</label>
+                  <label className="block font-bold text-fg-heading mb-1">Payment Model</label>
                   <select
                     value={paymentModel}
                     onChange={(e) => setPaymentModel(e.target.value as PaymentModel)}
@@ -2070,7 +2070,7 @@ export function OfferBuilder({
                 </div>
 
                 <div>
-                  <label className="block font-bold text-black dark:text-white mb-1">Currency</label>
+                  <label className="block font-bold text-fg-heading mb-1">Currency</label>
                   <select
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value)}
@@ -2087,7 +2087,7 @@ export function OfferBuilder({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-black dark:text-white mb-1">
+                  <label className="block font-bold text-fg-heading mb-1">
                     Advertiser Revenue ({currency})
                   </label>
                   <input
@@ -2101,7 +2101,7 @@ export function OfferBuilder({
                 </div>
 
                 <div>
-                  <label className="block font-bold text-black dark:text-white mb-1">
+                  <label className="block font-bold text-fg-heading mb-1">
                     Affiliate Payout ({currency})
                   </label>
                   <input
@@ -2118,7 +2118,7 @@ export function OfferBuilder({
               {/* Live Profit Spread Badge */}
               <div className="p-4 rounded-xl bg-surface-elevated border border-border-subtle flex items-center justify-between">
                 <div>
-                  <div className="font-bold text-black dark:text-white">Computed Spread / Net Margin</div>
+                  <div className="font-bold text-fg-heading">Computed Spread / Net Margin</div>
                   <div className="text-xs text-fg-muted">
                     Revenue: ${revenue.toFixed(2)} - Payout: ${payout.toFixed(2)}
                   </div>

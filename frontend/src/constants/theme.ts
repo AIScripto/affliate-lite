@@ -3,6 +3,8 @@
  * Follows DESIGN.md specifications
  */
 
+export * from './themes';
+
 export type StatusType = 
   | 'ACTIVE' 
   | 'PAUSED' 

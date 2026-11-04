@@ -1,0 +1,315 @@
+/* ================================================================
+   THEME PALETTES & MULTI-THEME ENGINE
+   Directly adapted from ERP Design Standards.
+   High-contrast, scannable, WCAG AA compliant across all 11 themes.
+   ================================================================ */
+
+/* ── Light Theme ── */
+html.light,
+.light {
+  --color-canvas: #F4F6FB;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #F8FAFC;
+  --color-border-subtle: #E2E8F0;
+  --color-border-strong: #CBD5E1;
+  --color-primary: #4F46E5;
+  --color-primary-hover: #4338CA;
+  --color-primary-light: #EEF2FF;
+  --color-success: #059669;
+  --color-success-hover: #047857;
+  --color-info: #0284C7;
+  --color-warning: #D97706;
+  --color-danger: #DC2626;
+  --color-fg: #0F172A;
+  --color-fg-heading: #0F172A;
+  --color-fg-muted: #475569;
+  --color-fg-subtle: #64748B;
+  --titlebar-gradient: linear-gradient(135deg, #1E293B 0%, #334155 50%, #1E293B 100%);
+  --sidebar-bg: #FFFFFF;
+  --sidebar-border: #E2E8F0;
+  --sidebar-text: #475569;
+  --sidebar-active-bg: rgba(79, 70, 229, 0.1);
+  --sidebar-active-text: #4F46E5;
+  --topbar-bg: rgba(255, 255, 255, 0.95);
+  --topbar-border: #E2E8F0;
+}
+
+/* ── Dark Theme (Default) ── */
+html.dark,
+.dark {
+  --color-canvas: #0B0E14;
+  --color-surface: #121620;
+  --color-surface-elevated: #1A1F2C;
+  --color-border-subtle: #252C3E;
+  --color-border-strong: #374151;
+  --color-primary: #6366F1;
+  --color-primary-hover: #4F46E5;
+  --color-primary-light: rgba(99, 102, 241, 0.15);
+  --color-success: #10B981;
+  --color-success-hover: #059669;
+  --color-info: #0284C7;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-fg: #F8FAFC;
+  --color-fg-heading: #FFFFFF;
+  --color-fg-muted: #94A3B8;
+  --color-fg-subtle: #64748B;
+  --titlebar-gradient: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #0F172A 100%);
+  --sidebar-bg: #121620;
+  --sidebar-border: #252C3E;
+  --sidebar-text: #94A3B8;
+  --sidebar-active-bg: rgba(99, 102, 241, 0.2);
+  --sidebar-active-text: #FFFFFF;
+  --topbar-bg: rgba(18, 22, 32, 0.95);
+  --topbar-border: #252C3E;
+}
+
+/* ── Indigo Theme ── */
+html.theme-indigo {
+  --color-canvas: #F0F4FF;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #F8FAFC;
+  --color-border-subtle: #E0E7FF;
+  --color-border-strong: #C7D2FE;
+  --color-primary: #6366F1;
+  --color-primary-hover: #4F46E5;
+  --color-primary-light: #EEF2FF;
+  --color-fg: #0F172A;
+  --color-fg-heading: #1E1B4B;
+  --color-fg-muted: #475569;
+  --color-fg-subtle: #64748B;
+  --titlebar-gradient: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #312E81 100%);
+  --sidebar-bg: linear-gradient(180deg, #0F172A 0%, #1E1B4B 60%, #0F172A 100%);
+  --sidebar-border: rgba(99, 102, 241, 0.25);
+  --sidebar-text: #A5B4FC;
+  --sidebar-active-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(139, 92, 246, 0.3));
+  --sidebar-active-text: #FFFFFF;
+  --topbar-bg: rgba(255, 255, 255, 0.95);
+  --topbar-border: #E0E7FF;
+}
+
+/* ── Emerald Theme ── */
+html.theme-emerald {
+  --color-canvas: #F0FDF4;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #F8FAFC;
+  --color-border-subtle: #DCFCE7;
+  --color-border-strong: #BBF7D0;
+  --color-primary: #10B981;
+  --color-primary-hover: #059669;
+  --color-primary-light: #ECFDF5;
+  --color-fg: #0F172A;
+  --color-fg-heading: #064E3B;
+  --color-fg-muted: #475569;
+  --color-fg-subtle: #64748B;
+  --titlebar-gradient: linear-gradient(135deg, #022C22 0%, #064E3B 50%, #047857 100%);
+  --sidebar-bg: linear-gradient(180deg, #022C22 0%, #064E3B 60%, #022C22 100%);
+  --sidebar-border: rgba(16, 185, 129, 0.25);
+  --sidebar-text: #6EE7B7;
+  --sidebar-active-bg: linear-gradient(135deg, rgba(16, 185, 129, 0.45), rgba(20, 184, 166, 0.25));
+  --sidebar-active-text: #FFFFFF;
+  --topbar-bg: rgba(255, 255, 255, 0.95);
+  --topbar-border: #DCFCE7;
+}
+
+/* ── Ocean Theme ── */
+html.theme-ocean {
+  --color-canvas: #F0F9FF;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #F8FAFC;
+  --color-border-subtle: #E0F2FE;
+  --color-border-strong: #BAE6FD;
+  --color-primary: #0EA5E9;
+  --color-primary-hover: #0284C7;
+  --color-primary-light: #F0F9FF;
+  --color-fg: #0F172A;
+  --color-fg-heading: #0C4A6E;
+  --color-fg-muted: #475569;
+  --color-fg-subtle: #64748B;
+  --titlebar-gradient: linear-gradient(135deg, #0C1A2E 0%, #0F4C81 50%, #0369A1 100%);
+  --sidebar-bg: linear-gradient(180deg, #0C1A2E 0%, #0F4C81 55%, #0C1A2E 100%);
+  --sidebar-border: rgba(14, 165, 233, 0.25);
+  --sidebar-text: #7DD3FC;
+  --sidebar-active-bg: linear-gradient(135deg, rgba(14, 165, 233, 0.45), rgba(6, 182, 212, 0.25));
+  --sidebar-active-text: #FFFFFF;
+  --topbar-bg: rgba(255, 255, 255, 0.95);
+  --topbar-border: #E0F2FE;
+}
+
+/* ── Rose Theme ── */
+html.theme-rose {
+  --color-canvas: #FFF1F2;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #F8FAFC;
+  --color-border-subtle: #FFE4E6;
+  --color-border-strong: #FECDD3;
+  --color-primary: #F43F5E;
+  --color-primary-hover: #E11D48;
+  --color-primary-light: #FFF1F2;
+  --color-fg: #0F172A;
+  --color-fg-heading: #881337;
+  --color-fg-muted: #475569;
+  --color-fg-subtle: #64748B;
+  --titlebar-gradient: linear-gradient(135deg, #1A0A0F 0%, #4C0519 50%, #881337 100%);
+  --sidebar-bg: linear-gradient(180deg, #1A0A0F 0%, #4C0519 60%, #1A0A0F 100%);
+  --sidebar-border: rgba(244, 63, 94, 0.25);
+  --sidebar-text: #FDA4AF;
+  --sidebar-active-bg: linear-gradient(135deg, rgba(244, 63, 94, 0.45), rgba(251, 113, 133, 0.25));
+  --sidebar-active-text: #FFFFFF;
+  --topbar-bg: rgba(255, 255, 255, 0.95);
+  --topbar-border: #FFE4E6;
+}
+
+/* ── Amber Theme ── */
+html.theme-amber {
+  --color-canvas: #FFFBEB;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #F8FAFC;
+  --color-border-subtle: #FEF3C7;
+  --color-border-strong: #FDE68A;
+  --color-primary: #F59E0B;
+  --color-primary-hover: #D97706;
+  --color-primary-light: #FFFBEB;
+  --color-fg: #0F172A;
+  --color-fg-heading: #78350F;
+  --color-fg-muted: #475569;
+  --color-fg-subtle: #64748B;
+  --titlebar-gradient: linear-gradient(135deg, #1C1007 0%, #451A03 50%, #78350F 100%);
+  --sidebar-bg: linear-gradient(180deg, #1C1007 0%, #451A03 60%, #1C1007 100%);
+  --sidebar-border: rgba(245, 158, 11, 0.25);
+  --sidebar-text: #FCD34D;
+  --sidebar-active-bg: linear-gradient(135deg, rgba(245, 158, 11, 0.45), rgba(251, 191, 36, 0.25));
+  --sidebar-active-text: #FFFFFF;
+  --topbar-bg: rgba(255, 255, 255, 0.95);
+  --topbar-border: #FEF3C7;
+}
+
+/* ── Slate Theme ── */
+html.theme-slate {
+  --color-canvas: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #F1F5F9;
+  --color-border-subtle: #E2E8F0;
+  --color-border-strong: #CBD5E1;
+  --color-primary: #64748B;
+  --color-primary-hover: #475569;
+  --color-primary-light: #F8FAFC;
+  --color-fg: #0F172A;
+  --color-fg-heading: #0F172A;
+  --color-fg-muted: #475569;
+  --color-fg-subtle: #64748B;
+  --titlebar-gradient: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
+  --sidebar-bg: linear-gradient(180deg, #0F172A 0%, #1E293B 60%, #0F172A 100%);
+  --sidebar-border: rgba(100, 116, 139, 0.25);
+  --sidebar-text: #CBD5E1;
+  --sidebar-active-bg: linear-gradient(135deg, rgba(100, 116, 139, 0.45), rgba(71, 85, 105, 0.25));
+  --sidebar-active-text: #FFFFFF;
+  --topbar-bg: rgba(255, 255, 255, 0.95);
+  --topbar-border: #E2E8F0;
+}
+
+/* ── Violet Theme ── */
+html.theme-violet {
+  --color-canvas: #FAF5FF;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #F8FAFC;
+  --color-border-subtle: #F3E8FF;
+  --color-border-strong: #E9D5FF;
+  --color-primary: #8B5CF6;
+  --color-primary-hover: #7C3AED;
+  --color-primary-light: #FAF5FF;
+  --color-fg: #0F172A;
+  --color-fg-heading: #4C1D95;
+  --color-fg-muted: #475569;
+  --color-fg-subtle: #64748B;
+  --titlebar-gradient: linear-gradient(135deg, #1E112A 0%, #2E1065 50%, #4C1D95 100%);
+  --sidebar-bg: linear-gradient(180deg, #1E112A 0%, #2E1065 60%, #1E112A 100%);
+  --sidebar-border: rgba(139, 92, 246, 0.25);
+  --sidebar-text: #D8B4FE;
+  --sidebar-active-bg: linear-gradient(135deg, rgba(139, 92, 246, 0.45), rgba(167, 139, 250, 0.25));
+  --sidebar-active-text: #FFFFFF;
+  --topbar-bg: rgba(255, 255, 255, 0.95);
+  --topbar-border: #F3E8FF;
+}
+
+/* ── Teal Theme ── */
+html.theme-teal {
+  --color-canvas: #F0FDFA;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #F8FAFC;
+  --color-border-subtle: #CCFBF1;
+  --color-border-strong: #99F6E4;
+  --color-primary: #14B8A6;
+  --color-primary-hover: #0D9488;
+  --color-primary-light: #F0FDFA;
+  --color-fg: #0F172A;
+  --color-fg-heading: #134E4A;
+  --color-fg-muted: #475569;
+  --color-fg-subtle: #64748B;
+  --titlebar-gradient: linear-gradient(135deg, #042F2E 0%, #115E59 50%, #134E4A 100%);
+  --sidebar-bg: linear-gradient(180deg, #042F2E 0%, #115E59 60%, #042F2E 100%);
+  --sidebar-border: rgba(20, 184, 166, 0.25);
+  --sidebar-text: #5EEAD4;
+  --sidebar-active-bg: linear-gradient(135deg, rgba(20, 184, 166, 0.45), rgba(45, 212, 191, 0.25));
+  --sidebar-active-text: #FFFFFF;
+  --topbar-bg: rgba(255, 255, 255, 0.95);
+  --topbar-border: #CCFBF1;
+}
+
+/* ── Midnight OLED Dark Theme ── */
+html.theme-midnight {
+  --color-canvas: #000000;
+  --color-surface: #09090B;
+  --color-surface-elevated: #18181B;
+  --color-border-subtle: #27272A;
+  --color-border-strong: #3F3F46;
+  --color-primary: #38BDF8;
+  --color-primary-hover: #0EA5E9;
+  --color-primary-light: #082F49;
+  --color-fg: #F8FAFC;
+  --color-fg-heading: #FFFFFF;
+  --color-fg-muted: #94A3B8;
+  --color-fg-subtle: #64748B;
+  --titlebar-gradient: linear-gradient(135deg, #000000 0%, #09090B 50%, #0F172A 100%);
+  --sidebar-bg: linear-gradient(180deg, #000000 0%, #09090B 60%, #000000 100%);
+  --sidebar-border: rgba(39, 39, 42, 0.8);
+  --sidebar-text: #94A3B8;
+  --sidebar-active-bg: linear-gradient(135deg, rgba(56, 189, 248, 0.35), rgba(14, 165, 233, 0.18));
+  --sidebar-active-text: #38BDF8;
+  --topbar-bg: rgba(9, 9, 11, 0.95);
+  --topbar-border: rgba(39, 39, 42, 0.8);
+}
+
+/* ── Vivid Depth Add-on ── */
+html.vivid .panel-card {
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
+    0 12px 28px -4px rgba(0, 0, 0, 0.45),
+    0 4px 10px -2px rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+html.vivid.light .panel-card {
+  box-shadow:
+    inset 0 1px 0 0 #FFFFFF,
+    0 12px 24px -4px rgba(15, 23, 42, 0.1),
+    0 2px 6px 0 rgba(15, 23, 42, 0.05);
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
+html.vivid .btn-3d-primary {
+  box-shadow:
+    0 6px 20px -2px rgba(79, 70, 229, 0.6),
+    0 2px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Common Titlebar Styles referencing dynamic --titlebar-gradient */
+.titlebar-3d-gradient {
+  background: var(--titlebar-gradient);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
+    0 8px 24px -4px rgba(0, 0, 0, 0.35),
+    0 4px 10px -2px rgba(0, 0, 0, 0.2);
+  color: #FFFFFF;
+}

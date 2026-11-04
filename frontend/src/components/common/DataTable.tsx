@@ -172,7 +172,7 @@ export function DataTable<T>({
                     key={col.key}
                     style={{ width: col.width }}
                     onClick={() => handleSort(col.key, col.sortable)}
-                    className={`py-3 px-4 bg-surface-elevated text-black dark:text-white font-bold select-none ${
+                    className={`py-3 px-4 bg-surface-elevated text-fg-heading font-bold select-none ${
                       col.align === 'center'
                         ? 'text-center'
                         : col.align === 'right'

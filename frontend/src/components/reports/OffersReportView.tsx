@@ -206,7 +206,7 @@ export function OffersReportView() {
         <div className="overflow-x-auto rounded-lg border border-border-subtle bg-surface">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-surface-elevated border-b border-border-subtle text-black dark:text-white uppercase tracking-wider text-[11px] font-bold">
+              <tr className="bg-surface-elevated border-b border-border-subtle text-fg-heading uppercase tracking-wider text-[11px] font-bold">
                 <th className="py-3 px-3 text-center w-12">#</th>
                 <th className="py-3 px-4">Name</th>
                 <th className="py-3 px-4 text-right">Conversions</th>

@@ -34,7 +34,7 @@ export function ActivePostbackParamsManager({
       <div className="p-3 bg-surface-elevated/70 border-b border-border-subtle flex items-center justify-between">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="w-3.5 h-3.5 text-primary" />
-          <h4 className="text-xs font-bold text-black dark:text-white uppercase tracking-wider">
+          <h4 className="text-xs font-bold text-fg-heading uppercase tracking-wider">
             Active URL Parameters
           </h4>
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
@@ -62,7 +62,7 @@ export function ActivePostbackParamsManager({
       {/* Parameters Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
-          <thead className="bg-surface-elevated border-b border-border-subtle text-[10px] uppercase font-bold text-black dark:text-white shadow-sm">
+          <thead className="bg-surface-elevated border-b border-border-subtle text-[10px] uppercase font-bold text-fg-heading shadow-sm">
             <tr className="bg-surface-elevated">
               <th className="py-2 px-3 bg-surface-elevated">Parameter</th>
               <th className="py-2 px-3 bg-surface-elevated">Macro / Value</th>

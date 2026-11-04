@@ -36,7 +36,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   return (
     <div className={`space-y-1.5 ${containerClassName}`}>
       {label && (
-        <label className="block text-xs font-bold text-black dark:text-white">
+        <label className="block text-xs font-bold text-fg-heading">
           {label}
         </label>
       )}
@@ -54,7 +54,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
                 className={`
                   flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-150 flex items-center justify-center gap-1.5
                   ${isSelected
-                    ? 'bg-white dark:bg-slate-800 text-black dark:text-white shadow-sm border border-slate-300 dark:border-slate-700 font-bold'
+                    ? 'bg-white dark:bg-slate-800 text-fg-heading shadow-sm border border-slate-300 dark:border-slate-700 font-bold'
                     : 'text-slate-600 hover:text-black dark:text-slate-300 dark:hover:text-white'
                   }
                   ${disabled ? 'opacity-50 pointer-events-none' : ''}
@@ -99,7 +99,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
                       disabled={disabled}
                       className="text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5"
                     />
-                    <span className="text-xs font-bold text-black dark:text-white">
+                    <span className="text-xs font-bold text-fg-heading">
                       {opt.label}
                     </span>
                   </div>

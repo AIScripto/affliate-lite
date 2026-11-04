@@ -211,7 +211,7 @@ export function PostbackParametersTable({
       {/* Header with Accordion toggle & Action buttons */}
       <div className="p-3.5 bg-surface-elevated/80 border-b border-border-subtle flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h3 className="text-xs font-bold text-black dark:text-white uppercase tracking-wider">
+          <h3 className="text-xs font-bold text-fg-heading uppercase tracking-wider">
             Integration pixels parameters
           </h3>
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
@@ -272,10 +272,10 @@ export function PostbackParametersTable({
             <table className="w-full text-left border-collapse text-xs">
               <thead className="sticky top-0 bg-surface-elevated border-b border-border-subtle z-20 shadow-sm">
                 <tr className="bg-surface-elevated">
-                  <th className="py-2.5 px-3 bg-surface-elevated text-[11px] font-bold text-black dark:text-white uppercase">Parameter</th>
-                  <th className="py-2.5 px-2.5 bg-surface-elevated text-[11px] font-bold text-black dark:text-white uppercase">Status</th>
-                  <th className="py-2.5 px-3 bg-surface-elevated text-[11px] font-bold text-black dark:text-white uppercase">Description</th>
-                  <th className="py-2.5 px-2 text-right bg-surface-elevated text-[11px] font-bold text-black dark:text-white uppercase">Actions</th>
+                  <th className="py-2.5 px-3 bg-surface-elevated text-[11px] font-bold text-fg-heading uppercase">Parameter</th>
+                  <th className="py-2.5 px-2.5 bg-surface-elevated text-[11px] font-bold text-fg-heading uppercase">Status</th>
+                  <th className="py-2.5 px-3 bg-surface-elevated text-[11px] font-bold text-fg-heading uppercase">Description</th>
+                  <th className="py-2.5 px-2 text-right bg-surface-elevated text-[11px] font-bold text-fg-heading uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle bg-surface">

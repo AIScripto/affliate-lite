@@ -34,7 +34,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(({
       {label && (
         <label
           htmlFor={selectId}
-          className="block text-xs font-bold text-black dark:text-white"
+          className="block text-xs font-bold text-fg-heading"
         >
           {label} {required && <span className="text-rose-500">*</span>}
         </label>

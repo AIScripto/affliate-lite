@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   LayoutDashboard,
   Users,
@@ -10,11 +10,11 @@ import {
   Menu,
   ChevronDown,
   ChevronRight,
-  Sun,
-  Moon,
   ShieldCheck,
   User as UserIcon,
   BookmarkPlus,
+  Check,
+  Sparkles,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -36,11 +36,33 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutProps) {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme, vivid, setVivid, themesList } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement | null>(null);
   const [reportsExpanded, setReportsExpanded] = useState(
     currentNav.startsWith('report-')
   );
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!userMenuRef.current?.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [menuOpen]);
 
   const getBreadcrumb = () => {
     switch (currentNav) {
@@ -78,12 +100,16 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
     <div className="min-h-screen bg-canvas text-fg flex flex-row font-sans">
       {/* Left Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-64 bg-surface border-r border-border-subtle flex flex-col transition-transform duration-200 lg:translate-x-0 ${
+        style={{
+          background: 'var(--sidebar-bg, var(--color-surface))',
+          borderColor: 'var(--sidebar-border, var(--color-border-subtle))',
+        }}
+        className={`fixed inset-y-0 left-0 z-30 w-64 border-r flex flex-col transition-transform duration-200 lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Brand Header */}
-        <div className="h-16 px-5 border-b border-border-subtle flex items-center gap-3 bg-surface">
+        <div className="h-16 px-5 border-b border-border-subtle flex items-center gap-3 bg-surface/50">
           <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-md shadow-primary/25 border-t border-white/25">
             <ShieldCheck className="w-5 h-5" />
           </div>
@@ -96,7 +122,7 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
           </div>
         </div>
 
-        {/* User Profile Block */}
+        {/* User Profile Block in Sidebar */}
         <div className="px-4 py-3.5 border-b border-border-subtle/80 flex items-center gap-3 bg-surface-elevated/30">
           <div className="relative">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/30 flex items-center justify-center text-amber-500 font-bold shadow-sm">
@@ -247,7 +273,7 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
         </div>
 
         {/* Sidebar Footer: Log Out */}
-        <div className="p-3.5 border-t border-border-subtle/80 bg-surface">
+        <div className="p-3.5 border-t border-border-subtle/80 bg-surface/50">
           <button
             type="button"
             onClick={() => {
@@ -265,43 +291,135 @@ export function AdminLayout({ currentNav, onNavigate, children }: AdminLayoutPro
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
-        {/* Top Navbar / Title Bar with Filled Color 3D Effects Gradient */}
-        <header className="h-16 titlebar-3d-gradient px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20">
+        {/* Top Navbar Header (Executive Balanced Appearance) */}
+        <header
+          style={{
+            background: 'var(--topbar-bg, var(--color-surface))',
+            borderColor: 'var(--topbar-border, var(--color-border-subtle))',
+          }}
+          className="h-16 border-b px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md transition-colors"
+        >
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-white transition cursor-pointer"
+              className="lg:hidden p-2 rounded-lg bg-surface-elevated/60 hover:bg-surface-elevated border border-border-subtle text-fg-muted transition cursor-pointer"
               title="Toggle Menu"
             >
               <Menu className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-white/70 font-medium">Platform</span>
-              <span className="text-white/40">/</span>
-              <span className="text-white font-bold tracking-tight text-sm drop-shadow-xs">{getBreadcrumb()}</span>
+              <span className="text-fg-muted font-medium">Platform</span>
+              <span className="text-fg-subtle">/</span>
+              <span className="text-fg-heading font-bold tracking-tight text-sm">
+                {getBreadcrumb()}
+              </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Top Right: User & Appearance Popover Menu (Matching ERP Specification) */}
+          <div className="user-menu" ref={userMenuRef}>
             <button
               type="button"
-              onClick={toggleTheme}
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/25 text-xs font-semibold text-white shadow-sm backdrop-blur-sm active:scale-95 transition cursor-pointer"
-              title="Switch Theme"
+              className="user-menu-button"
+              aria-haspopup="menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((prev) => !prev)}
             >
-              {theme === 'dark' ? (
-                <>
-                  <Sun className="w-3.5 h-3.5 text-amber-300" />
-                  <span>Switch Theme</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-3.5 h-3.5 text-indigo-100" />
-                  <span>Switch Theme</span>
-                </>
-              )}
+              <div className="user-menu-text hidden sm:flex">
+                <span className="user-menu-name">Administrator</span>
+                <span className="user-menu-role">System Admin</span>
+              </div>
+              <span className="user-avatar" aria-hidden="true">
+                AD
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 text-fg-muted" />
             </button>
+
+            {menuOpen && (
+              <div
+                className="user-menu-popover"
+                role="menu"
+                aria-label="Theme & Appearance"
+              >
+                <div className="user-menu-section-label">Theme & Appearance</div>
+                <div className="max-h-64 overflow-y-auto flex flex-col gap-0.5 pr-1">
+                  {themesList.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      role="menuitemradio"
+                      aria-checked={theme === option.value}
+                      className="user-menu-item"
+                      onClick={() => setTheme(option.value)}
+                      title={option.desc}
+                    >
+                      <span className="text-sm leading-none" aria-hidden="true">
+                        {option.emoji}
+                      </span>
+                      <span className="flex-1 min-w-0 truncate font-medium text-xs">
+                        {option.label}
+                      </span>
+                      <span
+                        className="inline-flex gap-1 items-center px-1.5 py-0.5 rounded-full bg-surface-elevated border border-border-subtle"
+                        aria-hidden="true"
+                      >
+                        {option.preview.map((color, i) => (
+                          <span
+                            key={i}
+                            className="w-1.5 h-1.5 rounded-full inline-block"
+                            style={{ backgroundColor: color }}
+                          />
+                        ))}
+                      </span>
+                      {theme === option.value && (
+                        <Check
+                          className="w-4 h-4 user-menu-check"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="user-menu-divider" />
+
+                <button
+                  type="button"
+                  role="menuitemcheckbox"
+                  aria-checked={vivid}
+                  className="user-menu-item"
+                  title="Soft depth and tactile lift on cards and tiles"
+                  onClick={() => setVivid(!vivid)}
+                >
+                  <Sparkles className="w-4 h-4 text-amber-400" aria-hidden="true" />
+                  <span className="flex-1 text-xs font-medium">Vivid Depth</span>
+                  {vivid && (
+                    <Check
+                      className="w-4 h-4 user-menu-check"
+                      aria-hidden="true"
+                    />
+                  )}
+                </button>
+
+                <div className="user-menu-divider" />
+
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="user-menu-item is-danger"
+                  onClick={() => {
+                    if (window.confirm('Are you sure you want to sign out?')) {
+                      onNavigate('dashboard');
+                      setMenuOpen(false);
+                    }
+                  }}
+                >
+                  <LogOut className="w-4 h-4 text-danger" aria-hidden="true" />
+                  <span className="text-xs font-semibold">Sign Out</span>
+                </button>
+              </div>
+            )}
           </div>
         </header>
 

@@ -166,13 +166,13 @@ export function DomainsView() {
       {showAddForm && (
         <form
           onSubmit={handleCreateDomain}
-          className="titlebar-3d-gradient p-5 rounded-2xl shadow-lg border border-border-subtle"
+          className="panel-card p-5"
         >
           <h2 className="text-xs font-bold uppercase tracking-wider text-primary mb-3">
             Add New Domain
           </h2>
           <div className="max-w-md">
-            <label className="block text-xs font-bold text-black dark:text-white mb-1">
+            <label className="block text-xs font-bold text-fg-heading mb-1">
               Name <span className="text-danger">*</span>
             </label>
             <input
@@ -183,9 +183,9 @@ export function DomainsView() {
                 setDomainName(e.target.value);
                 if (error) setError(null);
               }}
-              className={`w-full bg-surface border ${
-                error ? 'border-danger' : 'border-border-subtle'
-              } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary transition`}
+              className={`w-full bg-surface-elevated/60 border ${
+                error ? 'border-danger' : 'border-border-subtle focus:border-primary'
+              } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none transition shadow-sm`}
             />
             {error && <p className="text-[11px] text-danger mt-1">{error}</p>}
           </div>

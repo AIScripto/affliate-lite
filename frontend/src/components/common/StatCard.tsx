@@ -34,7 +34,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/80 dark:via-white/15 to-transparent pointer-events-none" />
 
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-bold text-black dark:text-white tracking-wider uppercase">{title}</span>
+        <span className="text-xs font-bold text-fg-heading tracking-wider uppercase">{title}</span>
         <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 flex items-center justify-center text-indigo-600 dark:text-slate-300 shadow-sm group-hover:scale-110 group-hover:border-indigo-400/50 transition-all duration-300">
           <Icon className="w-4 h-4" />
         </div>

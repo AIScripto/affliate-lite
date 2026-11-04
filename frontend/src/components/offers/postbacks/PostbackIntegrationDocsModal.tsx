@@ -80,7 +80,7 @@ curl_close($ch);
       <div className="space-y-6 text-xs text-fg">
         {/* Intro */}
         <div className="p-4 rounded-xl bg-surface-elevated border border-border-subtle">
-          <h3 className="font-bold text-sm text-black dark:text-white mb-1.5 flex items-center gap-2">
+          <h3 className="font-bold text-sm text-fg-heading mb-1.5 flex items-center gap-2">
             <Terminal className="w-4 h-4 text-primary" />
             <span>Server-to-Server (S2S) Attribution Protocol</span>
           </h3>
@@ -95,7 +95,7 @@ curl_close($ch);
         {/* Code Tabs */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="font-bold text-black dark:text-white">Sample Postback Code:</span>
+            <span className="font-bold text-fg-heading">Sample Postback Code:</span>
             <div className="inline-flex rounded-lg border border-border-subtle p-0.5 bg-surface-elevated">
               {(['curl', 'node', 'python', 'php'] as const).map((lang) => (
                 <button
@@ -130,7 +130,7 @@ curl_close($ch);
         {/* Key Guarantees */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="p-4 rounded-xl bg-surface-elevated border border-border-subtle space-y-1.5">
-            <div className="font-bold text-black dark:text-white flex items-center gap-1.5">
+            <div className="font-bold text-fg-heading flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-500" />
               <span>Idempotent Postback Processing</span>
             </div>
@@ -141,7 +141,7 @@ curl_close($ch);
           </div>
 
           <div className="p-4 rounded-xl bg-surface-elevated border border-border-subtle space-y-1.5">
-            <div className="font-bold text-black dark:text-white flex items-center gap-1.5">
+            <div className="font-bold text-fg-heading flex items-center gap-1.5">
               <ShieldAlert className="w-4 h-4 text-blue-500" />
               <span>Response Codes & Schema</span>
             </div>

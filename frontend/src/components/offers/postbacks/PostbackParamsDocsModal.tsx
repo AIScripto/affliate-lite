@@ -23,7 +23,7 @@ export function PostbackParamsDocsModal({ isOpen, onClose }: PostbackParamsDocsM
         <div className="rounded-xl border border-border-subtle overflow-hidden">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-surface-elevated border-b border-border-subtle text-[11px] font-bold text-black dark:text-white uppercase tracking-wider">
+              <tr className="bg-surface-elevated border-b border-border-subtle text-[11px] font-bold text-fg-heading uppercase tracking-wider">
                 <th className="py-2.5 px-3 bg-surface-elevated">Parameter</th>
                 <th className="py-2.5 px-3 bg-surface-elevated">Required?</th>
                 <th className="py-2.5 px-3 bg-surface-elevated">Description</th>

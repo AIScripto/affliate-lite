@@ -422,7 +422,7 @@ export function PublishersView() {
       {showAddForm && (
         <form
           onSubmit={handleCreatePublisher}
-          className="titlebar-3d-gradient p-5 rounded-2xl shadow-lg border border-border-subtle space-y-4"
+          className="panel-card p-5 space-y-4"
         >
             <div className="flex items-center justify-between border-b border-border-subtle pb-3">
               <h2 className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-2">
@@ -437,7 +437,7 @@ export function PublishersView() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Name */}
               <div>
-                <label className="block text-xs font-bold text-black dark:text-white mb-1">
+                <label className="block text-xs font-bold text-fg-heading mb-1">
                   Name <span className="text-danger">*</span>
                 </label>
                 <input
@@ -448,16 +448,16 @@ export function PublishersView() {
                     setName(e.target.value);
                     if (errors.name) setErrors({ ...errors, name: undefined });
                   }}
-                  className={`w-full bg-surface border ${
-                    errors.name ? 'border-danger' : 'border-border-subtle'
-                  } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary transition`}
+                  className={`w-full bg-surface-elevated/60 border ${
+                    errors.name ? 'border-danger' : 'border-border-subtle focus:border-primary'
+                  } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none transition shadow-sm`}
                 />
                 {errors.name && <p className="text-[11px] text-danger mt-1">{errors.name}</p>}
               </div>
 
               {/* Email */}
               <div>
-                <label className="block text-xs font-bold text-black dark:text-white mb-1">
+                <label className="block text-xs font-bold text-fg-heading mb-1">
                   Email <span className="text-danger">*</span>
                 </label>
                 <input
@@ -468,16 +468,16 @@ export function PublishersView() {
                     setEmail(e.target.value);
                     if (errors.email) setErrors({ ...errors, email: undefined });
                   }}
-                  className={`w-full bg-surface border ${
-                    errors.email ? 'border-danger' : 'border-border-subtle'
-                  } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary transition`}
+                  className={`w-full bg-surface-elevated/60 border ${
+                    errors.email ? 'border-danger' : 'border-border-subtle focus:border-primary'
+                  } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none transition shadow-sm`}
                 />
                 {errors.email && <p className="text-[11px] text-danger mt-1">{errors.email}</p>}
               </div>
 
               {/* Password */}
               <div>
-                <label className="block text-xs font-bold text-black dark:text-white mb-1">
+                <label className="block text-xs font-bold text-fg-heading mb-1">
                   Password <span className="text-danger">*</span>
                 </label>
                 <input
@@ -488,9 +488,9 @@ export function PublishersView() {
                     setPassword(e.target.value);
                     if (errors.password) setErrors({ ...errors, password: undefined });
                   }}
-                  className={`w-full bg-surface border ${
-                    errors.password ? 'border-danger' : 'border-border-subtle'
-                  } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary transition`}
+                  className={`w-full bg-surface-elevated/60 border ${
+                    errors.password ? 'border-danger' : 'border-border-subtle focus:border-primary'
+                  } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none transition shadow-sm`}
                 />
                 {errors.password && <p className="text-[11px] text-danger mt-1">{errors.password}</p>}
               </div>
@@ -498,13 +498,13 @@ export function PublishersView() {
 
             {/* Publisher Type */}
             <div>
-              <label className="block text-xs font-bold text-black dark:text-white mb-1">
+              <label className="block text-xs font-bold text-fg-heading mb-1">
                 Publisher Type
               </label>
               <select
                 value={publisherType}
                 onChange={(e) => setPublisherType(e.target.value as PublisherType)}
-                className="w-full md:w-1/3 bg-surface border border-border-subtle text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary transition"
+                className="w-full md:w-1/3 bg-surface-elevated/60 border border-border-subtle text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary transition shadow-sm"
               >
                 <option value="Publisher">Publisher</option>
                 <option value="SubPublisher">SubPublisher</option>
@@ -514,7 +514,7 @@ export function PublishersView() {
             {/* Offers Multi-Select (Matches Oval Media badge chips with '×' removal) */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold text-black dark:text-white">
+                <label className="block text-xs font-bold text-fg-heading">
                   Offers
                 </label>
                 <div className="flex items-center gap-3 text-[11px]">
@@ -613,7 +613,7 @@ export function PublishersView() {
             {/* Postback (Optional) with 1-Click Parameter Token Appender */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-bold text-black dark:text-white">
+                <label className="block text-xs font-bold text-fg-heading">
                   Postback (Optional)
                 </label>
                 <span className="text-[11px] text-fg-muted">
@@ -746,7 +746,7 @@ export function PublishersView() {
         <div className="space-y-4 text-xs">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block font-bold text-black dark:text-white mb-1">Name</label>
+              <label className="block font-bold text-fg-heading mb-1">Name</label>
               <input
                 type="text"
                 value={editName}
@@ -755,7 +755,7 @@ export function PublishersView() {
               />
             </div>
             <div>
-              <label className="block font-bold text-black dark:text-white mb-1">Email</label>
+              <label className="block font-bold text-fg-heading mb-1">Email</label>
               <input
                 type="email"
                 value={editEmail}
@@ -767,7 +767,7 @@ export function PublishersView() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block font-bold text-black dark:text-white mb-1">Publisher Type</label>
+              <label className="block font-bold text-fg-heading mb-1">Publisher Type</label>
               <select
                 value={editPublisherType}
                 onChange={(e) => setEditPublisherType(e.target.value as PublisherType)}
@@ -778,7 +778,7 @@ export function PublishersView() {
               </select>
             </div>
             <div>
-              <label className="block font-bold text-black dark:text-white mb-1">
+              <label className="block font-bold text-fg-heading mb-1">
                 Reset Password (Optional)
               </label>
               <input
@@ -794,7 +794,7 @@ export function PublishersView() {
           {/* Edit Offers */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block font-bold text-black dark:text-white">Assigned Offers</label>
+              <label className="block font-bold text-fg-heading">Assigned Offers</label>
               <div className="flex items-center gap-2 text-[10px]">
                 <button
                   type="button"
@@ -869,7 +869,7 @@ export function PublishersView() {
 
           {/* Edit Postback URL */}
           <div>
-            <label className="block font-bold text-black dark:text-white mb-1">
+            <label className="block font-bold text-fg-heading mb-1">
               Postback URL (Optional)
             </label>
             <input

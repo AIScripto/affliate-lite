@@ -21,7 +21,7 @@ export function TargetingUrlsGuideModal({ isOpen, onClose }: TargetingUrlsGuideM
         </p>
 
         <div className="p-4 rounded-xl bg-surface-elevated border border-border-subtle space-y-2">
-          <div className="flex items-center gap-2 font-bold text-sm text-black dark:text-white">
+          <div className="flex items-center gap-2 font-bold text-sm text-fg-heading">
             <Globe className="w-4 h-4 text-primary" />
             <span>Localized Landing Pages & Geo-Specific Routing</span>
           </div>
@@ -33,7 +33,7 @@ export function TargetingUrlsGuideModal({ isOpen, onClose }: TargetingUrlsGuideM
         </div>
 
         <div className="p-4 rounded-xl bg-surface-elevated border border-border-subtle space-y-2">
-          <div className="flex items-center gap-2 font-bold text-sm text-black dark:text-white">
+          <div className="flex items-center gap-2 font-bold text-sm text-fg-heading">
             <GitFork className="w-4 h-4 text-emerald-500" />
             <span>A/B Split-Testing with Weights (%)</span>
           </div>
@@ -45,7 +45,7 @@ export function TargetingUrlsGuideModal({ isOpen, onClose }: TargetingUrlsGuideM
         </div>
 
         <div className="p-4 rounded-xl bg-surface-elevated border border-border-subtle space-y-2">
-          <div className="flex items-center gap-2 font-bold text-sm text-black dark:text-white">
+          <div className="flex items-center gap-2 font-bold text-sm text-fg-heading">
             <ShieldCheck className="w-4 h-4 text-blue-500" />
             <span>Macro Substitution & Fallback</span>
           </div>

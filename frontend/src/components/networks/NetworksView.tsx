@@ -235,7 +235,7 @@ export function NetworksView() {
       {showAddForm && (
         <form
           onSubmit={handleCreateNetwork}
-          className="titlebar-3d-gradient p-5 rounded-2xl shadow-lg border border-border-subtle"
+          className="panel-card p-5"
         >
           <h2 className="text-xs font-bold uppercase tracking-wider text-primary mb-3">
             Add New Network / Advertiser
@@ -243,7 +243,7 @@ export function NetworksView() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name */}
             <div>
-              <label className="block text-xs font-bold text-black dark:text-white mb-1">
+              <label className="block text-xs font-bold text-fg-heading mb-1">
                 Name <span className="text-danger">*</span>
               </label>
               <input
@@ -254,9 +254,9 @@ export function NetworksView() {
                   setName(e.target.value);
                   if (nameError) setNameError(null);
                 }}
-                className={`w-full bg-surface border ${
-                  nameError ? 'border-danger' : 'border-border-subtle'
-                } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary transition`}
+                className={`w-full bg-surface-elevated/60 border ${
+                  nameError ? 'border-danger' : 'border-border-subtle focus:border-primary'
+                } text-fg rounded-lg px-3 py-2 text-xs focus:outline-none transition shadow-sm`}
               />
               {nameError && (
                 <p className="text-[11px] text-danger mt-1">{nameError}</p>
@@ -265,7 +265,7 @@ export function NetworksView() {
 
             {/* Free-text Contact Details */}
             <div>
-              <label className="block text-xs font-bold text-black dark:text-white mb-1">
+              <label className="block text-xs font-bold text-fg-heading mb-1">
                 Contact Details
               </label>
               <input
@@ -273,7 +273,7 @@ export function NetworksView() {
                 placeholder="Enter Telegram, Email, or Skype (Optional)"
                 value={contactDetails}
                 onChange={(e) => setContactDetails(e.target.value)}
-                className="w-full bg-surface border border-border-subtle text-fg rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary transition"
+                className="w-full bg-surface-elevated/60 border border-border-subtle focus:border-primary text-fg rounded-lg px-3 py-2 text-xs focus:outline-none transition shadow-sm"
               />
             </div>
           </div>
@@ -373,7 +373,7 @@ export function NetworksView() {
       >
         <div className="space-y-4 text-xs">
           <div>
-            <label className="block font-bold text-black dark:text-white mb-1">Name</label>
+            <label className="block font-bold text-fg-heading mb-1">Name</label>
             <input
               type="text"
               value={editName}
@@ -382,7 +382,7 @@ export function NetworksView() {
             />
           </div>
           <div>
-            <label className="block font-bold text-black dark:text-white mb-1">Contact Details</label>
+            <label className="block font-bold text-fg-heading mb-1">Contact Details</label>
             <input
               type="text"
               value={editContact}
