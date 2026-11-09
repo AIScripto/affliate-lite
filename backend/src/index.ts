@@ -1,14 +1,19 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import apiRouter from './routes';
 import prisma from './db/prisma';
-import { handleClickRedirect, handlePostback } from './controllers/trackingController';
+import { handleClickRedirect } from './controllers/trackingController';
+import { handlePostback, handlePixelImage, handlePixelFrame } from './controllers/postbackReceiverController';
+import { TRUST_PROXY_HOPS } from './utils/clientIp';
 import { asyncHandler } from './utils/asyncRouter';
+import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
 
 const app = express();
+// Real visitor IP from nginx (and Caddy, if added) instead of the proxy's address
+app.set('trust proxy', TRUST_PROXY_HOPS);
 const PORT = process.env.PORT || 3086;
 
 // Middleware
@@ -50,6 +55,12 @@ app.get('/click', asyncHandler(handleClickRedirect));
 app.get('/api/v1/click', asyncHandler(handleClickRedirect));
 
 // Global S2S Postback Receiver ([03:48], [06:24]–[06:58])
+// Browser pixels advertised in the offer builder (Image / IFrame)
+for (const prefix of ['', '/api/v1']) {
+  app.get(`${prefix}/postback/pixel.jpg`, asyncHandler(handlePixelImage));
+  app.get(`${prefix}/postback/pixel.gif`, asyncHandler(handlePixelImage));
+  app.get(`${prefix}/postback/pixel.html`, asyncHandler(handlePixelFrame));
+}
 app.get('/postback', asyncHandler(handlePostback));
 app.post('/postback', asyncHandler(handlePostback));
 app.get('/api/v1/postback', asyncHandler(handlePostback));
@@ -63,16 +74,8 @@ app.use((_req: Request, res: Response) => {
   res.status(404).json({ error: 'Not Found', message: 'API route not found' });
 });
 
-// Global Error Handler: log full details on the server, never send internal error text to clients
-app.use((err: Error & { type?: string }, req: Request, res: Response, _next: NextFunction) => {
-  if (err.type === 'entity.parse.failed') {
-    res.status(400).json({ error: 'Bad Request', message: 'Request body is not valid JSON' });
-    return;
-  }
-  console.error(`[Server Error] ${req.method} ${req.originalUrl}:`, err);
-  if (res.headersSent) return;
-  res.status(500).json({ error: 'Internal Server Error', message: 'Something went wrong. Please try again.' });
-});
+// Global Error Handler
+app.use(errorHandler);
 
 // Last-resort safety net: log and keep serving instead of stopping the process
 process.on('unhandledRejection', (reason) => {

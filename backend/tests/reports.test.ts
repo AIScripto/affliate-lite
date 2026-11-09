@@ -14,6 +14,7 @@ import { ReportsQuerySchema } from '../src/schemas';
 import { CLICK_ID_PATTERN, firstParam } from '../src/constants/tracking';
 import { TIMELINE_BUCKET_COUNT, TIMELINE_MIN_SPAN_HOURS } from '../src/constants/reports';
 import { asyncHandler } from '../src/utils/asyncRouter';
+import { errorHandler, GENERIC_ERROR_MESSAGE } from '../src/middleware/errorHandler';
 
 const HOUR = 3600 * 1000;
 const day = (iso: string) => new Date(`${iso}T00:00:00.000Z`);
@@ -237,5 +238,35 @@ describe('asyncHandler', () => {
       })({} as never, {} as never, resolve);
     });
     assert.match(String(received), /sync/);
+  });
+});
+
+describe('errorHandler', () => {
+  function fakeRes() {
+    const res = { statusCode: 0, body: undefined as unknown, headersSent: false,
+      status(code: number) { res.statusCode = code; return res; },
+      json(b: unknown) { res.body = b; return res; } };
+    return res;
+  }
+  const req = { method: 'GET', originalUrl: '/x' } as never;
+
+  it('error recovery: database errors become a generic 500 without internal details', () => {
+    const res = fakeRes();
+    const original = console.error;
+    console.error = () => {};
+    try {
+      errorHandler(new Error('Invalid `prisma.click.create()` invocation: column sub_id too long'), req, res as never, () => {});
+    } finally {
+      console.error = original;
+    }
+    assert.equal(res.statusCode, 500);
+    assert.deepEqual(res.body, { error: 'Internal Server Error', message: GENERIC_ERROR_MESSAGE });
+    assert.doesNotMatch(JSON.stringify(res.body), /prisma|column/);
+  });
+
+  it('edge: malformed JSON body is a 400, not a 500', () => {
+    const res = fakeRes();
+    errorHandler(Object.assign(new Error('Unexpected token'), { type: 'entity.parse.failed' }), req, res as never, () => {});
+    assert.equal(res.statusCode, 400);
   });
 });

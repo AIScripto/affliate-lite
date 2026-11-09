@@ -1,5 +1,7 @@
 import { z } from 'zod';
+import { PostbackDirection, PostbackOutcome } from '@prisma/client';
 import { REPORT_STATUS_FILTERS, REPORT_SEARCH_MAX_LENGTH } from '../constants/reports';
+import { POSTBACK_LOG_PAGE_SIZE } from '../constants/postback';
 
 export const LoginSchema = z.object({
   email: z.string().trim().email('Please enter a valid email address.'),
@@ -155,6 +157,16 @@ export const ReportsQuerySchema = z
     maxAmount: optionalAmount('Maximum amount'),
   })
   .passthrough();
+
+/** Filters for the admin postback log. */
+export const PostbackLogsQuerySchema = z.object({
+  clickId: z.string().trim().max(100).optional(),
+  offerId: optionalId('Offer'),
+  publisherId: optionalId('Publisher'),
+  direction: z.nativeEnum(PostbackDirection, { errorMap: () => ({ message: 'Please select a valid direction.' }) }).optional(),
+  outcome: z.nativeEnum(PostbackOutcome, { errorMap: () => ({ message: 'Please select a valid outcome.' }) }).optional(),
+  limit: z.coerce.number().int().min(1).max(POSTBACK_LOG_PAGE_SIZE).default(POSTBACK_LOG_PAGE_SIZE),
+});
 
 export const ClickQuerySchema = z.object({
   offer_id: z.string().regex(/^\d+$/, 'Invalid offer_id'),

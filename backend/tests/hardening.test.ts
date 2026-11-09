@@ -104,14 +104,22 @@ test('Crash safety: unknown UUID clickid returns 404; malformed JSON body return
   await assertServerAlive();
 });
 
-test('Crash safety: unexpected database error returns generic 500 without internals', async () => {
-  const offer = await prisma.offer.findFirst({ where: { status: 'ACTIVE' } });
+test('Click input: long sub_id is shortened, out-of-range ids get 400 or master fallback', async () => {
+  const offer = await prisma.offer.findFirst({ where: { status: 'ACTIVE', visibility: 'PUBLIC' } });
   assert.ok(offer);
-  // sub_id column is VARCHAR(255): 300 chars makes the insert fail inside Prisma
-  const res = await get(`/click?offer_id=${offer.id}&json=1&sub_id=${'x'.repeat(300)}`);
-  assert.equal(res.status, 500);
-  const text = await res.text();
-  assert.doesNotMatch(text, /prisma|invocation|column/i, 'no internal error details in response');
+
+  const long = await get(`/click?offer_id=${offer.id}&json=1&sub_id=${'x'.repeat(300)}`);
+  assert.equal(long.status, 200, 'was a 500 database error before');
+  const stored = await prisma.click.findUniqueOrThrow({ where: { id: (await long.json()).clickId } });
+  assert.ok(stored.subId!.length <= 255);
+
+  assert.equal((await get('/click?offer_id=99999999999&json=1')).status, 400);
+  assert.equal((await get('/click?offer_id=1.5&json=1')).status, 400);
+
+  // Invalid aff_id is treated as missing: zero-leak master fallback (DOD Rule 6)
+  const fallback = await get(`/click?offer_id=${offer.id}&aff_id=99999999999&json=1`);
+  assert.equal(fallback.status, 200);
+  assert.equal((await fallback.json()).isMasterFallback, true);
   await assertServerAlive();
 });
 

@@ -265,9 +265,16 @@ test('Gate 5: Macro Replacement & S2S Postback ([04:40], [06:24])', async () => 
   assert.equal(postbackData.payout, 150.0);
   assert.equal(postbackData.revenue, 225.0);
 
-  // 3. Test duplicate conversion restriction
+  // 3. Same postback again (network retry): idempotent 200, nothing new recorded (DOD Rule 6)
   const duplicateRes = await fetch(`${baseUrl}/postback?clickid=${clickData.clickId}&goal=1`);
-  assert.equal(duplicateRes.status, 409, 'Duplicate postback must be rejected when allowDuplicateConversions is false');
+  assert.equal(duplicateRes.status, 200);
+  const duplicateData = await duplicateRes.json();
+  assert.equal(duplicateData.duplicate, true);
+  assert.equal(duplicateData.conversionId, postbackData.conversionId);
+
+  // 4. A second goal on the same click is refused when allowDuplicateConversions is false
+  const secondGoalRes = await fetch(`${baseUrl}/postback?clickid=${clickData.clickId}&goal=2`);
+  assert.equal(secondGoalRes.status, 409, 'Second conversion must be rejected when allowDuplicateConversions is false');
 });
 
 test('Gate 6: Dashboard & Report Calculations ([00:13], [07:35])', async () => {

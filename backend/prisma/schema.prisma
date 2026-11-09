@@ -73,6 +73,25 @@ enum ConversionStatus {
   @@map("conversion_status")
 }
 
+enum PostbackDirection {
+  INBOUND
+  OUTBOUND
+
+  @@map("postback_direction")
+}
+
+enum PostbackOutcome {
+  CREATED
+  STATUS_UPDATED
+  DUPLICATE
+  REJECTED
+  SENT
+  FAILED
+  BLOCKED
+
+  @@map("postback_outcome")
+}
+
 model User {
   id           Int          @id @default(autoincrement())
   name         String       @db.VarChar(150)
@@ -245,6 +264,7 @@ model Conversion {
   payout       Decimal          @default(0.00) @db.Decimal(12, 2)
   externalTxId String?          @map("external_tx_id") @db.VarChar(255)
   createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   click     Click   @relation(fields: [clickId], references: [id], onDelete: Restrict)
   offer     Offer   @relation(fields: [offerId], references: [id], onDelete: Cascade)
@@ -254,4 +274,26 @@ model Conversion {
   @@unique([clickId, goalValue], map: "idx_conversions_click_goal_unique")
   @@index([createdAt, networkId, offerId, publisherId, status], map: "idx_conversions_report")
   @@map("conversions")
+}
+
+/// Every postback received from a network (INBOUND) or sent to a publisher (OUTBOUND),
+/// accepted or not, so missing conversions can be traced. No foreign keys: logs outlive deleted offers.
+model PostbackLog {
+  id           Int               @id @default(autoincrement())
+  direction    PostbackDirection
+  outcome      PostbackOutcome
+  httpStatus   Int               @map("http_status")
+  message      String?           @db.VarChar(500)
+  clickId      String?           @map("click_id") @db.VarChar(100)
+  conversionId Int?              @map("conversion_id")
+  offerId      Int?              @map("offer_id")
+  publisherId  Int?              @map("publisher_id")
+  method       String            @db.VarChar(10)
+  params       Json              @default("{}")
+  ipAddress    String?           @map("ip_address") @db.VarChar(45)
+  createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([createdAt], map: "idx_postback_logs_created")
+  @@index([clickId], map: "idx_postback_logs_click")
+  @@map("postback_logs")
 }

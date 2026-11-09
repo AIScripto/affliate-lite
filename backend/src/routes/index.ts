@@ -6,6 +6,7 @@ import domainsRoutes from './domainsRoutes';
 import networksRoutes from './networksRoutes';
 import offersRoutes from './offersRoutes';
 import reportsRoutes from './reportsRoutes';
+import postbackLogsRoutes from './postbackLogsRoutes';
 
 const router = createRouter();
 
@@ -16,5 +17,6 @@ router.use('/domains', domainsRoutes);
 router.use('/networks', networksRoutes);
 router.use('/offers', offersRoutes);
 router.use('/reports', reportsRoutes);
+router.use('/postback-logs', postbackLogsRoutes);
 
 export default router;

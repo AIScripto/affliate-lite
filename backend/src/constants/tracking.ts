@@ -8,3 +8,14 @@ export function firstParam(value: unknown): string | undefined {
   const str = String(raw).trim();
   return str === '' ? undefined : str;
 }
+
+/** Largest value of a Postgres INTEGER id column. */
+export const MAX_DB_INT_ID = 2_147_483_647;
+
+/** A positive whole-number database id, or undefined for anything else (text, decimals, too large). */
+export function parseDbId(value: unknown): number | undefined {
+  const raw = firstParam(value);
+  if (!raw || !/^\d+$/.test(raw)) return undefined;
+  const id = Number(raw);
+  return id >= 1 && id <= MAX_DB_INT_ID ? id : undefined;
+}
