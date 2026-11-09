@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { createRouter } from '../utils/asyncRouter';
 import {
   createNetwork,
   getNetworks,
@@ -11,7 +11,7 @@ import { validate } from '../middleware/validate';
 import { CreateNetworkSchema, UpdateNetworkSchema } from '../schemas';
 import { authenticate, requireRole } from '../middleware/auth';
 
-const router = Router();
+const router = createRouter();
 
 router.use(authenticate, requireRole('ADMIN'));
 

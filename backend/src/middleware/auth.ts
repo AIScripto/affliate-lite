@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserRole } from '@prisma/client';
+import { isHiddenFromPublisher } from '../constants/security';
 
 export function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
@@ -98,17 +99,21 @@ export function requireRole(allowedRole: UserRole) {
 }
 
 /**
- * Strips revenue, totalProfit, and totalIncome fields from responses when user is PUBLISHER
- * Per specs/backend/04-Backend-DoD-Skill.md Section 2.
+ * Removes advertiser money, platform margin, and secrets from responses when user is PUBLISHER.
+ * Field rules live in constants/security.ts. Per specs/backend/04-Backend-DoD-Skill.md Section 2.
  */
-function cleanPublisherData(data: unknown): unknown {
+export function cleanPublisherData(data: unknown): unknown {
   if (Array.isArray(data)) {
     return data.map(cleanPublisherData);
+  }
+  // Dates and Prisma Decimals serialise via toJSON; rebuilding them field by field would turn them into {}
+  if (data !== null && typeof data === 'object' && typeof (data as { toJSON?: unknown }).toJSON === 'function') {
+    return (data as { toJSON: () => unknown }).toJSON();
   }
   if (data !== null && typeof data === 'object') {
     const copy: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
-      if (key === 'revenue' || key === 'totalProfit' || key === 'totalIncome') {
+      if (isHiddenFromPublisher(key)) {
         continue;
       }
       copy[key] = cleanPublisherData(value);

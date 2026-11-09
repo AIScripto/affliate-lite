@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import crypto from 'node:crypto';
 import { prisma } from '../db/prisma';
+import { CLICK_ID_PATTERN, firstParam } from '../constants/tracking';
 
 /**
  * Validates that an outbound postback URL is a public web address
@@ -194,13 +195,19 @@ export async function handleClickRedirect(req: Request, res: Response): Promise<
  */
 export async function handlePostback(req: Request, res: Response): Promise<void> {
   const query = { ...req.query, ...req.body };
-  const clickId = (query.clickid || query.click_id) as string;
+  const clickId = firstParam(query.clickid) ?? firstParam(query.click_id);
   const goalValue = (query.goal as string) || '1';
   const sumOverride = query.sum ? parseFloat(query.sum as string) : undefined;
   const statusParam = (query.status as string) || '1';
 
   if (!clickId) {
     res.status(400).json({ error: 'Bad Request', message: 'Missing clickid parameter' });
+    return;
+  }
+
+  // Networks often send the macro text itself (e.g. "{clickid}") when it is not set up yet
+  if (!CLICK_ID_PATTERN.test(clickId)) {
+    res.status(400).json({ error: 'Bad Request', message: 'Invalid clickid format', clickid: clickId.slice(0, 100) });
     return;
   }
 

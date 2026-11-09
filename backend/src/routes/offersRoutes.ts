@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { createRouter } from '../utils/asyncRouter';
 import {
   createOffer,
   getOffers,
@@ -17,7 +17,7 @@ import { validate } from '../middleware/validate';
 import { UpsertOfferSchema } from '../schemas';
 import { authenticate, requireRole, stripPublisherFinancials } from '../middleware/auth';
 
-const router = Router();
+const router = createRouter();
 
 // Read operations accessible to both ADMIN and PUBLISHER (with financial stripping)
 router.get('/', authenticate, stripPublisherFinancials, getOffers);

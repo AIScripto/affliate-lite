@@ -85,7 +85,9 @@ describe('Reports Module & Export Utilities Test Suite', () => {
       ],
     };
     const html = buildReportPrintHtml(nullDoc);
-    assert.ok(html.includes('<td>-</td>'));
+    // Money column gets the "num" class, text column an empty class; both show "-"
+    assert.ok(html.includes('<td class="num">-</td>'));
+    assert.ok(html.includes('<td class="">-</td>'));
   });
 
   it('error recovery: handles special HTML characters safely against XSS', () => {

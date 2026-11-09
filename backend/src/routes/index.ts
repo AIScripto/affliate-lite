@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { createRouter } from '../utils/asyncRouter';
 import authRoutes from './authRoutes';
 import dashboardRoutes from './dashboardRoutes';
 import publishersRoutes from './publishersRoutes';
@@ -7,7 +7,7 @@ import networksRoutes from './networksRoutes';
 import offersRoutes from './offersRoutes';
 import reportsRoutes from './reportsRoutes';
 
-const router = Router();
+const router = createRouter();
 
 router.use('/auth', authRoutes);
 router.use('/dashboard', dashboardRoutes);

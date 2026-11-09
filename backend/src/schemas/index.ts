@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { REPORT_STATUS_FILTERS, REPORT_SEARCH_MAX_LENGTH } from '../constants/reports';
 
 export const LoginSchema = z.object({
   email: z.string().trim().email('Please enter a valid email address.'),
@@ -116,6 +117,44 @@ export const DashboardQuerySchema = z.object({
   endDate: z.string().optional(),
   currency: z.enum(['USD', 'EUR', 'GBP', 'PKR', 'AED']).default('USD'),
 });
+
+const optionalDate = (field: string) =>
+  z
+    .string()
+    .trim()
+    .optional()
+    .refine((v) => !v || !Number.isNaN(new Date(v).getTime()), { message: `${field} must be a valid date (YYYY-MM-DD).` });
+
+const optionalId = (field: string) =>
+  z.preprocess(
+    (v) => (v === '' || v === undefined ? undefined : v),
+    z.coerce.number({ invalid_type_error: `${field} must be a number.` }).int(`${field} must be a whole number.`).positive(`${field} must be a positive whole number.`).optional()
+  );
+
+const optionalAmount = (field: string) =>
+  z.preprocess(
+    (v) => (v === '' || v === undefined ? undefined : v),
+    z.coerce.number({ invalid_type_error: `${field} must be a number.` }).min(0, `${field} cannot be negative.`).optional()
+  );
+
+/** Filters shared by all /reports endpoints. Unknown keys pass through untouched. */
+export const ReportsQuerySchema = z
+  .object({
+    dateFrom: optionalDate('Start date'),
+    dateTo: optionalDate('End date'),
+    search: z.string().max(REPORT_SEARCH_MAX_LENGTH, 'Search text is too long.').optional(),
+    networkId: optionalId('Network'),
+    publisherId: optionalId('Publisher'),
+    offerId: optionalId('Offer'),
+    status: z
+      .string()
+      .toUpperCase()
+      .pipe(z.enum(REPORT_STATUS_FILTERS, { errorMap: () => ({ message: 'Please select a valid status.' }) }))
+      .optional(),
+    minAmount: optionalAmount('Minimum amount'),
+    maxAmount: optionalAmount('Maximum amount'),
+  })
+  .passthrough();
 
 export const ClickQuerySchema = z.object({
   offer_id: z.string().regex(/^\d+$/, 'Invalid offer_id'),

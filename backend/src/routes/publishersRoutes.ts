@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { createRouter } from '../utils/asyncRouter';
 import {
   createPublisher,
   getPublishers,
@@ -15,7 +15,7 @@ import {
 } from '../schemas';
 import { authenticate, requireRole } from '../middleware/auth';
 
-const router = Router();
+const router = createRouter();
 
 // Publishers routes are restricted to ADMIN per RBAC Matrix (specs/backend/01-Architecture-and-Data-Models.md Section 4)
 router.use(authenticate, requireRole('ADMIN'));

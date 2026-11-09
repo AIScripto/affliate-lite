@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { prisma } from '../db/prisma';
-import { computeRealTimeline } from './reportsController';
+import { fetchTimeline, fetchDailyTotals } from '../services/timeline';
+import { DASHBOARD_HISTORY_DAYS, DASHBOARD_TOP_LIST_SIZE } from '../constants/reports';
 
 export async function getDashboardSummary(req: Request, res: Response): Promise<void> {
   const isPublisher = req.user?.role === 'PUBLISHER';
@@ -29,8 +30,7 @@ export async function getDashboardSummary(req: Request, res: Response): Promise<
     approvedConversions,
     uncheckedConversions,
     conversionSums,
-    allClicks,
-    allConversions,
+    timelineResult,
   ] = await Promise.all([
     prisma.click.count({ where: clickWhere }),
     prisma.click.count({
@@ -65,16 +65,7 @@ export async function getDashboardSummary(req: Request, res: Response): Promise<
         revenue: true,
       },
     }),
-    prisma.click.findMany({
-      where: clickWhere,
-      select: { createdAt: true },
-      orderBy: { createdAt: 'asc' },
-    }),
-    prisma.conversion.findMany({
-      where: conversionWhere,
-      select: { createdAt: true, status: true, payout: true, revenue: true },
-      orderBy: { createdAt: 'asc' },
-    }),
+    fetchTimeline({ publisherId }),
   ]);
 
   const totalPayout = Number(conversionSums._sum.payout || 0);
@@ -86,7 +77,7 @@ export async function getDashboardSummary(req: Request, res: Response): Promise<
   // EPC Formula: Payout / Clicks
   const epc = totalClicks > 0 ? Number((totalPayout / totalClicks).toFixed(2)) : 0.0;
 
-  const { timeline, trends } = computeRealTimeline(allClicks, allConversions);
+  const { timeline, trends } = timelineResult;
 
   // Calculate yesterday's boundary for authentic day-over-day trends
   const yesterdayStart = new Date(startOfToday);
@@ -115,115 +106,59 @@ export async function getDashboardSummary(req: Request, res: Response): Promise<
     ? Math.round(((todayConversions - yesterdayConversions) / yesterdayConversions) * 100)
     : todayConversions > 0 ? 100 : 0;
 
-  // Traffic for last 30 days
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-  const [clicksHistory, conversionsHistory] = await Promise.all([
-    prisma.click.findMany({
-      where: {
-        ...clickWhere,
-        createdAt: { gte: thirtyDaysAgo },
-      },
-      select: { createdAt: true },
-    }),
-    prisma.conversion.findMany({
-      where: {
-        ...conversionWhere,
-        createdAt: { gte: thirtyDaysAgo },
-      },
-      select: { createdAt: true, payout: true, revenue: true },
-    }),
-  ]);
-
-  // Group by date (YYYY-MM-DD)
-  const dayMap = new Map<string, { clicks: number; conversions: number; profit: number; income: number; payout: number }>();
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const dateStr = d.toISOString().split('T')[0] ?? '';
-    dayMap.set(dateStr, { clicks: 0, conversions: 0, profit: 0, income: 0, payout: 0 });
-  }
-
-  clicksHistory.forEach((c) => {
-    const dateStr = c.createdAt.toISOString().split('T')[0];
-    if (dateStr && dayMap.has(dateStr)) {
-      const entry = dayMap.get(dateStr)!;
-      entry.clicks += 1;
-    }
-  });
-
-  conversionsHistory.forEach((c) => {
-    const dateStr = c.createdAt.toISOString().split('T')[0];
-    if (dateStr && dayMap.has(dateStr)) {
-      const entry = dayMap.get(dateStr)!;
-      entry.conversions += 1;
-      const rev = Number(c.revenue);
-      const pay = Number(c.payout);
-      entry.income += rev;
-      entry.payout += pay;
-      entry.profit += rev - pay;
-    }
-  });
-
-  const trafficLast30Days = Array.from(dayMap.entries()).map(([date, data]) => ({
-    date,
-    clicks: data.clicks,
-    conversions: data.conversions,
-    totalProfit: Number(data.profit.toFixed(2)),
-    totalIncome: Number(data.income.toFixed(2)),
-    payout: Number(data.payout.toFixed(2)),
+  // Traffic for last 30 days (grouped by day inside Postgres)
+  const daily = await fetchDailyTotals({ publisherId }, DASHBOARD_HISTORY_DAYS);
+  const trafficLast30Days = daily.map((d) => ({
+    date: d.date,
+    clicks: d.clicks,
+    conversions: d.conversions,
+    totalProfit: Number((d.revenue - d.payout).toFixed(2)),
+    totalIncome: d.revenue,
+    payout: d.payout,
   }));
 
-  // Top Offers: sorted by conversions DESC, clicks DESC per [01:04]
-  const offers = await prisma.offer.findMany({
-    select: {
-      id: true,
-      name: true,
-      clicks: {
-        where: clickWhere,
-        select: { id: true },
-      },
-      conversions: {
-        where: conversionWhere,
-        select: { id: true },
-      },
-    },
-  });
+  // Top Offers and Top Publishers: sorted by conversions DESC, clicks DESC per [01:04].
+  // Counted with groupBy so no click rows are loaded into memory.
+  const [offers, offerClicks, offerConvs, publishers, pubClicks, pubConvs] = await Promise.all([
+    prisma.offer.findMany({ select: { id: true, name: true } }),
+    prisma.click.groupBy({ by: ['offerId'], where: clickWhere, _count: { _all: true } }),
+    prisma.conversion.groupBy({ by: ['offerId'], where: conversionWhere, _count: { _all: true } }),
+    prisma.user.findMany({
+      where: { role: 'PUBLISHER', ...(publisherId ? { id: publisherId } : {}) },
+      select: { id: true, name: true },
+    }),
+    prisma.click.groupBy({ by: ['publisherId'], where: clickWhere, _count: { _all: true } }),
+    prisma.conversion.groupBy({ by: ['publisherId'], where: conversionWhere, _count: { _all: true } }),
+  ]);
 
+  const countMap = <K extends string>(rows: Array<Record<K, number> & { _count: { _all: number } }>, key: K) =>
+    new Map(rows.map((r) => [r[key], r._count._all]));
+  const byConversionsThenClicks = (a: { conversions: number; clicks: number }, b: { conversions: number; clicks: number }) =>
+    b.conversions - a.conversions || b.clicks - a.clicks;
+
+  const offerClickMap = countMap(offerClicks, 'offerId');
+  const offerConvMap = countMap(offerConvs, 'offerId');
   const topOffers = offers
     .map((o) => ({
       id: o.id,
       name: o.name,
-      clicks: o.clicks.length,
-      conversions: o.conversions.length,
+      clicks: offerClickMap.get(o.id) || 0,
+      conversions: offerConvMap.get(o.id) || 0,
     }))
-    .sort((a, b) => b.conversions - a.conversions || b.clicks - a.clicks)
-    .slice(0, 10);
+    .sort(byConversionsThenClicks)
+    .slice(0, DASHBOARD_TOP_LIST_SIZE);
 
-  // Top Publishers: sorted by conversions DESC, clicks DESC
-  const publishers = await prisma.user.findMany({
-    where: {
-      role: 'PUBLISHER',
-      ...(publisherId ? { id: publisherId } : {}),
-    },
-    select: {
-      id: true,
-      name: true,
-      clicks: { select: { id: true } },
-      conversions: { select: { id: true } },
-    },
-  });
-
+  const pubClickMap = countMap(pubClicks, 'publisherId');
+  const pubConvMap = countMap(pubConvs, 'publisherId');
   const topPublishers = publishers
     .map((p) => ({
       id: p.id,
       name: p.name,
-      clicks: p.clicks.length,
-      conversions: p.conversions.length,
+      clicks: pubClickMap.get(p.id) || 0,
+      conversions: pubConvMap.get(p.id) || 0,
     }))
-    .sort((a, b) => b.conversions - a.conversions || b.clicks - a.clicks)
-    .slice(0, 10);
+    .sort(byConversionsThenClicks)
+    .slice(0, DASHBOARD_TOP_LIST_SIZE);
 
   res.json({
     kpis: {

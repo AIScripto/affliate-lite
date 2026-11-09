@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../db/prisma';
 
 export async function createOffer(req: Request, res: Response): Promise<void> {
@@ -139,31 +140,24 @@ export async function createOffer(req: Request, res: Response): Promise<void> {
   res.status(201).json(fullOffer);
 }
 
+/** Offers a publisher may see: PUBLIC, REQUIRES_APPROVAL, or PRIVATE offers assigned to them (ACTIVE only). */
+function publisherVisibleOffersWhere(publisherId: number): Prisma.OfferWhereInput {
+  return {
+    status: 'ACTIVE',
+    OR: [
+      { visibility: 'PUBLIC' },
+      { visibility: 'PRIVATE', publishers: { some: { publisherId, isEnabled: true } } },
+      { visibility: 'REQUIRES_APPROVAL' },
+    ],
+  };
+}
+
 export async function getOffers(req: Request, res: Response): Promise<void> {
   const isPublisher = req.user?.role === 'PUBLISHER';
   const publisherId = isPublisher ? req.user?.id : undefined;
 
-  let whereClause: Record<string, unknown> = {};
-
-  if (isPublisher && publisherId) {
-    // Publisher can see PUBLIC active offers OR PRIVATE active offers assigned to them
-    whereClause = {
-      status: 'ACTIVE',
-      OR: [
-        { visibility: 'PUBLIC' },
-        {
-          visibility: 'PRIVATE',
-          publishers: {
-            some: {
-              publisherId,
-              isEnabled: true,
-            },
-          },
-        },
-        { visibility: 'REQUIRES_APPROVAL' },
-      ],
-    };
-  }
+  const whereClause: Prisma.OfferWhereInput =
+    isPublisher && publisherId ? publisherVisibleOffersWhere(publisherId) : {};
 
   const offers = await prisma.offer.findMany({
     where: whereClause,
@@ -236,14 +230,18 @@ export async function getOfferById(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const offer = await prisma.offer.findUnique({
-    where: { id },
+  const isPublisher = req.user?.role === 'PUBLISHER';
+  const publisherId = isPublisher ? req.user?.id : undefined;
+
+  // Publishers only reach offers they can see in the list, and never the list of other assigned publishers
+  const offer = await prisma.offer.findFirst({
+    where: isPublisher && publisherId ? { id, ...publisherVisibleOffersWhere(publisherId) } : { id },
     include: {
       network: true,
       domain: true,
       targetingGroups: true,
       payouts: true,
-      publishers: {
+      publishers: isPublisher ? false : {
         include: {
           publisher: { select: { id: true, name: true, email: true, status: true } },
         },

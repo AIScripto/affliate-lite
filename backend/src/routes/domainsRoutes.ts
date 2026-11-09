@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { createRouter } from '../utils/asyncRouter';
 import {
   createDomain,
   getDomains,
@@ -9,7 +9,7 @@ import { validate } from '../middleware/validate';
 import { CreateDomainSchema, UpdateDomainStatusSchema } from '../schemas';
 import { authenticate, requireRole } from '../middleware/auth';
 
-const router = Router();
+const router = createRouter();
 
 router.use(authenticate, requireRole('ADMIN'));
 

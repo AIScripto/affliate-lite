@@ -129,9 +129,13 @@ test('Gate 2: Publisher Deactivation Cascade ([02:20])', async () => {
   });
   assert.equal(revokedAssignment, null, 'Assignments must be wiped upon setting status to INACTIVE');
 
-  // Verify click redirect is blocked for inactive publisher
+  // DOD Rule 6 (Zero-Leak): a click from an inactive publisher is not blocked;
+  // it is credited to the master account so the traffic is not lost
   const clickRes = await fetch(`${baseUrl}/click?offer_id=${offer.id}&aff_id=${pub.id}&json=1`);
-  assert.equal(clickRes.status, 403);
+  assert.equal(clickRes.status, 200);
+  const clickData = await clickRes.json();
+  assert.equal(clickData.isMasterFallback, true);
+  assert.notEqual(clickData.publisherId, pub.id, 'inactive publisher must not be credited');
 });
 
 test('Gate 3: Network Free-Text Contact Details ([03:06])', async () => {
