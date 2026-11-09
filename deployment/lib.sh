@@ -15,7 +15,9 @@ PUBLIC_HOST="${PUBLIC_HOST:-$( (hostname -I 2>/dev/null || true) | awk '{print $
 PUBLIC_HOST="${PUBLIC_HOST:-localhost}"
 
 COMPOSE="docker compose"
-[ -n "${APP_DOMAIN:-}" ] && COMPOSE="docker compose --profile https"
+
+# Public address shown in reports (the https domain served by the server's Caddy)
+APP_URL="${APP_URL:-https://affiliate.asesment.com}"
 
 # ── Output ────────────────────────────────────────────────────
 if [ -t 1 ]; then
@@ -148,8 +150,8 @@ status_report() { # status_report [result text]
   docker stats --no-stream --format '{{.Name}}  CPU {{.CPUPerc}}  Memory {{.MemUsage}}' "$FRONTEND_CONTAINER" "$BACKEND_CONTAINER" 2>/dev/null | sed 's/^/  /' || true
 
   echo; printf '%sOpen%s\n' "$BOLD" "$RESET"
-  printf '  App      http://%s:%s\n' "$PUBLIC_HOST" "$FRONTEND_PORT"
-  printf '  API      http://%s:%s/health\n' "$PUBLIC_HOST" "$BACKEND_PORT"
+  printf '  App      %s\n' "$APP_URL"
+  printf '  API      %s/api/v1/postback (postback link base)\n' "$APP_URL"
 
   if [ -f "$HISTORY_FILE" ]; then
     echo; printf '%sRecent deployments%s %s(newest last)%s\n' "$BOLD" "$RESET" "$DIM" "$RESET"

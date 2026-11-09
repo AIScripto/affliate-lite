@@ -1,6 +1,10 @@
 # Production stack for Affiliate Tracker.
 # Images are built by build-and-push.sh and selected with APP_TAG.
 # Use ./deploy.sh <tag> instead of running this file by hand.
+#
+# HTTPS is handled by the Caddy service already running on the server (shared by every site there),
+# see host-caddy.example. Ports are bound to 127.0.0.1 so the only way in is through Caddy (https).
+# Do NOT add a Caddy container here: it would take ports 80/443 from the shared Caddy and stop every site.
 name: affliate
 
 services:
@@ -32,8 +36,8 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
-      # Defaults to port 3086 on host
-      - "${BACKEND_BIND:-0.0.0.0}:${BACKEND_PORT:-3086}:3086"
+      # Only reachable from the server itself (Caddy -> nginx -> backend). Set BACKEND_BIND=0.0.0.0 to open it.
+      - "${BACKEND_BIND:-127.0.0.1}:${BACKEND_PORT:-3086}:3086"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3086/health || exit 1"]
       interval: 10s
@@ -51,33 +55,10 @@ services:
       backend:
         condition: service_healthy
     ports:
-      # Defaults to port 3085 on host
-      - "${FRONTEND_BIND:-0.0.0.0}:${FRONTEND_PORT:-3085}:80"
+      # Only reachable from the server itself; the public address is the https domain served by Caddy.
+      - "${FRONTEND_BIND:-127.0.0.1}:${FRONTEND_PORT:-3085}:80"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:80 || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
-
-  # ── HTTPS reverse proxy (optional): docker compose --profile https up -d ──
-  caddy:
-    image: caddy:2.8-alpine
-    profiles: ["https"]
-    container_name: affliate_caddy
-    restart: unless-stopped
-    environment:
-      APP_DOMAIN: ${APP_DOMAIN:-}
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      frontend:
-        condition: service_healthy
-
-volumes:
-  caddy_data:
-  caddy_config:

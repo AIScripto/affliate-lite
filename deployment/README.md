@@ -54,8 +54,8 @@ Automated deployment tooling for **Affiliate Tracker** on Ubuntu VM (`161.97.110
 | :--- | :--- |
 | `.env.backend` | Backend runtime secrets, port, CORS, and remote `DATABASE_URL` |
 | `.env.frontend` | Frontend build and proxy configuration |
-| `docker-compose.yml` | Multi-container stack (backend, frontend, migration job, optional caddy) |
-| `Caddyfile` | Optional automatic HTTPS reverse proxy configuration |
+| `docker-compose.yml` | Multi-container stack (backend, frontend, migration job). Ports bound to 127.0.0.1 |
+| `host-caddy.example` | The entry for this app in the server's shared Caddy (HTTPS). Reference only |
 | `lib.sh` | Shared utilities, preflight checks, health checks, and status reporting |
 | `backup.sh` | Automated compressed PostgreSQL backups with 30-day retention |
 | `rollback.sh` | Fast zero-registry rollback to `:previous` image |
