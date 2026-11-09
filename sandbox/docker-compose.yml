@@ -1,0 +1,9 @@
+# Test-only sandbox. Runs on its own, next to the TEST tracker only. Never on the production server.
+services:
+  sandbox:
+    image: tariqsulehri/affliate-sandbox:${SANDBOX_TAG:-latest}
+    container_name: affliate_sandbox
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "9999:9999"

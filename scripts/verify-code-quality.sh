@@ -57,6 +57,19 @@ else
 fi
 echo ""
 
+# Step 3b: Sandbox TypeScript Validation (test-only app; skipped when its packages are not installed)
+if [ -d "$ROOT_DIR/sandbox/node_modules" ]; then
+    echo -e "${YELLOW}Step 3b: Checking Sandbox TypeScript code for errors...${NC}"
+    cd "$ROOT_DIR/sandbox"
+    if npx tsc --noEmit; then
+        echo -e "${GREEN}✓ Sandbox TypeScript check passed cleanly (0 errors).${NC}"
+    else
+        echo -e "${RED}❌ ERROR: Sandbox TypeScript compilation failed. Fix errors above before committing.${NC}"
+        exit 1
+    fi
+    echo ""
+fi
+
 # Step 4: Verify Definition of Done (DOD) Documents
 echo -e "${YELLOW}Step 4/5: Verifying Definition of Done (DOD) compliance files...${NC}"
 if [ -f "$ROOT_DIR/DOD.md" ] && [ -f "$ROOT_DIR/AGENTS.md" ]; then
