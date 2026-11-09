@@ -17,6 +17,7 @@ import { MetricTile } from '../common/MetricTile';
 import { Toast } from '../common/Toast';
 import { StatusBadge } from '../common/StatusBadge';
 import { OfferBuilder } from './OfferBuilder';
+import { buildTrackingUrl } from '../../utils/trackingUrls';
 
 export function OffersView() {
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -66,9 +67,8 @@ export function OffersView() {
   }, []);
 
   const handleCopyPostback = (offer: Offer) => {
-    const domainHost = offer.domain?.name || 'zshe.panel.7tracking.com';
     const macro = offer.postbackMacroParam || '{clickid}';
-    const postbackUrl = `https://${domainHost}/api/v1/postback?clickid=${macro}`;
+    const postbackUrl = buildTrackingUrl('postback', [`clickid=${macro}`]);
     navigator.clipboard.writeText(postbackUrl);
     setCopiedOfferId(offer.id);
     showToast('Postback URL copied to clipboard!');

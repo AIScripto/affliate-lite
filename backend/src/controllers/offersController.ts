@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Prisma } from '@prisma/client';
 import { prisma } from '../db/prisma';
+import { getPublicBaseUrl } from '../utils/publicUrl';
 
 export async function createOffer(req: Request, res: Response): Promise<void> {
   const rawBody = req.body || {};
@@ -177,11 +178,11 @@ export async function getOffers(req: Request, res: Response): Promise<void> {
     },
   });
 
-  const baseUrl = process.env.BASE_URL || 'http://localhost:3086';
+  const baseUrl = getPublicBaseUrl(req);
 
   const formatted = offers.map((o) => {
     const defaultPayout = o.payouts[0];
-    const postbackUrl = `${baseUrl}/postback?clickid={clickid}`;
+    const postbackUrl = `${baseUrl}/api/v1/postback?clickid=${o.postbackMacroParam || '{clickid}'}`;
 
     return {
       id: o.id,

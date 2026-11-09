@@ -343,3 +343,21 @@ test('Pixels: security token is still required', async () => {
   const allowed = await fetch(`${baseUrl}/api/v1/postback/pixel.jpg?clickid=${c}&secure_token=${TOKEN}`);
   assert.equal(allowed.headers.get('x-postback-status'), '200');
 });
+
+test('Pixels: script pixel (/sdk/pixel.js) records the conversion and returns JavaScript', async () => {
+  const c = await newClick(offerStrict);
+  const res = await fetch(`${baseUrl}/sdk/pixel.js?clickid=${c}&goal=1`);
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get('content-type') ?? '', /javascript/);
+  assert.equal(res.headers.get('x-postback-status'), '200');
+  assert.equal(await prisma.conversion.count({ where: { clickId: c } }), 1);
+});
+
+test('Offers API: postbackUrl uses the address the panel is opened on, not localhost', async () => {
+  const res = await fetch(`${baseUrl}/api/v1/offers`, {
+    headers: { Authorization: `Bearer ${adminToken}`, 'X-Forwarded-Host': '161.97.110.121:3085' },
+  });
+  const { offers } = await res.json();
+  const url: string = offers[0].postbackUrl;
+  assert.ok(url.startsWith('http://161.97.110.121:3085/api/v1/postback?clickid='), url);
+});

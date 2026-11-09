@@ -5,6 +5,7 @@ import { processPostback, PostbackRequest } from '../services/postback/receiver'
 /** 1x1 transparent GIF returned by the image pixel. */
 const PIXEL_GIF = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
 const PIXEL_HTML = '<!doctype html><html><head><meta charset="utf-8"></head><body></body></html>';
+const PIXEL_SCRIPT = '/* conversion recorded */';
 const NO_CACHE = 'no-store, no-cache, must-revalidate';
 
 function toPostbackRequest(req: Request): PostbackRequest {
@@ -42,4 +43,13 @@ export async function handlePixelFrame(req: Request, res: Response): Promise<voi
     .status(200)
     .set({ 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': NO_CACHE, 'X-Postback-Status': String(result.httpStatus) })
     .send(PIXEL_HTML);
+}
+
+/** Script pixel: <script src=".../sdk/pixel.js?clickid=...">. Same rules as the image pixel. */
+export async function handlePixelScript(req: Request, res: Response): Promise<void> {
+  const result = await processPostback(toPostbackRequest(req));
+  res
+    .status(200)
+    .set({ 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': NO_CACHE, 'X-Postback-Status': String(result.httpStatus) })
+    .send(PIXEL_SCRIPT);
 }

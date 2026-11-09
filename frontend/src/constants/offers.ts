@@ -157,3 +157,11 @@ export const REDIRECT_MODES = [
   { id: '307', label: '307 Temporary Redirect', description: 'Preserves POST bodies when redirecting forms' },
   { id: 'direct', label: 'Direct Linking (No Redirect)', description: 'Shopper lands directly via JavaScript tracking snippet' },
 ];
+
+/** Backend paths for conversion tracking links (served via the panel's nginx). */
+export const TRACKING_PATHS = {
+  postback: '/api/v1/postback',
+  pixelImage: '/api/v1/postback/pixel.jpg',
+  pixelFrame: '/api/v1/postback/pixel.html',
+  pixelScript: '/sdk/pixel.js',
+} as const;

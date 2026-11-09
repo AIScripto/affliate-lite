@@ -55,6 +55,7 @@ import {
   DEFAULT_POSTBACK_PARAMS,
 } from './postbacks/PostbackParametersTable';
 import { RefreshCw } from 'lucide-react';
+import { buildTrackingUrl } from '../../utils/trackingUrls';
 
 function parseInitialActiveParams(
   clickidMacro: string,
@@ -759,9 +760,8 @@ export function OfferBuilder({
   const profitMarginPct = revenue > 0 ? Number(((netProfit / revenue) * 100).toFixed(1)) : 0;
 
   // Selected Domain Name & Dynamic Postback URL
-  const selectedDomainObj = domains.find((d) => d.id === domainId) || domains[0];
-  const domainHost = selectedDomainObj?.name || 'zshe.panel.7tracking.com';
-  const computedPostbackUrl = useMemo(() => {
+  // Query parts shared by the S2S postback and the browser pixels
+  const postbackQueryParts = useMemo(() => {
     const queryParts: string[] = [];
     postbackActiveParams.forEach((p) => {
       if (!p.enabled) return;
@@ -776,9 +776,13 @@ export function OfferBuilder({
         queryParts.push(p.value ? `${p.key}=${p.value}` : p.key);
       }
     });
-    const queryString = queryParts.length > 0 ? `?${queryParts.join('&')}` : '';
-    return `https://${domainHost}/api/v1/postback${queryString}`;
-  }, [domainHost, postbackActiveParams, postbackMacroParam, advertiserSecurityToken]);
+    return queryParts;
+  }, [postbackActiveParams, postbackMacroParam, advertiserSecurityToken]);
+
+  const computedPostbackUrl = buildTrackingUrl('postback', postbackQueryParts);
+  const pixelImageUrl = buildTrackingUrl('pixelImage', postbackQueryParts);
+  const pixelFrameUrl = buildTrackingUrl('pixelFrame', postbackQueryParts);
+  const pixelScriptUrl = buildTrackingUrl('pixelScript', postbackQueryParts);
 
   const handleSave = async (andContinue: boolean = false) => {
     const errors: Record<string, string> = {};
@@ -1855,19 +1859,13 @@ export function OfferBuilder({
 
                     <div className="relative">
                       <div className="w-full bg-surface-elevated border border-border-subtle rounded-lg p-3 pr-20 font-mono text-[11px] text-fg-muted break-all select-all">
-                        {`<!-- Offer Conversion -->\n<img src="${computedPostbackUrl.replace(
-                          '/api/v1/postback',
-                          `/api/v1/postback/pixel.jpg?offer_id=${offer?.id || '7'}`
-                        )}" height="1" width="1" alt=""/>\n<!-- End Offer Conversion -->`}
+                        {`<!-- Offer Conversion -->\n<img src="${pixelImageUrl}" height="1" width="1" alt=""/>\n<!-- End Offer Conversion -->`}
                       </div>
                       <button
                         type="button"
                         onClick={() =>
                           handleCopy(
-                            `<img src="${computedPostbackUrl.replace(
-                              '/api/v1/postback',
-                              `/api/v1/postback/pixel.jpg?offer_id=${offer?.id || '7'}`
-                            )}" height="1" width="1" alt=""/>`,
+                            `<img src="${pixelImageUrl}" height="1" width="1" alt=""/>`,
                             'Image Pixel copied ✓'
                           )
                         }
@@ -1896,19 +1894,13 @@ export function OfferBuilder({
 
                     <div className="relative">
                       <div className="w-full bg-surface-elevated border border-border-subtle rounded-lg p-3 pr-20 font-mono text-[11px] text-fg-muted break-all select-all">
-                        {`<!-- Offer Conversion -->\n<iframe src="${computedPostbackUrl.replace(
-                          '/api/v1/postback',
-                          `/api/v1/postback/pixel.html?offer_id=${offer?.id || '7'}`
-                        )}" scrolling="no" frameborder="0" width="1" height="1"></iframe>\n<!-- End Offer Conversion -->`}
+                        {`<!-- Offer Conversion -->\n<iframe src="${pixelFrameUrl}" scrolling="no" frameborder="0" width="1" height="1"></iframe>\n<!-- End Offer Conversion -->`}
                       </div>
                       <button
                         type="button"
                         onClick={() =>
                           handleCopy(
-                            `<iframe src="${computedPostbackUrl.replace(
-                              '/api/v1/postback',
-                              `/api/v1/postback/pixel.html?offer_id=${offer?.id || '7'}`
-                            )}" scrolling="no" frameborder="0" width="1" height="1"></iframe>`,
+                            `<iframe src="${pixelFrameUrl}" scrolling="no" frameborder="0" width="1" height="1"></iframe>`,
                             'IFrame Pixel copied ✓'
                           )
                         }
@@ -1937,13 +1929,13 @@ export function OfferBuilder({
 
                     <div className="relative">
                       <div className="w-full bg-surface-elevated border border-border-subtle rounded-lg p-3 pr-20 font-mono text-[11px] text-fg-muted break-all select-all">
-                        {`<script>\n  (function(w,d,s,u){var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.src=u;f.parentNode.insertBefore(j,f);})(window,document,'script','https://${domainHost}/sdk/pixel.js?offer_id=${offer?.id || '7'}&clickid=${postbackMacroParam}');\n</script>`}
+                        {`<script>\n  (function(w,d,s,u){var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.src=u;f.parentNode.insertBefore(j,f);})(window,document,'script','${pixelScriptUrl}');\n</script>`}
                       </div>
                       <button
                         type="button"
                         onClick={() =>
                           handleCopy(
-                            `<script>(function(w,d,s,u){var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.src=u;f.parentNode.insertBefore(j,f);})(window,document,'script','https://${domainHost}/sdk/pixel.js?offer_id=${offer?.id || '7'}&clickid=${postbackMacroParam}');</script>`,
+                            `<script>(function(w,d,s,u){var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.src=u;f.parentNode.insertBefore(j,f);})(window,document,'script','${pixelScriptUrl}');</script>`,
                             'JavaScript Pixel copied ✓'
                           )
                         }

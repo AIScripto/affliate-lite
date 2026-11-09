@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import apiRouter from './routes';
 import prisma from './db/prisma';
 import { handleClickRedirect } from './controllers/trackingController';
-import { handlePostback, handlePixelImage, handlePixelFrame } from './controllers/postbackReceiverController';
+import { handlePostback, handlePixelImage, handlePixelFrame, handlePixelScript } from './controllers/postbackReceiverController';
 import { TRUST_PROXY_HOPS } from './utils/clientIp';
 import { asyncHandler } from './utils/asyncRouter';
 import { errorHandler } from './middleware/errorHandler';
@@ -61,6 +61,7 @@ for (const prefix of ['', '/api/v1']) {
   app.get(`${prefix}/postback/pixel.gif`, asyncHandler(handlePixelImage));
   app.get(`${prefix}/postback/pixel.html`, asyncHandler(handlePixelFrame));
 }
+app.get('/sdk/pixel.js', asyncHandler(handlePixelScript));
 app.get('/postback', asyncHandler(handlePostback));
 app.post('/postback', asyncHandler(handlePostback));
 app.get('/api/v1/postback', asyncHandler(handlePostback));
