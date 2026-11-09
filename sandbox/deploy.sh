@@ -40,8 +40,10 @@ SANDBOX_OFFER_TOKEN=sbx_$(head -c 9 /dev/urandom | base64 | tr -d '/+=' | head -
 ENV
   echo "Created $DIR/.env (fill in TRACKER_ADMIN_EMAIL / TRACKER_ADMIN_PASSWORD)"
 fi
-SANDBOX_TAG="$TAG" docker compose pull -q
-SANDBOX_TAG="$TAG" docker compose up -d
+# Remember the deployed version, so any later "docker compose up" restarts this version and not an old "latest"
+if grep -q '^SANDBOX_TAG=' .env; then sed -i "s|^SANDBOX_TAG=.*|SANDBOX_TAG=$TAG|" .env; else echo "SANDBOX_TAG=$TAG" >> .env; fi
+docker compose pull -q
+docker compose up -d
 for i in $(seq 1 30); do
   if curl -fsS http://localhost:9999/health >/dev/null 2>&1; then echo "Sandbox $TAG is up on port 9999"; exit 0; fi
   sleep 1
